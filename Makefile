@@ -18,4 +18,4 @@ build:
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
-	#rm -f stdfunfiles.go
+	rm -f stdfunfiles.go
