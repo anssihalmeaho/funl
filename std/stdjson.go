@@ -3,7 +3,7 @@ package std
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/anssihalmeaho/funl"
+	"github.com/anssihalmeaho/funl/funl"
 	"reflect"
 )
 

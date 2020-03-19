@@ -1,7 +1,7 @@
 package std
 
 import (
-	"github.com/anssihalmeaho/funl"
+	"github.com/anssihalmeaho/funl/funl"
 )
 
 type stdFuncType func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value)

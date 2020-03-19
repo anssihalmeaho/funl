@@ -2,7 +2,7 @@ package std
 
 import (
 	"fmt"
-	"github.com/anssihalmeaho/funl"
+	"github.com/anssihalmeaho/funl/funl"
 	"time"
 )
 

@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/anssihalmeaho/funl"
+	"github.com/anssihalmeaho/funl/funl"
 	"io"
 	"io/ioutil"
 	"os"

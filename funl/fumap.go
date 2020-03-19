@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"funlang/pmap"
+	"github.com/anssihalmeaho/funl/pmap"
 	"hash/fnv"
 )
 

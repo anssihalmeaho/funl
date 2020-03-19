@@ -3,7 +3,7 @@ package std
 import (
 	"bufio"
 	"fmt"
-	"github.com/anssihalmeaho/funl"
+	"github.com/anssihalmeaho/funl/funl"
 	"os"
 )
 

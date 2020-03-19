@@ -3,7 +3,7 @@ package std
 import (
 	"bytes"
 	"fmt"
-	"github.com/anssihalmeaho/funl"
+	"github.com/anssihalmeaho/funl/funl"
 )
 
 func initSTDBytes() (err error) {

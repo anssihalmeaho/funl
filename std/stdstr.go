@@ -1,7 +1,7 @@
 package std
 
 import (
-	"github.com/anssihalmeaho/funl"
+	"github.com/anssihalmeaho/funl/funl"
 	"strings"
 	"unicode"
 )

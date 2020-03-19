@@ -3,7 +3,7 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 
-BINARY_NAME=funla
+BINARY_NAME=fu
 
 all: build
 

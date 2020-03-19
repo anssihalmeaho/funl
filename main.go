@@ -8,8 +8,8 @@ import (
 	"runtime"
 	"runtime/pprof"
 
-	"github.com/anssihalmeaho/funl"
-	"github.com/anssihalmeaho/std"
+	"github.com/anssihalmeaho/funl/funl"
+	"github.com/anssihalmeaho/funl/std"
 )
 
 //go:generate go run ./stdfun/stdfun_generator.go
