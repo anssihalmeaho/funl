@@ -36,10 +36,11 @@ func main() {
 
 	mw := &myWriter{orig: out}
 
-	out.Write([]byte("package main \n\nconst (\n"))
+	out.Write([]byte("package main \n\nfunc init() {\n"))
 	for _, f := range fs {
 		if strings.HasSuffix(f.Name(), ".fun") {
-			out.Write([]byte(strings.TrimSuffix(f.Name(), ".fun") + " = `"))
+			keyStr := `"` + strings.TrimSuffix(f.Name(), ".fun") + `"`
+			out.Write([]byte("\n\tstdfunMap[" + keyStr + "] = `"))
 			f, err := os.Open("./stdfun/" + f.Name())
 			if err != nil {
 				fmt.Println(fmt.Sprintf("Error in reading std .fun files (%v)", err))
@@ -51,6 +52,6 @@ func main() {
 			f.Close()
 		}
 	}
-	out.Write([]byte(")\n"))
+	out.Write([]byte("}\n"))
 	out.Close()
 }
