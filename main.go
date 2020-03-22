@@ -18,6 +18,8 @@ const doProfiling = false
 const doStackMeas = false
 const doMemMeas = false
 
+var stdfunMap = map[string]string{}
+
 func initFunSourceSTD() (err error) {
 	type funModInfo struct {
 		name    string
@@ -26,19 +28,19 @@ func initFunSourceSTD() (err error) {
 	var funmods = []funModInfo{
 		{
 			name:    "stdfu",
-			content: stdfu,
+			content: stdfunMap["stdfu"],
 		},
 		{
 			name:    "stdset",
-			content: stdset,
+			content: stdfunMap["stdset"],
 		},
 		{
 			name:    "stddbc",
-			content: stddbc,
+			content: stdfunMap["stddbc"],
 		},
 		{
 			name:    "stdfilu", //note. this needs stdfu
-			content: stdfilu,
+			content: stdfunMap["stdfilu"],
 		},
 	}
 	for _, fm := range funmods {
@@ -122,7 +124,7 @@ func main() {
 				srcFileName = others[0]
 			}
 			if srcFileName == "repl.fun" {
-				content = []byte(repl)
+				content = []byte(stdfunMap["repl"])
 			} else {
 				content, err = ioutil.ReadFile(srcFileName)
 				if err != nil {
