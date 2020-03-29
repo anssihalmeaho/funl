@@ -18,40 +18,6 @@ const doProfiling = false
 const doStackMeas = false
 const doMemMeas = false
 
-var stdfunMap = map[string]string{}
-
-func initFunSourceSTD() (err error) {
-	type funModInfo struct {
-		name    string
-		content string
-	}
-	var funmods = []funModInfo{
-		{
-			name:    "stdfu",
-			content: stdfunMap["stdfu"],
-		},
-		{
-			name:    "stdset",
-			content: stdfunMap["stdset"],
-		},
-		{
-			name:    "stddbc",
-			content: stdfunMap["stddbc"],
-		},
-		{
-			name:    "stdfilu", //note. this needs stdfu
-			content: stdfunMap["stdfilu"],
-		},
-	}
-	for _, fm := range funmods {
-		err = funl.AddFunModToNamespace(fm.name, []byte(fm.content))
-		if err != nil {
-			return
-		}
-	}
-	return
-}
-
 func main() {
 	if doProfiling {
 		f, err := os.Create("fup.prof")
@@ -124,7 +90,7 @@ func main() {
 				srcFileName = others[0]
 			}
 			if srcFileName == "repl.fun" {
-				content = []byte(stdfunMap["repl"])
+				content = []byte(funl.GetReplCode())
 			} else {
 				content, err = ioutil.ReadFile(srcFileName)
 				if err != nil {
@@ -144,7 +110,7 @@ func main() {
 	}
 
 	var retValue funl.Value
-	retValue, err = funl.FunlMainWithArgs(string(content), parsedArgs, name, srcFileName, std.InitSTD, initFunSourceSTD)
+	retValue, err = funl.FunlMainWithArgs(string(content), parsedArgs, name, srcFileName, std.InitSTD)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Error: %v", err))
 		return

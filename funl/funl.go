@@ -222,7 +222,7 @@ func GetArgs(argsAsStr string) (argsItems []*Item, err error) {
 	return
 }
 
-func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName string, initSTD, initFunSourceSTD func() error) (retValue Value, err error) {
+func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName string, initSTD func() error) (retValue Value, err error) {
 	parser := NewParser(NewDefaultOperators(), &srcFileName)
 	var nsName string
 	var nspace *NSpace
@@ -289,5 +289,32 @@ func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName strin
 	initFrame.inProcCall = true
 
 	retValue = evalMain(initFrame)
+	return
+}
+
+var stdfunMap = map[string]string{}
+
+// GetReplCode return REPL code
+func GetReplCode() string {
+	return stdfunMap["repl"]
+}
+
+func initFunSourceSTD() (err error) {
+	type funModInfo struct {
+		name    string
+		content string
+	}
+	var funmodNames = []string{
+		"stdfu",
+		"stdset",
+		"stddbc",
+		"stdfilu", //note. this needs stdfu
+	}
+	for _, funmodName := range funmodNames {
+		err = AddFunModToNamespace(funmodName, []byte(stdfunMap[funmodName]))
+		if err != nil {
+			return
+		}
+	}
 	return
 }

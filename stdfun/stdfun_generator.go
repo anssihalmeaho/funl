@@ -8,9 +8,6 @@ import (
 	"strings"
 )
 
-//go generate
-//go build -o funl.exe
-
 type myWriter struct {
 	orig io.Writer
 }
@@ -28,7 +25,7 @@ func (myw *myWriter) Write(p []byte) (n int, err error) {
 
 func main() {
 	fs, _ := ioutil.ReadDir("./stdfun/")
-	out, err := os.Create("stdfunfiles.go")
+	out, err := os.Create("./funl/stdfunfiles.go")
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Error in generating std .fun files (%v)", err))
 		return
@@ -36,7 +33,7 @@ func main() {
 
 	mw := &myWriter{orig: out}
 
-	out.Write([]byte("package main \n\nfunc init() {\n"))
+	out.Write([]byte("package funl \n\nfunc init() {\n"))
 	for _, f := range fs {
 		if strings.HasSuffix(f.Name(), ".fun") {
 			keyStr := `"` + strings.TrimSuffix(f.Name(), ".fun") + `"`
