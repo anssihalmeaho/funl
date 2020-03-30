@@ -74,7 +74,7 @@ func main() {
 	var srcFileName string
 	if !skipSrcFile {
 		if *replPtr {
-			srcFileName = "repl.fun"
+			srcFileName = "repl.fnl"
 		}
 
 		if evalStr != "" {
@@ -89,7 +89,7 @@ func main() {
 				}
 				srcFileName = others[0]
 			}
-			if srcFileName == "repl.fun" {
+			if srcFileName == "repl.fnl" {
 				content = []byte(funl.GetReplCode())
 			} else {
 				content, err = ioutil.ReadFile(srcFileName)

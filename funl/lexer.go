@@ -1,6 +1,7 @@
 package funl
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"unicode"
@@ -452,7 +453,10 @@ func (s *multilineCommentState) processSpecCharacter(ch rune) lexState {
 	return receivingCommentBlock
 }
 
-func (s *tokenizer) scan(sourceText string) ([]token, error) {
+func (s *tokenizer) scan(srcText string) ([]token, error) {
+	// replace LF with CR LF (unix/mac to windows format)
+	sourceText := string(bytes.ReplaceAll([]byte(srcText), []byte{10}, []byte{13, 10}))
+
 	var currentState = s.stateLinks[unknown]
 	var newState lexState
 	var prevC rune

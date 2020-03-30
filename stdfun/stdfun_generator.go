@@ -8,21 +8,6 @@ import (
 	"strings"
 )
 
-type myWriter struct {
-	orig io.Writer
-}
-
-func (myw *myWriter) Write(p []byte) (n int, err error) {
-	var newp []byte
-	for _, bv := range p {
-		if bv == 10 {
-			newp = append(newp, []byte(" ")...)
-		}
-		newp = append(newp, bv)
-	}
-	return myw.orig.Write(newp)
-}
-
 func main() {
 	fs, _ := ioutil.ReadDir("./stdfun/")
 	out, err := os.Create("./funl/stdfunfiles.go")
@@ -31,12 +16,10 @@ func main() {
 		return
 	}
 
-	mw := &myWriter{orig: out}
-
 	out.Write([]byte("package funl \n\nfunc init() {\n"))
 	for _, f := range fs {
-		if strings.HasSuffix(f.Name(), ".fun") {
-			keyStr := `"` + strings.TrimSuffix(f.Name(), ".fun") + `"`
+		if strings.HasSuffix(f.Name(), ".fnl") {
+			keyStr := `"` + strings.TrimSuffix(f.Name(), ".fnl") + `"`
 			out.Write([]byte("\n\tstdfunMap[" + keyStr + "] = `"))
 			f, err := os.Open("./stdfun/" + f.Name())
 			if err != nil {
@@ -44,7 +27,7 @@ func main() {
 				f.Close()
 				break
 			}
-			io.Copy(mw, f)
+			io.Copy(out, f)
 			out.Write([]byte("`\n"))
 			f.Close()
 		}

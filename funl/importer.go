@@ -119,7 +119,7 @@ func readModuleFromFile(inProcCall bool, sid SymID, importPath string) (topFrame
 		}
 	}
 
-	fileExtensionName := "fun"
+	fileExtensionName := "fnl"
 	importModName := SymIDMap.AsString(sid)
 	importFileName := importModName
 	if importModName == "" {
