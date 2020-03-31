@@ -222,6 +222,14 @@ func GetArgs(argsAsStr string) (argsItems []*Item, err error) {
 	return
 }
 
+var initExtensions []func() error
+
+// AddExtensionInitializer can be used for registering initializer
+// for some extension module (registered in init -function)
+func AddExtensionInitializer(initializer func() error) {
+	initExtensions = append(initExtensions, initializer)
+}
+
 func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName string, initSTD func() error) (retValue Value, err error) {
 	parser := NewParser(NewDefaultOperators(), &srcFileName)
 	var nsName string
@@ -241,6 +249,13 @@ func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName strin
 
 	if err = initFunSourceSTD(); err != nil {
 		runTimeError("Error in std-lib (fun source) init (%v)", err)
+	}
+
+	// call possible extension inits
+	for _, initializer := range initExtensions {
+		if err := initializer(); err != nil {
+			runTimeError("Error in extension module init (%v)", err)
+		}
 	}
 
 	// then put imports to all namespaces
