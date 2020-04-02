@@ -25,16 +25,16 @@ There are also other examples in examples folder.
 
 ### Options (-help, -h)
 #### In Linux  (or Cygwin, Mac)
-    funla.exe -help
+    ./funla -help
 
 #### In Windows
-    ./funla -help
+    funla.exe -help
 
 ### REPL (Read-Eval-Print-Loop)
 #### In Linux  (or Cygwin, Mac)
-    funla.exe -repl
+    ./funla -repl
 
 #### In Windows
-    ./funla -repl
+    funla.exe -repl
 
 In REPL type help for more information.
