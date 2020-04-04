@@ -6,24 +6,29 @@ It's interpreted language with support for concurrency and immutable data.
 ### Install
 #### Install in Linux (or Cygwin, Mac)
     git clone https://github.com/anssihalmeaho/funl.git
+    cd funl
     make
 
-#### Install in Windows
-    git clone https://github.com/anssihalmeaho/funl.git
-    go build -trimpath -o funla.exe -v .
+Run hello world example:
 
-### Run Hello World
-#### In Linux  (or Cygwin, Mac)
     ./funla -silent examples/hello.fnl
     Hello World
 
-#### In Windows
+#### Install in Windows
+    git clone https://github.com/anssihalmeaho/funl.git
+    cd funl
+    go build -trimpath -o funla.exe -v .
+
+Run hello world example:
+
     funla.exe -silent examples\hello.fnl
     Hello World
 
 There are also other examples in examples folder.
 
-### Options (-help, -h)
+## Getting help and try expressions
+
+### Options: -help, -h
 #### In Linux  (or Cygwin, Mac)
     ./funla -help
 
@@ -38,3 +43,23 @@ There are also other examples in examples folder.
     funla.exe -repl
 
 In REPL type help for more information.
+
+### Options: -eval
+    ./funla -eval "plus(1 2)"
+    3
+
+### help operator
+
+help operator can be used to get list of operators:
+
+    ./funla -eval "help('operators')"
+
+help operator provides description for each operator:
+
+    ./funla -eval "help('if')"
+
+in REPL:
+
+    ./funla -repl
+    Welcome to FunL REPL (interactive command shell)
+    funl> help('if')
