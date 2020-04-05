@@ -67,3 +67,6 @@ in REPL:
     ./funla -repl
     Welcome to FunL REPL (interactive command shell)
     funl> help('if')
+
+## Language and Standard library descriptions
+* [General structure](https://github.com/anssihalmeaho/funl/wiki/General-Structure)
