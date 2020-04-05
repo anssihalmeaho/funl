@@ -1,9 +1,13 @@
 # FunL
 FunL is simple dynamically typed, functional programming language.
-It's interpreted language with support for concurrency and immutable data.
+It's interpreted language with support for concurrency and immutable data. 
+FunL is implemented with Go.
 
 ## Get started
 ### Install
+
+Prerequisite is to have Go language environment available.
+
 #### Install in Linux (or Cygwin, Mac)
     git clone https://github.com/anssihalmeaho/funl.git
     cd funl
