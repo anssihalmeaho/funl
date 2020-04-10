@@ -28,6 +28,8 @@ Run hello world example:
     funla.exe -silent examples\hello.fnl
     Hello World
 
+![hello world](https://github.com/anssihalmeaho/funl/edit/master/hellow.png)
+
 There are also other examples in examples folder.
 
 ## Getting help and try expressions
