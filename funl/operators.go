@@ -791,6 +791,23 @@ Operator: put
 
 Usage: put(<map> <key> <value>)
 `,
+		"get": `
+Operator: get
+  Gets value for given key from map. If key is not found
+  runtime error is generated.
+
+  First argument is map, 2nd argument is key.
+
+  There must be 2 arguments.
+  Return value is value corresponding to key.
+
+Example:
+  get(map(1 2 3 4) 1) -> 2
+  get(map(1 2 3 4) 10) -> Runtime error:  get: key not found (10)
+
+Usage: get(<map> <key>)
+`,
+
 		"getl": `
 Operator: getl
   Gets value for given key from map. Returns result as
