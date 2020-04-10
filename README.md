@@ -1,3 +1,5 @@
+![](https://github.com/anssihalmeaho/funl/blob/master/hellow.png)
+
 # FunL
 FunL is simple dynamically typed, functional programming language.
 It's interpreted language with support for concurrency and immutable data. 
@@ -27,8 +29,6 @@ Run hello world example:
 
     funla.exe -silent examples\hello.fnl
     Hello World
-
-![hello world](https://github.com/anssihalmeaho/funl/edit/master/hellow.png)
 
 There are also other examples in examples folder.
 
