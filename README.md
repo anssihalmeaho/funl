@@ -74,5 +74,6 @@ in REPL:
 * [General structure](https://github.com/anssihalmeaho/funl/wiki/General-Structure)
 * [Syntax and Concepts](https://github.com/anssihalmeaho/funl/wiki/Syntax-and-concepts)
 * [Concurrency and impure operations](https://github.com/anssihalmeaho/funl/wiki/Concurrency-and-impure-operations)
+* [Importing modules](https://github.com/anssihalmeaho/funl/wiki/Importing-modules)
 * [Operators explained](https://github.com/anssihalmeaho/funl/wiki/Operators-explained)
 
