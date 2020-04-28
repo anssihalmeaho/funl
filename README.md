@@ -76,4 +76,5 @@ in REPL:
 * [Concurrency and impure operations](https://github.com/anssihalmeaho/funl/wiki/Concurrency-and-impure-operations)
 * [Importing modules](https://github.com/anssihalmeaho/funl/wiki/Importing-modules)
 * [Operators explained](https://github.com/anssihalmeaho/funl/wiki/Operators-explained)
+* [Standard Libraries](https://github.com/anssihalmeaho/funl/wiki/Standard-Libraries)
 
