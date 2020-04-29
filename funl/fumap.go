@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/anssihalmeaho/funl/pmap"
 	"hash/fnv"
+
+	"github.com/anssihalmeaho/funl/pmap"
 )
 
 //PMap is persistent map
@@ -15,7 +16,7 @@ type PMap struct {
 	delCount  int
 }
 
-func areEqualMaps(m1, m2 *PMap) bool {
+func areEqualMaps(frame *Frame, m1, m2 *PMap) bool {
 	/*	NOTE. this check is removed as deletion marking makes it invalid
 		if m1.Rbm == m2.Rbm {
 			return true
@@ -54,11 +55,11 @@ func areEqualMaps(m1, m2 *PMap) bool {
 	equalValues := func(kval1, kval2 KeyVal) bool {
 		keyitem1 := &Item{Type: ValueItem, Data: kval1.Key}
 		keyitem2 := &Item{Type: ValueItem, Data: kval2.Key}
-		retv := handleEqOP(nil, []*Item{keyitem1, keyitem2})
+		retv := handleEqOP(frame, []*Item{keyitem1, keyitem2})
 		if same := retv.Data.(bool); same {
 			valitem1 := &Item{Type: ValueItem, Data: kval1.Val}
 			valitem2 := &Item{Type: ValueItem, Data: kval2.Val}
-			retvv := handleEqOP(nil, []*Item{valitem1, valitem2})
+			retvv := handleEqOP(frame, []*Item{valitem1, valitem2})
 			return retvv.Data.(bool)
 		}
 		return false

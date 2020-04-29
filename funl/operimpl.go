@@ -1511,10 +1511,6 @@ func handleEqOP(frame *Frame, operands []*Item) (retVal Value) {
 		}
 		switch argval.Kind {
 		case OpaqueValue:
-			if !frame.inProcCall {
-				runTimeError2(frame, "%s not allowed in function for opaque value", opName)
-			}
-
 			if !comparedValue.(OpaqueAPI).Equals(argval.Data.(OpaqueAPI)) {
 				retVal = Value{Kind: BoolValue, Data: false}
 				return
@@ -1548,7 +1544,7 @@ func handleEqOP(frame *Frame, operands []*Item) (retVal Value) {
 			if !convok {
 				runTimeError2(frame, "%s: invalid map", opName)
 			}
-			if !areEqualMaps(m1, m2) {
+			if !areEqualMaps(frame, m1, m2) {
 				retVal = Value{Kind: BoolValue, Data: false}
 				return
 			}
