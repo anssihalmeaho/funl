@@ -78,5 +78,6 @@ in REPL:
 * [Operators explained](https://github.com/anssihalmeaho/funl/wiki/Operators-explained)
 * [External Modules](https://github.com/anssihalmeaho/funl/wiki/External-Modules)
 * [Usage as embedded language](https://github.com/anssihalmeaho/funl/wiki/Using-FunL-as-embedded-language)
+* [REPL usage](https://github.com/anssihalmeaho/funl/wiki/REPL-usage)
 * [Standard Libraries](https://github.com/anssihalmeaho/funl/wiki/Standard-Libraries)
 
