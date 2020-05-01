@@ -70,6 +70,8 @@ in REPL:
     Welcome to FunL REPL (interactive command shell)
     funl> help('if')
 
+Check [REPL usage](https://github.com/anssihalmeaho/funl/wiki/REPL-usage) for more hints.
+
 ## Language and Standard library descriptions
 * [General structure](https://github.com/anssihalmeaho/funl/wiki/General-Structure)
 * [Syntax and Concepts](https://github.com/anssihalmeaho/funl/wiki/Syntax-and-concepts)
