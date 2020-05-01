@@ -77,5 +77,6 @@ in REPL:
 * [Importing modules](https://github.com/anssihalmeaho/funl/wiki/Importing-modules)
 * [Operators explained](https://github.com/anssihalmeaho/funl/wiki/Operators-explained)
 * [External Modules](https://github.com/anssihalmeaho/funl/wiki/External-Modules)
+* [Usage as embedded language](https://github.com/anssihalmeaho/funl/wiki/Using-FunL-as-embedded-language)
 * [Standard Libraries](https://github.com/anssihalmeaho/funl/wiki/Standard-Libraries)
 
