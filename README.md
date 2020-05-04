@@ -50,9 +50,14 @@ There are also other examples in examples folder.
 
 In REPL type help for more information.
 
+Check [REPL usage](https://github.com/anssihalmeaho/funl/wiki/REPL-usage) for more hints.
+
 ### Options: -eval
     ./funla -eval "plus(1 2)"
     3
+
+With _-eval_ option any FunL expression can be given as argument.
+Expression is evaluated and result is printed.
 
 ### help operator
 
@@ -69,8 +74,6 @@ in REPL:
     ./funla -repl
     Welcome to FunL REPL (interactive command shell)
     funl> help('if')
-
-Check [REPL usage](https://github.com/anssihalmeaho/funl/wiki/REPL-usage) for more hints.
 
 ## Language and Standard library descriptions
 * [General structure](https://github.com/anssihalmeaho/funl/wiki/General-Structure)
