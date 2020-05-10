@@ -5,11 +5,12 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/anssihalmeaho/funl/funl"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/anssihalmeaho/funl/funl"
 )
 
 func initSTDHttp() (err error) {
@@ -464,6 +465,21 @@ func getStdHttpRegHandler(name string) stdFuncType {
 			}
 
 			reqKVs := []*funl.Item{
+				// URI
+				{
+					Type: funl.ValueItem,
+					Data: funl.Value{
+						Kind: funl.StringValue,
+						Data: "URI",
+					},
+				},
+				{
+					Type: funl.ValueItem,
+					Data: funl.Value{
+						Kind: funl.StringValue,
+						Data: r.RequestURI,
+					},
+				},
 				// method
 				{
 					Type: funl.ValueItem,
