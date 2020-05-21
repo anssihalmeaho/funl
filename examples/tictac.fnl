@@ -133,11 +133,11 @@ minmax = func(grid turn depth)
 		is-end has-winner winner = call(has-game-ended next-grid):
 		score = if( is-end
 		if( has-winner
-					case( turn
-						player  minus(0 10)
-						machine 10
-					)
-					0 # no winner, even game
+				case( turn
+					player  minus(0 10)
+					machine 10
+				)
+				0 # no winner, even game
 			)
 			call(minmax next-grid call(swap turn) plus(depth 1))
 		)
