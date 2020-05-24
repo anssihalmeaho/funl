@@ -1,6 +1,24 @@
 
 ns stdfu
 
+loop = func(handler inlist result)
+	while( not(empty(inlist))
+		handler
+		rest(inlist)
+		call(handler head(inlist) result)
+		result
+	)
+end
+
+ploop = proc(handler inlist result)
+	while( not(empty(inlist))
+		handler
+		rest(inlist)
+		call(handler head(inlist) result)
+		result
+	)
+end
+
 chain = func(input, handler-list)
 	applyHandler = func(handler-chain, output)
 		while( not(empty(handler-chain)),
