@@ -120,6 +120,24 @@ apply = func(srclist, converter)
 	call(applyConv, srclist, list(), 1)
 end
 
+proc-apply = proc(srclist, converter)
+	applyConv = proc(l, newl, cnt)
+		if( empty(l),
+			newl,
+			call(
+				proc()
+					remainingList = rest(l)
+					item = head(l)
+					convertedItem = call(converter, item)
+					call(applyConv, remainingList, append(newl, convertedItem), plus(cnt,1))
+				end
+			)
+		)
+	end
+
+	call(applyConv, srclist, list(), 1)
+end
+
 filter = func(srcdata, condition)
 	map-filter = func(src-map)
 		looper = func(kvs, resultm)
@@ -303,6 +321,14 @@ proc-pipe = func(proc-list)
 
 		call(looper proc-list input)
 	end
+end
+
+pairs-to-map = func(kv-list)
+	pair-to-map = func(item result)
+		put(result head(item) last(item))
+	end
+
+	call(loop pair-to-map kv-list map())
 end
 
 endns
