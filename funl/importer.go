@@ -170,6 +170,23 @@ func readModuleFromFile(inProcCall bool, sid SymID, importPath string) (topFrame
 	return
 }
 
+// AddNStoCache is for std usage
+func AddNStoCache(inProcCall bool, importModName string, nspace *NSpace) *Frame {
+	// first create top frame for namespace and put to nsDir
+	topFrame := newTopFrameForNS(nspace)
+	nsSid := SymIDMap.Add(importModName)
+
+	// then put imports to namespace
+	AddImportsToNamespaceSub(nspace, topFrame)
+
+	topFrame.inProcCall = inProcCall // NOTE. this was added later as otherwise proc calls failed at main level
+
+	// then evaluate and assign symbols of namespace
+	nsDir.FillFromAstNSpaceAndStore(topFrame, nsSid, nspace)
+
+	return topFrame
+}
+
 func commonAddFunModToNamespace(inProcCall bool, targetPath, importModName string, content []byte) (topFrame *Frame, err error) {
 	parser := NewParser(NewDefaultOperators(), &targetPath)
 	var nsName string
@@ -184,18 +201,7 @@ func commonAddFunModToNamespace(inProcCall bool, targetPath, importModName strin
 		return
 	}
 
-	// first create top frame for namespace and put to nsDir
-	topFrame = newTopFrameForNS(nspace)
-	nsSid := SymIDMap.Add(importModName)
-
-	// then put imports to namespace
-	AddImportsToNamespaceSub(nspace, topFrame)
-
-	topFrame.inProcCall = inProcCall // NOTE. this was added later as otherwise proc calls failed at main level
-
-	// then evaluate and assign symbols of namespace
-	nsDir.FillFromAstNSpaceAndStore(topFrame, nsSid, nspace)
-
+	topFrame = AddNStoCache(inProcCall, importModName, nspace)
 	return
 }
 

@@ -168,7 +168,7 @@ func handleFloatOP(frame *Frame, operands []*Item) (retVal Value) {
 
 type evalErrHandler struct{}
 
-func (eh *evalErrHandler) handleParseError(errorText string) {
+func (eh *evalErrHandler) HandleParseError(errorText string) {
 	runTimeError(errorText)
 }
 

@@ -125,6 +125,10 @@ func AddImportsToNamespaceSub(nspace *NSpace, frame *Frame) {
 	}
 }
 
+func EvalAndAssignValuesForSymbolsInFrameForNS(frame *Frame, ns *NSpace) {
+	evalAndAssignValuesForSymbolsInFrameForNS(frame, ns)
+}
+
 func evalAndAssignValuesForSymbolsInFrameForNS(frame *Frame, ns *NSpace) {
 	symbolMap := ns.Syms.AsMap()
 	for _, sid := range ns.Syms.Keys() {

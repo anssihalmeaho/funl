@@ -73,7 +73,7 @@ type Parser struct {
 }
 
 type ParseErrorHandler interface {
-	handleParseError(errorText string)
+	HandleParseError(errorText string)
 }
 
 func (p *Parser) SetErrorHandler(peh ParseErrorHandler) {
@@ -93,7 +93,7 @@ func (p *Parser) stopOnError(line interface{}, format string, args ...interface{
 	}
 	errorText := fmt.Sprintf("Syntax error: "+fileName+lineStr+format, args...)
 	if p.errorHandler != nil {
-		p.errorHandler.handleParseError(errorText)
+		p.errorHandler.HandleParseError(errorText)
 		return
 	}
 	fmt.Println(errorText)
@@ -433,6 +433,11 @@ func (p *Parser) ParseValue() (item *Item) {
 	}
 	item = &Item{Type: ValueItem, Data: value}
 	return
+}
+
+// OperNameToID is for std usage
+func OperNameToID(opName string) (op OperType, ok bool) {
+	return operNameToID(opName)
 }
 
 func operNameToID(opName string) (op OperType, ok bool) {

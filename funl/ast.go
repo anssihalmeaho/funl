@@ -314,6 +314,11 @@ func init() {
 	}
 }
 
+// GetWastedName is for stdast use
+func GetWastedName() string {
+	return getWastedName()
+}
+
 type Symt struct {
 	ordered []SymID // keys
 	mapped  map[SymID]*Item
@@ -464,6 +469,14 @@ func (sym *Symt) Add(symbol string, item *Item) error {
 
 type ImportInfo struct {
 	importPath string // "" if not defined
+}
+
+func (imp *ImportInfo) Path() string {
+	return imp.importPath
+}
+
+func (imp *ImportInfo) SetPath(path string) {
+	imp.importPath = path
 }
 
 type NSpace struct {

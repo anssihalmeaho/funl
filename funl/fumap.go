@@ -609,6 +609,11 @@ func handleKeyvalsOP(frame *Frame, operands []*Item) (retVal Value) {
 	return
 }
 
+// HandleGetlOP is for std usage
+func HandleGetlOP(frame *Frame, operands []*Item) (retVal Value) {
+	return handleGetlOP(frame, operands)
+}
+
 func handleGetlOP(frame *Frame, operands []*Item) (retVal Value) {
 	argCount := len(operands)
 	if argCount != 2 {
