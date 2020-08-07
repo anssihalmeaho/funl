@@ -33,7 +33,7 @@ testStrOper = func()
 		call(stdstr.startswith str(func() 1 end), 'func-value'), # maybe should be something else...
 		eq(str(chan()), 'chan-value'), # maybe should be something else...
 		eq(str( div(float(5), float(10))), '0.5'),
-		eq(str(float(50)), '50'),
+		eq(str(float(50)), '50.0'),
 		true
 	)
 	allRight = call(common_test_util.isAllTrueInList, result)

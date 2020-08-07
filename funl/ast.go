@@ -2,6 +2,7 @@ package funl
 
 import (
 	"fmt"
+	"math"
 	"runtime"
 	"runtime/debug"
 	"strconv"
@@ -564,6 +565,10 @@ func (val Value) String() string {
 		return fmt.Sprintf("%d", intv)
 	case FloatValue:
 		floatv := val.Data.(float64)
+		if math.Trunc(floatv) == floatv {
+			// its whole number
+			return fmt.Sprintf("%.1f", floatv)
+		}
 		return fmt.Sprintf("%v", floatv)
 	case StringValue:
 		return fmt.Sprintf("'%s'", val.Data.(string))
