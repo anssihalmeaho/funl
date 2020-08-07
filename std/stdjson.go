@@ -1,10 +1,14 @@
 package std
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/anssihalmeaho/funl/funl"
+	"math"
 	"reflect"
+	"strconv"
+
+	"github.com/anssihalmeaho/funl/funl"
 )
 
 func initSTDJson() (err error) {
@@ -136,8 +140,9 @@ func decodeJSON(name string, frame *funl.Frame, indata []byte) (ok bool, errText
 	}()
 
 	var res interface{}
-	err := json.Unmarshal(indata, &res)
-	if err != nil {
+	d := json.NewDecoder(bytes.NewBuffer(indata))
+	d.UseNumber()
+	if err := d.Decode(&res); err != nil {
 		ok, errText = false, fmt.Sprintf("%s: error in unmarshal: %v", name, err)
 		return
 	}
@@ -184,9 +189,12 @@ func traverseValuesEncode(frame *funl.Frame, inValue funl.Value, prevsl []byte) 
 
 	case funl.FloatValue:
 		floatVal := inValue.Data.(float64)
-		floatAsBytes, err := json.Marshal(floatVal)
-		if err != nil {
-			panic(err)
+		var floatAsBytes []byte
+		if math.Trunc(floatVal) == floatVal {
+			// its whole number
+			floatAsBytes = []byte(fmt.Sprintf("%.1f", floatVal))
+		} else {
+			floatAsBytes = []byte(strconv.FormatFloat(floatVal, 'f', -1, 64))
 		}
 		nextsl = append(prevsl, floatAsBytes...)
 		return
@@ -252,6 +260,14 @@ func traverseValues(frame *funl.Frame, intf interface{}) funl.Value {
 	case reflect.Bool:
 		return funl.Value{Kind: funl.BoolValue, Data: val.Bool()}
 	case reflect.String:
+		if num, convOK := val.Interface().(json.Number); convOK {
+			if i64, err := num.Int64(); err == nil {
+				return funl.Value{Kind: funl.IntValue, Data: int(i64)}
+			}
+			if f64, err := num.Float64(); err == nil {
+				return funl.Value{Kind: funl.FloatValue, Data: f64}
+			}
+		}
 		return funl.Value{Kind: funl.StringValue, Data: val.String()}
 	case reflect.Int:
 		return funl.Value{Kind: funl.IntValue, Data: val.Int()}
