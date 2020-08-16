@@ -328,6 +328,7 @@ func initFunSourceSTD() (err error) {
 		"stdset",
 		"stddbc",
 		"stdfilu", //note. this needs stdfu
+		"stdser",
 	}
 	for _, funmodName := range funmodNames {
 		err = AddFunModToNamespace(funmodName, []byte(stdfunMap[funmodName]))
