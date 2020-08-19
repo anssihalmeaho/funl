@@ -28,6 +28,9 @@ go generate
 
 This needs to be done when adding or modifying some standard libraries written in FunL itself.
 
+In _main.go_ there's line ```//go:generate go run ./stdfun/stdfun_generator.go``` which causes 
+execution of ```/stdfun/stdfun_generator.go``` in ```go generate``` which produces _stdfunfiles.go_.
+
 ## Testing
 There is testing tool and tests implemented in FunL. Run those tests when doing changes:
 
