@@ -86,3 +86,6 @@ in REPL:
 * [REPL usage](https://github.com/anssihalmeaho/funl/wiki/REPL-usage)
 * [Standard Libraries](https://github.com/anssihalmeaho/funl/wiki/Standard-Libraries)
 
+## Contribution and development guidelines
+Guide for [contributing and developing FunL](https://github.com/anssihalmeaho/funl/blob/master/CONTRIBUTING.md)
+
