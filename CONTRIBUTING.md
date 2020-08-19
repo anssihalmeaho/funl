@@ -6,7 +6,19 @@ There are many ways to contribute, for example:
 * Extending standard libraries (for example, networking/sockets, HTTP extending etc.)
 * Make projects based on FunL, applications or libraries
 * Improve (or make better) testing framework
+* Make automated tests for standard libraries
+* More tooling (code formatter, code analyzers etc.)
 
+Possible new (standard) libraries:
+
+* support for compression (gzip etc.)
+* cryptography support
+* data formats: csv, excel, base64, yaml etc.
+* sockets (TCP/UDP), websockets, Server-Sent Events, SMTP etc.
+* regular expressions
+* more advanced command line options parser
+* random number generation
+* bit operations
 
 # Asking for more information
 I'm happy to answer questions if needed.
