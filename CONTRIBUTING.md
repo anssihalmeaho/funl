@@ -2,7 +2,7 @@
 # Possible contributions
 There are many ways to contribute, for example:
 
-* Syntax highlighting for IDE's (VSC, Atome etc.)
+* Syntax highlighting for IDE's (VSC, Atom etc.)
 * Extending standard libraries (for example, networking/sockets, HTTP extending etc.)
 * Make projects based on FunL, applications or libraries
 * Improve (or make better) testing framework
