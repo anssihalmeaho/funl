@@ -173,6 +173,36 @@ endns
 	stdfunMap["stdfu"] = `
 ns stdfu
 
+pre-decorate = func(pre-handler handler)
+	func()
+		new-args = call(pre-handler argslist():)
+		call(handler new-args:)
+	end
+end
+
+post-decorate = func(handler post-handler)
+	func()
+		retval = call(handler argslist():)
+		new-retval = call(post-handler retval argslist():)
+		new-retval
+	end
+end
+
+p-pre-decorate = func(pre-handler handler)
+	proc()
+		new-args = call(pre-handler argslist():)
+		call(handler new-args:)
+	end
+end
+
+p-post-decorate = func(handler post-handler)
+	proc()
+		retval = call(handler argslist():)
+		new-retval = call(post-handler retval argslist():)
+		new-retval
+	end
+end
+
 loop = func(handler inlist result)
 	while( not(empty(inlist))
 		handler
