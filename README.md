@@ -84,6 +84,7 @@ in REPL:
 * [External Modules](https://github.com/anssihalmeaho/funl/wiki/External-Modules)
 * [Usage as embedded language](https://github.com/anssihalmeaho/funl/wiki/Using-FunL-as-embedded-language)
 * [REPL usage](https://github.com/anssihalmeaho/funl/wiki/REPL-usage)
+* [Reading Runtime Error Printout](https://github.com/anssihalmeaho/funl/wiki/rteprint)
 * [Standard Libraries](https://github.com/anssihalmeaho/funl/wiki/Standard-Libraries)
 
 ## Contribution and development guidelines
