@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"runtime"
+	"runtime/debug"
 	"runtime/pprof"
 
 	"github.com/anssihalmeaho/funl/funl"
@@ -28,9 +29,13 @@ func main() {
 		defer pprof.StopCPUProfile()
 	}
 
+	_, goBTset := os.LookupEnv("FUNLGOBACKTRACE")
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("Runtime error: ", r)
+			if goBTset {
+				debug.PrintStack()
+			}
 		}
 	}()
 
