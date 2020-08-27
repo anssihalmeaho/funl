@@ -2,8 +2,17 @@ package funl
 
 import (
 	"fmt"
+	"os"
 	"reflect"
+	"runtime/debug"
+	"time"
 )
+
+var goBTset bool
+
+func init() {
+	_, goBTset = os.LookupEnv("FUNLGOBACKTRACE")
+}
 
 func handleTryOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "try"
@@ -78,6 +87,9 @@ func handleSpawnOP(frame *Frame, operands []*Item) (retVal Value) {
 					}
 					fmt.Println()
 					fmt.Println("Fiber died, Runtime error: ", rteText)
+					if goBTset {
+						debug.PrintStack()
+					}
 				}
 			}()
 			isFailure = true
@@ -90,6 +102,29 @@ func handleSpawnOP(frame *Frame, operands []*Item) (retVal Value) {
 }
 
 func handleChanOP(frame *Frame, operands []*Item) (retVal Value) {
+	opName := "chan"
+	argCount := len(operands)
+
+	if argCount > 0 {
+		v := operands[0]
+		var bufVal Value
+		switch v.Type {
+		case ValueItem:
+			bufVal = v.Data.(Value)
+		case SymbolPathItem, OperCallItem:
+			bufVal = EvalItem(v, frame)
+		default:
+			runTimeError2(frame, "something wrong (%s)", opName)
+		}
+
+		if bufVal.Kind != IntValue {
+			runTimeError2(frame, "invalid argument, should be int (%s)", opName)
+		}
+		chData := make(chan Value, bufVal.Data.(int))
+		retVal = Value{Kind: ChanValue, Data: chData}
+		return
+	}
+
 	chData := make(chan Value)
 	retVal = Value{Kind: ChanValue, Data: chData}
 	return
@@ -102,8 +137,9 @@ func handleSendOP(frame *Frame, operands []*Item) (retVal Value) {
 		runTimeError2(frame, "%s not allowed in function", opName)
 	}
 
-	if l := len(operands); l != 2 {
-		runTimeError2(frame, "Wrong amount of arguments for %s (%d given)", opName, l)
+	argcount := len(operands)
+	if argcount != 2 && argcount != 3 {
+		runTimeError2(frame, "Wrong amount of arguments for %s (%d given)", opName, argcount)
 	}
 
 	v := operands[0]
@@ -131,9 +167,167 @@ func handleSendOP(frame *Frame, operands []*Item) (retVal Value) {
 		runTimeError2(frame, "something wrong (%s)", opName)
 	}
 
-	chVal.Data.(chan Value) <- dataVal
+	blockIfNeeded := true
+	if argcount > 2 {
+		mapv := operands[2]
+		var mapVal Value
+		switch mapv.Type {
+		case ValueItem:
+			mapVal = mapv.Data.(Value)
+		case SymbolPathItem, OperCallItem:
+			mapVal = EvalItem(mapv, frame)
+		default:
+			runTimeError2(frame, "something wrong (%s)", opName)
+		}
 
-	retVal = Value{Kind: BoolValue, Data: true}
+		if mapVal.Kind != MapValue {
+			runTimeError2(frame, "%s: requires map value", opName)
+		}
+		keyvals := handleKeyvalsOP(frame, []*Item{&Item{Type: ValueItem, Data: mapVal}})
+		kvListIter := NewListIterator(keyvals)
+		for {
+			nextKV := kvListIter.Next()
+			if nextKV == nil {
+				break
+			}
+			kvIter := NewListIterator(*nextKV)
+			keyv := *(kvIter.Next())
+			valv := *(kvIter.Next())
+			if keyv.Kind != StringValue {
+				runTimeError2(frame, "%s: info key not a string: %v", opName, keyv)
+			}
+			switch keyStr := keyv.Data.(string); keyStr {
+			case "wait":
+				if valv.Kind != BoolValue {
+					runTimeError2(frame, "%s: %s value not bool: %v", opName, keyStr, keyv)
+				}
+				blockIfNeeded = valv.Data.(bool)
+			}
+		}
+	}
+
+	if blockIfNeeded {
+		chVal.Data.(chan Value) <- dataVal
+		retVal = Value{Kind: BoolValue, Data: true}
+	} else {
+		select {
+		case chVal.Data.(chan Value) <- dataVal:
+			retVal = Value{Kind: BoolValue, Data: true}
+		default:
+			retVal = Value{Kind: BoolValue, Data: false}
+		}
+	}
+	return
+}
+
+func handleRecwithOP(frame *Frame, operands []*Item) (retVal Value) {
+	opName := "recwith"
+
+	if !frame.inProcCall {
+		runTimeError2(frame, "%s not allowed in function", opName)
+	}
+
+	if l := len(operands); l != 2 {
+		runTimeError2(frame, "Wrong amount of arguments for %s (%d given)", opName, l)
+	}
+
+	v := operands[0]
+	var chVal Value
+	switch v.Type {
+	case ValueItem:
+		chVal = v.Data.(Value)
+	case SymbolPathItem, OperCallItem:
+		chVal = EvalItem(v, frame)
+	default:
+		runTimeError2(frame, "something wrong (%s)", opName)
+	}
+	if chVal.Kind != ChanValue {
+		runTimeError2(frame, "Expecting channel as 1st arg for %s", opName)
+	}
+
+	blockIfNeeded := true
+	var waitTime time.Duration
+	var hasTimeLimit bool
+
+	mapv := operands[1]
+	var mapVal Value
+	switch mapv.Type {
+	case ValueItem:
+		mapVal = mapv.Data.(Value)
+	case SymbolPathItem, OperCallItem:
+		mapVal = EvalItem(mapv, frame)
+	default:
+		runTimeError2(frame, "something wrong (%s)", opName)
+	}
+
+	if mapVal.Kind != MapValue {
+		runTimeError2(frame, "%s: requires map value", opName)
+	}
+	keyvals := handleKeyvalsOP(frame, []*Item{&Item{Type: ValueItem, Data: mapVal}})
+	kvListIter := NewListIterator(keyvals)
+	for {
+		nextKV := kvListIter.Next()
+		if nextKV == nil {
+			break
+		}
+		kvIter := NewListIterator(*nextKV)
+		keyv := *(kvIter.Next())
+		valv := *(kvIter.Next())
+		if keyv.Kind != StringValue {
+			runTimeError2(frame, "%s: info key not a string: %v", opName, keyv)
+		}
+		switch keyStr := keyv.Data.(string); keyStr {
+		case "wait":
+			if valv.Kind != BoolValue {
+				runTimeError2(frame, "%s: %s value not bool: %v", opName, keyStr, keyv)
+			}
+			blockIfNeeded = valv.Data.(bool)
+		case "limit-sec":
+			if valv.Kind != IntValue {
+				runTimeError2(frame, "%s: %s value not int: %v", opName, keyStr, keyv)
+			}
+			waitTime = time.Duration(valv.Data.(int)) * time.Second
+			hasTimeLimit = true
+		case "limit-nanosec":
+			if valv.Kind != IntValue {
+				runTimeError2(frame, "%s: %s value not int: %v", opName, keyStr, keyv)
+			}
+			waitTime = time.Duration(valv.Data.(int))
+			hasTimeLimit = true
+		}
+	}
+
+	var isValueReceived bool
+	var val Value
+	if blockIfNeeded {
+		if hasTimeLimit {
+			select {
+			case val = <-chVal.Data.(chan Value):
+				isValueReceived = true
+			case <-time.After(waitTime):
+				val = Value{Kind: StringValue, Data: ""}
+			}
+		} else {
+			val = <-chVal.Data.(chan Value)
+			isValueReceived = true
+		}
+	} else {
+		select {
+		case val = <-chVal.Data.(chan Value):
+			isValueReceived = true
+		default:
+			val = Value{Kind: StringValue, Data: ""}
+		}
+	}
+
+	values := []Value{
+		{
+			Kind: BoolValue,
+			Data: isValueReceived,
+		},
+		val,
+	}
+	retVal = MakeListOfValues(frame, values)
 	return
 }
 

@@ -568,6 +568,8 @@ func operNameToID(opName string) (op OperType, ok bool) {
 		op = CondOP
 	case "help":
 		op = HelpOP
+	case "recwith":
+		op = RecwithOP
 	default:
 		return
 	}
