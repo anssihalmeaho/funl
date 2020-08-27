@@ -96,6 +96,7 @@ const (
 	ArgslistOP
 	CondOP
 	HelpOP
+	RecwithOP
 	MaximumOP
 )
 
@@ -209,6 +210,7 @@ func operTypeFromIntToString(ot OperType) string {
 		ArgslistOP: "argslist",
 		CondOP:     "cond",
 		HelpOP:     "help",
+		RecwithOP:  "recwith",
 		MaximumOP:  "MAX",
 	}[ot]
 	if !ok {

@@ -609,12 +609,15 @@ Usage: spawn(<expr> <expr> <expr> ...)
 `,
 		"chan": `
 Operator: chan
-  Creates channel value.
-
-  Requires no arguments.
+  Creates channel value. If no arguments are given then
+  channel is unbuffered (meaning send waits until there's someone
+  receiving on channel). If argument is given it's assumed to be
+  int -value which defines buffer size for channel (in which case channel
+  is buffered one, meaning that send may not block until there's reader).
   Return value is channel value.
 
 Usage: chan()
+       chan(<int: buffer-size>)
 `,
 		"send": `
 Operator: send
@@ -1127,6 +1130,7 @@ func NewDefaultOperators() Operators {
 		"argslist": OperatorInfo{},
 		"cond":     OperatorInfo{},
 		"help":     OperatorInfo{},
+		"recwith":  OperatorInfo{},
 	}
 }
 
