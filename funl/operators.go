@@ -622,15 +622,62 @@ Usage: chan()
 		"send": `
 Operator: send
   Evaluates and sends value (given as 2nd argument) to channel
-  (given as 1st argument). Blocks execution until receiving
-  fiber reads channel.
+  (given as 1st argument). By default blocks execution until receiving
+  fiber reads channel, however it can be defined with optional 3rd argument
+  that execution does not block to writing to channel (so that if channel is
+  full current fiber does not block to wait other fibers to read from it)
 
-  Requires 2 arguments.
-  Return value is always true (boolean).
+  Requires 2 or 3 arguments.
+
+  Optional 3rd argument is map (options map) which can have following name-values:
+  - 'wait' : bool value:
+      - true -> block to wait if channel is full
+      - false -> returns if channel is full (no waiting)
+      Default is true (blocks to writing to channel)
+
+  Return value is true if value was written to channel, false if value was not
+  written to channel.
 
 Note. send is not allowed to be called from function (only from procedure).
 
+Example:
+  ch = chan(100)
+  was-added = send(ch 'some value')
+  was-added = send(ch 'some value' map('wait' false))
+
 Usage: send(<channel-expr> <expr>)
+       send(<channel-expr> <expr> <options-map>)
+`,
+		"recwith": `
+Operator: recwith
+  Receives value from channel (given as 1st argument).
+
+  Requires 2 argument, 1st argument is assumed to be channel.
+  Second argument is map (options map) which can have following name-values:
+  - 'wait' : bool value: 
+      - true -> block to wait if channel is empty
+      - false -> returns if channel is empty (no waiting)
+      Default is true (blocks to receiving from channel)
+  - 'limit-sec' : int-value, number of seconds to wait in channel
+                  (returns after time limit if no items received from channel)
+  - 'limit-nanosec' : int-value, number of nanoseconds to wait in channel
+                  (returns after time limit if no items received from channel)
+  Default is that there is no time limit (waits forever).
+
+  Return value is list of two items.
+
+  List returned has following items:
+  1) First item (bool) is true if value was received from channel.
+     If no value was received then it's false.
+  2) Second item is value received from channel ('' if value not received)
+
+Note. recwith is not allowed to be called from function (only from procedure).
+
+Example:
+  ch = chan()
+  value-received, value = recwith(ch map('wait' false)):
+
+Usage: recwith(<channel-expr> <options-map>)
 `,
 		"recv": `
 Operator: recv
