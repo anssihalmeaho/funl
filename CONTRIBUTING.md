@@ -70,3 +70,6 @@ For some parts of code there are also Go unit tests:
 go test ./...
 ```
 
+## Debugging runtime errors
+See [guide to read runtime error printouts](https://github.com/anssihalmeaho/funl/wiki/rteprint)
+
