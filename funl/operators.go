@@ -744,6 +744,8 @@ Operator: select
   Number of arguments must not be zero and must be even number.
   Return value is value returned from handler.
 
+  Handler takes one argument which is value received from channel.
+
 Note. select is not allowed to be called from function (only procedure allowed),
       otherwise runtime error is generated.
 

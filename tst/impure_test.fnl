@@ -5,6 +5,22 @@ import ut_fwk
 
 ASSURE = ut_fwk.VERIFY
 
+testBufferedChannel = proc()
+	ch = chan(2)
+
+	ret-1 = recwith(ch map('wait' false))
+	tst-result-1 = call(ASSURE eq(ret-1 list(false '')) plus('Unexpected value from recwith: ' str(ret-1)))
+
+	ret-2 = list(
+		send(ch 'any value' map('wait' false))
+		send(ch 'any value' map('wait' false))
+		send(ch 'any value' map('wait' false))
+	)
+	tst-result-2 = call(ASSURE eq(ret-2 list(true true false)) plus('Unexpected value from send: ' str(ret-2)))
+
+	and(tst-result-1 tst-result-2)
+end
+
 testOneFiberCreateAndReply = proc()
 	replyCh = chan()
 	testMsg = 'this is test message'
