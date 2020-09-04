@@ -316,7 +316,7 @@ func makeFuncValue(frame *funl.Frame, funcMap funl.Value) *funl.Item {
 		}
 		sid, found := funl.SymIDMap.Get(v.Data.(string))
 		if !found {
-			funl.RunTimeError2(frame, "arg not found (%s)", v.Data.(string))
+			sid = funl.SymIDMap.Add(v.Data.(string))
 		}
 		argNames = append(argNames, sid)
 	}
@@ -458,7 +458,7 @@ func makeItem(frame *funl.Frame, astmap funl.Value) *funl.Item {
 			}
 			sid, found := funl.SymIDMap.Get(symStr)
 			if !found {
-				funl.RunTimeError2(frame, "Symbol not found (%s)", symStr)
+				sid = funl.SymIDMap.Add(symStr)
 			}
 			symPath = append(symPath, sid)
 		}
