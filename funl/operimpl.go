@@ -172,6 +172,11 @@ func (eh *evalErrHandler) HandleParseError(errorText string) {
 	runTimeError(errorText)
 }
 
+// HandleEvalOP can be used from Go code
+func HandleEvalOP(frame *Frame, operands []*Item) (retVal Value) {
+	return handleEvalOP(frame, operands)
+}
+
 func handleEvalOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "eval"
 	if l := len(operands); l != 1 {
