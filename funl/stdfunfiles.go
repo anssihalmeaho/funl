@@ -578,10 +578,10 @@ get-doc = func(schema)
 						'doc'
 							call(func()
 								doc-lines = call(stdfu.apply rest(check) func(item) plus('\n' indent '  -> ' item) end)
-								plus('doc: ' doc-lines: ', ')
+								plus(doc-lines: ', ')
 							end)
 						'in'
-							plus('allowed: ' call(stdfu.apply rest(check) func(x) plus(str(x) ' ') end): ', ')
+							plus('allowed: [ ' call(stdfu.apply rest(check) func(x) plus(str(x) ' ') end): '], ')
 						error('illegal tag: ' str(head(check)))
 					)
 					plus(out-str fout)
@@ -633,7 +633,7 @@ validate = func(schema srcdata)
 								allowed = rest(check)
 								cond(
 									not(key-found)
-										list(false append(msg-list sprintf('field %v not found for in check (%s)' mkey field-path)))
+										result-list
 									not(in(allowed val))
 										list(false append(msg-list sprintf('field %v is not in allowed set (%v not in: %v)(%s)' mkey val allowed field-path)))
 									result-list
@@ -646,7 +646,7 @@ validate = func(schema srcdata)
 								required-type = head(rest(check))
 								cond(
 									not(key-found)
-										list(false append(msg-list sprintf('field %v not found for type check (%s)' mkey field-path)))
+										result-list
 									not(eq(type(val) required-type))
 										list(false append(msg-list sprintf('field %v is not required type (got: %v, expected: %v)(%s)' mkey type(val) required-type field-path)))
 									result-list
