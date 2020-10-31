@@ -120,7 +120,7 @@ validate = func(schema srcdata)
 								submap-found submap-data = getl(map-data mkey):
 								cond(
 									not(submap-found)
-										list(false append(msg-list sprintf('field %v (sub map) not found (%s)' mkey field-path)))
+										result-list
 									not(eq(type(submap-data) 'map'))
 										list(false append(msg-list sprintf('field %v is not map (%s)' mkey field-path)))
 									call(validate-map head(rest(check)) submap-data plus(field-path ' -> ' str(mkey)))
