@@ -43,6 +43,9 @@ This needs to be done when adding or modifying some standard libraries written i
 In _main.go_ there's line ```//go:generate go run ./stdfun/stdfun_generator.go``` which causes 
 execution of ```/stdfun/stdfun_generator.go``` in ```go generate``` which produces _stdfunfiles.go_.
 
+In addition name of new module needs to be added to __funmodNames__ table in __initFunSourceSTD__ function(__funl.go__)
+so that module is included in __funla__ binary.
+
 ## Testing
 There is testing tool and tests implemented in FunL. Run those tests when doing changes:
 
