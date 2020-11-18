@@ -142,6 +142,11 @@ type fdebugInfo struct {
 	syms      *Symt
 }
 
+// SetInProcCall sets inProcCall in Frame
+func (fr *Frame) SetInProcCall(v bool) {
+	fr.inProcCall = v
+}
+
 // GetFuncDebugInfos gets function infos for backtrace
 func (fr *Frame) GetFuncDebugInfos(prev []fdebugInfo) []fdebugInfo {
 	fdeb := fdebugInfo{
