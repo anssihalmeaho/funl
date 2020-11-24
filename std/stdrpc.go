@@ -290,7 +290,7 @@ func (server *RServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	server.ProcsMutex.RUnlock()
 
 	if !found {
-		writeErrorResponse(err, req.RPName)
+		writeErrorResponse(fmt.Errorf("Not found (%s)", req.RPName), req.RPName)
 		return
 	}
 
