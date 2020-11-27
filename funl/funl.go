@@ -318,6 +318,11 @@ func GetReplCode() string {
 	return stdfunMap["repl"]
 }
 
+// InitFunSourceSTD provided for initializing std externally
+func InitFunSourceSTD() (err error) {
+	return initFunSourceSTD()
+}
+
 func initFunSourceSTD() (err error) {
 	type funModInfo struct {
 		name    string
