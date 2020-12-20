@@ -90,3 +90,7 @@ in REPL:
 ## Contribution and development guidelines
 Guide for [contributing and developing FunL](https://github.com/anssihalmeaho/funl/blob/master/CONTRIBUTING.md)
 
+## Blog
+There is Blog for FunL related topics: https://programmingfunl.wordpress.com
+
+
