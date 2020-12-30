@@ -46,6 +46,7 @@ func InitSTD() (err error) {
 		initSTDMath,
 		initSTDAst,
 		initSTDRPC,
+		initSTDbase64,
 	}
 	for _, initf := range inits {
 		err = initf()
