@@ -1309,10 +1309,16 @@ func handleTypeOP(frame *Frame, operands []*Item) (retVal Value) {
 	case ChanValue:
 		typeName = "channel"
 	case OpaqueValue:
-		if !frame.inProcCall {
-			runTimeError2(frame, "%s not allowed in function for opaque value", opName)
+		opaqueTypeName := val.Data.(OpaqueAPI).TypeName()
+		switch opaqueTypeName {
+		case "bytearray":
+			// bytearray is kind of built-in type with static typename so lets allow it
+		default:
+			if !frame.inProcCall {
+				runTimeError2(frame, "%s not allowed in function for opaque value", opName)
+			}
 		}
-		typeName = "opaque:" + val.Data.(OpaqueAPI).TypeName()
+		typeName = "opaque:" + opaqueTypeName
 	case MapValue:
 		typeName = "map"
 	case ExtProcValue:
