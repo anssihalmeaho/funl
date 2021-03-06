@@ -1,11 +1,14 @@
 package std
 
 import (
-	"github.com/anssihalmeaho/funl/funl"
+	"bytes"
 	"os"
+	"os/exec"
 	"os/signal"
 	"strings"
 	"syscall"
+
+	"github.com/anssihalmeaho/funl/funl"
 )
 
 func initSTDos() (err error) {
@@ -36,9 +39,149 @@ func initSTDos() (err error) {
 			Name:   "unsetenv",
 			Getter: getStdOSUnSetEnv,
 		},
+		{
+			Name:   "exec",
+			Getter: getStdOSExec,
+		},
+		{
+			Name:   "exec-with",
+			Getter: getStdOSExecWith,
+		},
 	}
 	err = setSTDFunctions(topFrame, stdModuleName, stdOSFuncs)
 	return
+}
+
+func getStdOSExecWith(name string) stdFuncType {
+	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
+		l := len(arguments)
+		if l < 1 {
+			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), needs at least one", name, l)
+		}
+
+		var stdinBytearr *OpaqueByteArray
+		if arguments[0].Kind != funl.MapValue {
+			funl.RunTimeError2(frame, "%s: requires map value", name)
+		}
+		keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{&funl.Item{Type: funl.ValueItem, Data: arguments[0]}})
+		kvListIter := funl.NewListIterator(keyvals)
+		for {
+			nextKV := kvListIter.Next()
+			if nextKV == nil {
+				break
+			}
+			kvIter := funl.NewListIterator(*nextKV)
+			keyv := *(kvIter.Next())
+			valv := *(kvIter.Next())
+			if keyv.Kind != funl.StringValue {
+				funl.RunTimeError2(frame, "%s: info key not a string: %v", name, keyv)
+			}
+			switch keyStr := keyv.Data.(string); keyStr {
+			case "stdin":
+				if valv.Kind != funl.OpaqueValue {
+					funl.RunTimeError2(frame, "%s: %s value not opaque value: %v", name, keyStr, keyv)
+				}
+				var convOK bool
+				stdinBytearr, convOK = valv.Data.(*OpaqueByteArray)
+				if !convOK {
+					funl.RunTimeError2(frame, "%s: %s value not opaque: %v", name, keyStr, keyv)
+				}
+			}
+		}
+
+		var argStrs []string
+		for i, argval := range arguments[1:] {
+			if argval.Kind != funl.StringValue {
+				funl.RunTimeError2(frame, "%s: assuming string as key (%d)", name, i)
+			}
+			argStrs = append(argStrs, argval.Data.(string))
+		}
+
+		var outStd bytes.Buffer
+		var outErr bytes.Buffer
+		cmd := exec.Command(argStrs[0], argStrs[1:]...)
+		cmd.Stdout = &outStd
+		cmd.Stderr = &outErr
+
+		if stdinBytearr != nil {
+			cmd.Stdin = bytes.NewBuffer(stdinBytearr.data)
+		}
+
+		err := cmd.Run()
+
+		var errText string
+		if err != nil {
+			errText = err.Error()
+		}
+		values := []funl.Value{
+			{
+				Kind: funl.BoolValue,
+				Data: err == nil,
+			},
+			{
+				Kind: funl.StringValue,
+				Data: errText,
+			},
+			{
+				Kind: funl.OpaqueValue,
+				Data: &OpaqueByteArray{data: outStd.Bytes()},
+			},
+			{
+				Kind: funl.OpaqueValue,
+				Data: &OpaqueByteArray{data: outErr.Bytes()},
+			},
+		}
+		retVal = funl.MakeListOfValues(frame, values)
+		return
+	}
+}
+
+func getStdOSExec(name string) stdFuncType {
+	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
+		l := len(arguments)
+		if l < 1 {
+			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), needs at least one", name, l)
+		}
+		var argStrs []string
+		for i, argval := range arguments {
+			if argval.Kind != funl.StringValue {
+				funl.RunTimeError2(frame, "%s: assuming string as key (%d)", name, i)
+			}
+			argStrs = append(argStrs, argval.Data.(string))
+		}
+
+		var outStd bytes.Buffer
+		var outErr bytes.Buffer
+		cmd := exec.Command(argStrs[0], argStrs[1:]...)
+		cmd.Stdout = &outStd
+		cmd.Stderr = &outErr
+		err := cmd.Run()
+
+		var errText string
+		if err != nil {
+			errText = err.Error()
+		}
+		values := []funl.Value{
+			{
+				Kind: funl.BoolValue,
+				Data: err == nil,
+			},
+			{
+				Kind: funl.StringValue,
+				Data: errText,
+			},
+			{
+				Kind: funl.OpaqueValue,
+				Data: &OpaqueByteArray{data: outStd.Bytes()},
+			},
+			{
+				Kind: funl.OpaqueValue,
+				Data: &OpaqueByteArray{data: outErr.Bytes()},
+			},
+		}
+		retVal = funl.MakeListOfValues(frame, values)
+		return
+	}
 }
 
 func getStdOSUnSetEnv(name string) stdFuncType {
