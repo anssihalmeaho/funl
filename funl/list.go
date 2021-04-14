@@ -101,10 +101,7 @@ func handleExtendOP(frame *Frame, operands []*Item) (retVal Value) {
 	var prevnew *ListObject
 	var nextnew *ListObject
 	var newHead *ListObject
-	for i, v := range argvals {
-		if i == (argsLen - 1) {
-			break
-		}
+	for _, v := range argvals {
 		it := NewListIterator(v)
 		for {
 			nextitem := it.Next()
@@ -129,9 +126,6 @@ func handleExtendOP(frame *Frame, operands []*Item) (retVal Value) {
 	case 1:
 		newHead = argvals[0].Data.(*List).Head
 	default:
-		if nextnew != nil {
-			nextnew.Next = argvals[argsLen-1].Data.(*List).Head
-		}
 		newTail = argvals[argsLen-1].Data.(*List).Tail
 	}
 	retVal = Value{Kind: ListValue, Data: &List{Head: newHead, Tail: newTail}}

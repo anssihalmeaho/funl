@@ -46,6 +46,15 @@ testListBasics = proc()
 		eq(slice(testlist, 2), list(true, list(), otherlist)),
 		eq(slice(otherlist, 100), list()),
 		eq(slice(otherlist, 1, 100), list(2, 3))
+
+		eq( extend(list(1 2 3) list(4 5 6) list(7 8 9)) list(1 2 3 4 5 6 7 8 9))
+		eq( extend(list() list() list()) list())
+		eq( extend(list(1 2)) list(1 2))
+		eq( extend(list()) list())
+		eq( extend(list(1 2 3) list()) list(1 2 3))
+
+		eq( extend(list() list() list()) list())
+		eq( extend(list() list(4 5 6)) list(4 5 6))
 	)
 	allRight = call(common_test_util.isAllTrueInList, result)
 	call(ASSURE, allRight, plus('Unexpected result = ', str(result)))
