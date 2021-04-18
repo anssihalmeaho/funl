@@ -3,6 +3,7 @@ package std
 import (
 	"bytes"
 	"fmt"
+
 	"github.com/anssihalmeaho/funl/funl"
 )
 
@@ -54,6 +55,11 @@ func initSTDBytes() (err error) {
 
 type OpaqueByteArray struct {
 	data []byte
+}
+
+// Creates new OpaqueByteArray
+func NewOpaqueByteArray(data []byte) *OpaqueByteArray {
+	return &OpaqueByteArray{data: data}
 }
 
 func (ob *OpaqueByteArray) TypeName() string {
