@@ -1,2 +1,2 @@
 
-*.fnl -linguist-detectable
+*.fnl linguist-language=funl
