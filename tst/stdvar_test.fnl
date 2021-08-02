@@ -14,6 +14,12 @@ test-change-v2-ok = proc()
 	call(ASSURE eq(retv list(true, '', 60, list(50, 10))) plus('Unexpected result = ' str(retv)))
 end
 
+test-change-v2-ok-no-extra-parameter = proc()
+	var = call(stdvar.new 50)
+	retv = call(stdvar.change-v2 var func(prev) list(plus(prev 1) list(prev 1)) end)
+	call(ASSURE eq(retv list(true, '', 51, list(50, 1))) plus('Unexpected result = ' str(retv)))
+end
+
 test-change-v2-RTE-in-func = proc()
 	var = call(stdvar.new 50)
 	retv = call(stdvar.change-v2 var func(prev inp) list(plus(prev inp) list(prev inp)) end true)
