@@ -13,6 +13,9 @@ HTTP client example for inquiring people currently in space.
 ## tictac.fnl
 Tic-tac-toe game (program against user).
 
+## fizzbuzz.fnl
+FizzBuzz implementation in FunL.
+
 ## ToDo Application (todo_client.fnl / todo_server.fnl / todo_common.fnl)
 Implementation of HTTP client and server for simple todo-application.
 There is also common module (todo_common) for client and server to use.
