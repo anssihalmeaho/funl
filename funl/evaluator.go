@@ -134,12 +134,21 @@ type Frame struct {
 	Imported      map[SymID]*Frame
 	inProcCall    bool
 	EvaluatedArgs []Value
+	Interpreter   *Interpreter
 }
 
 type fdebugInfo struct {
 	function  *Function
 	argvalues []Value
 	syms      *Symt
+}
+
+// GetTopFrame gets top frame
+func (fr *Frame) GetTopFrame() *Frame {
+	if fr.AccessLink == nil {
+		return fr
+	}
+	return fr.AccessLink.GetTopFrame()
 }
 
 // SetInProcCall sets inProcCall in Frame
@@ -232,6 +241,7 @@ func handleWhileOP(frame *Frame, operands []*Item) (retVal Value) {
 	nFrame.Syms = frame.Syms.MakeCopy()
 	nFrame.inProcCall = frame.inProcCall
 	nFrame.Imported = frame.Imported
+	nFrame.Interpreter = frame.Interpreter
 
 	nextFrame := &nFrame
 	for {
@@ -315,9 +325,10 @@ func handleCallOP(frame *Frame, operands []*Item) (retVal Value) {
 	}
 	// create new frame
 	nextFrame := Frame{
-		Syms:     NewSymt(),
-		OtherNS:  nil, // TODO: needs to be something more...
-		Imported: make(map[SymID]*Frame),
+		Syms:        NewSymt(),
+		OtherNS:     nil, // TODO: needs to be something more...
+		Imported:    make(map[SymID]*Frame),
+		Interpreter: frame.Interpreter,
 	}
 	isExtProcCall := false
 	// lets take function from first argument
@@ -384,7 +395,8 @@ func handleCallOP(frame *Frame, operands []*Item) (retVal Value) {
 	// put args also to separate slice so that those can be accessed by argslist -operator
 	nextFrame.EvaluatedArgs = evaluatedArgs[1:]
 	// lets handle local imports
-	AddImportsToNamespace(&nextFrame.FuncProto.NSpace, &nextFrame)
+	interpreter := frame.GetTopFrame().Interpreter
+	AddImportsToNamespace(&nextFrame.FuncProto.NSpace, &nextFrame, interpreter)
 
 	// lets fill let defintions to frame symbol table
 	symbolMap := nextFrame.FuncProto.NSpace.Syms.AsMap()

@@ -13,7 +13,7 @@ import (
 	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDHttp() (err error) {
+func initSTDHttp(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdhttp"
 	topFrame := &funl.Frame{
 		Syms:     funl.NewSymt(),
@@ -62,7 +62,7 @@ func initSTDHttp() (err error) {
 			Getter: getStdHttpAddResponseHeader,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdHttpFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdHttpFuncs, interpreter)
 	return
 }
 

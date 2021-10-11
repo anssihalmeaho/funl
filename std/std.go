@@ -12,9 +12,10 @@ type stdFuncInfo struct {
 	IsFunction bool
 }
 
-func setSTDFunctions(topFrame *funl.Frame, stdModuleName string, stdFuncs []stdFuncInfo) (err error) {
+func setSTDFunctions(topFrame *funl.Frame, stdModuleName string, stdFuncs []stdFuncInfo, interpreter *funl.Interpreter) (err error) {
 	nsSid := funl.SymIDMap.Add(stdModuleName)
-	funl.GetNSDir().Put(nsSid, topFrame)
+	//funl.GetNSDir().Put(nsSid, topFrame)
+	interpreter.NsDir.Put(nsSid, topFrame)
 
 	for _, v := range stdFuncs {
 		extProc := funl.ExtProcType{
@@ -42,9 +43,10 @@ type StdFuncInfo struct {
 }
 
 // SetSTDFunctions exposed
-func SetSTDFunctions(topFrame *funl.Frame, stdModuleName string, stdFuncs []StdFuncInfo) (err error) {
+func SetSTDFunctions(topFrame *funl.Frame, stdModuleName string, stdFuncs []StdFuncInfo, interpreter *funl.Interpreter) (err error) {
 	nsSid := funl.SymIDMap.Add(stdModuleName)
-	funl.GetNSDir().Put(nsSid, topFrame)
+	//funl.GetNSDir().Put(nsSid, topFrame)
+	interpreter.NsDir.Put(nsSid, topFrame)
 
 	for _, v := range stdFuncs {
 		extProc := funl.ExtProcType{
@@ -62,8 +64,8 @@ func SetSTDFunctions(topFrame *funl.Frame, stdModuleName string, stdFuncs []StdF
 }
 
 //InitSTD is used for initializing standard library
-func InitSTD() (err error) {
-	inits := []func() error{
+func InitSTD(interpreter *funl.Interpreter) (err error) {
+	inits := []func(*funl.Interpreter) error{
 		initSTDIO,
 		initSTDTIME,
 		initSTDBytes,
@@ -80,7 +82,7 @@ func InitSTD() (err error) {
 		initSTDVar,
 	}
 	for _, initf := range inits {
-		err = initf()
+		err = initf(interpreter)
 		if err != nil {
 			return
 		}

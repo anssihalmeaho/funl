@@ -3,11 +3,12 @@ package std
 import (
 	"bufio"
 	"fmt"
-	"github.com/anssihalmeaho/funl/funl"
 	"os"
+
+	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDIO() (err error) {
+func initSTDIO(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdio"
 	topFrame := &funl.Frame{
 		Syms:     funl.NewSymt(),
@@ -32,7 +33,7 @@ func initSTDIO() (err error) {
 			Getter: getStdIOReadinput,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdIOFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdIOFuncs, interpreter)
 	return
 }
 

@@ -2,11 +2,12 @@ package std
 
 import (
 	"fmt"
-	"github.com/anssihalmeaho/funl/funl"
 	"time"
+
+	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDTIME() (err error) {
+func initSTDTIME(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdtime"
 	topFrame := &funl.Frame{
 		Syms:     funl.NewSymt(),
@@ -43,7 +44,7 @@ func initSTDTIME() (err error) {
 			Getter: getStdStopTicker,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdTimeFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdTimeFuncs, interpreter)
 	return
 }
 

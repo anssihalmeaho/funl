@@ -238,7 +238,8 @@ func handleImpOP(frame *Frame, operands []*Item) (retVal Value) {
 	if _, modFound := frame.FuncProto.NSpace.OtherNS[sid]; !modFound {
 		frame.FuncProto.NSpace.OtherNS[sid] = ImportInfo{} // path added when given
 	}
-	AddImportsToNamespace(&frame.FuncProto.NSpace, frame)
+	interpreter := frame.GetTopFrame().Interpreter
+	AddImportsToNamespace(&frame.FuncProto.NSpace, frame, interpreter)
 
 	symt, found := frame.GetSymItemsOfImportedModule(sid)
 	var moperands []*Item

@@ -1,11 +1,12 @@
 package std
 
 import (
-	"github.com/anssihalmeaho/funl/funl"
 	"math"
+
+	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDMath() (err error) {
+func initSTDMath(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdmath"
 	topFrame := &funl.Frame{
 		Syms:     funl.NewSymt(),
@@ -179,7 +180,7 @@ func initSTDMath() (err error) {
 			IsFunction: true,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdMathFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdMathFuncs, interpreter)
 
 	item := &funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.FloatValue, Data: math.Pi}}
 	err = topFrame.Syms.Add("pi", item)

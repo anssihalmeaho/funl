@@ -107,7 +107,7 @@ func readExtModuleFromFile(sid SymID, importPath string) (topFrame *Frame, found
 	return
 }
 
-func readModuleFromFile(inProcCall bool, sid SymID, importPath string) (topFrame *Frame, found bool, err error) {
+func readModuleFromFile(inProcCall bool, sid SymID, importPath string, interpreter *Interpreter) (topFrame *Frame, found bool, err error) {
 	importSpecs := make(map[string]string)
 	if importPath != "" {
 		for _, onepart := range strings.Split(importPath, ";") {
@@ -161,7 +161,7 @@ func readModuleFromFile(inProcCall bool, sid SymID, importPath string) (topFrame
 		return
 	}
 
-	topFrame, err = commonAddFunModToNamespace(inProcCall, targetPath, importModName, content)
+	topFrame, err = commonAddFunModToNamespace(inProcCall, targetPath, importModName, content, interpreter)
 	if err != nil {
 		err = fmt.Errorf("Importing source failed: %v", err)
 		return
@@ -171,23 +171,23 @@ func readModuleFromFile(inProcCall bool, sid SymID, importPath string) (topFrame
 }
 
 // AddNStoCache is for std usage
-func AddNStoCache(inProcCall bool, importModName string, nspace *NSpace) *Frame {
+func AddNStoCache(inProcCall bool, importModName string, nspace *NSpace, interpreter *Interpreter) *Frame {
 	// first create top frame for namespace and put to nsDir
-	topFrame := newTopFrameForNS(nspace)
+	topFrame := newTopFrameForNS(nspace, interpreter)
 	nsSid := SymIDMap.Add(importModName)
 
 	// then put imports to namespace
-	AddImportsToNamespaceSub(nspace, topFrame)
+	AddImportsToNamespaceSub(nspace, topFrame, interpreter)
 
 	topFrame.inProcCall = inProcCall // NOTE. this was added later as otherwise proc calls failed at main level
 
 	// then evaluate and assign symbols of namespace
-	nsDir.FillFromAstNSpaceAndStore(topFrame, nsSid, nspace)
+	interpreter.NsDir.FillFromAstNSpaceAndStore(topFrame, nsSid, nspace)
 
 	return topFrame
 }
 
-func commonAddFunModToNamespace(inProcCall bool, targetPath, importModName string, content []byte) (topFrame *Frame, err error) {
+func commonAddFunModToNamespace(inProcCall bool, targetPath, importModName string, content []byte, interpreter *Interpreter) (topFrame *Frame, err error) {
 	parser := NewParser(NewDefaultOperators(), &targetPath)
 	var nsName string
 	var nspace *NSpace
@@ -201,12 +201,12 @@ func commonAddFunModToNamespace(inProcCall bool, targetPath, importModName strin
 		return
 	}
 
-	topFrame = AddNStoCache(inProcCall, importModName, nspace)
+	topFrame = AddNStoCache(inProcCall, importModName, nspace, interpreter)
 	return
 }
 
-func AddFunModToNamespace(importModName string, content []byte) (err error) {
-	_, err = commonAddFunModToNamespace(true, importModName, importModName, content)
+func AddFunModToNamespace(importModName string, content []byte, interpreter *Interpreter) (err error) {
+	_, err = commonAddFunModToNamespace(true, importModName, importModName, content, interpreter)
 	if err != nil {
 		err = fmt.Errorf("Importing source failed: %v", err)
 	}

@@ -14,12 +14,14 @@ type FNIHandler struct {
 }
 
 func (fni *FNIHandler) RegExtProc(extProc ExtProcType, extProcName string) (err error) {
-	nsSid := SymIDMap.Add(extProcName)
-	nsDir.Put(nsSid, fni.topFrame)
+	/*
+		nsSid := SymIDMap.Add(extProcName)
+		nsDir.Put(nsSid, fni.topFrame)
 
-	epVal := Value{Kind: ExtProcValue, Data: extProc}
-	item := &Item{Type: ValueItem, Data: epVal}
-	err = fni.topFrame.Syms.Add(extProcName, item)
+		epVal := Value{Kind: ExtProcValue, Data: extProc}
+		item := &Item{Type: ValueItem, Data: epVal}
+		err = fni.topFrame.Syms.Add(extProcName, item)
+	*/
 	return
 }
 

@@ -1,12 +1,13 @@
 package std
 
 import (
-	"github.com/anssihalmeaho/funl/funl"
 	"strings"
 	"unicode"
+
+	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDStr() (err error) {
+func initSTDStr(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdstr"
 	topFrame := &funl.Frame{
 		Syms:     funl.NewSymt(),
@@ -90,7 +91,7 @@ func initSTDStr() (err error) {
 			IsFunction: true,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdStrFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdStrFuncs, interpreter)
 	return
 }
 

@@ -18,7 +18,7 @@ Todo
 - TSL support
 */
 
-func initSTDRPC() (err error) {
+func initSTDRPC(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdrpc"
 	topFrame := &funl.Frame{
 		Syms:     funl.NewSymt(),
@@ -51,7 +51,7 @@ func initSTDRPC() (err error) {
 			Getter: getRPCRClose,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdRPCFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdRPCFuncs, interpreter)
 	return
 }
 

@@ -11,7 +11,7 @@ import (
 	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDos() (err error) {
+func initSTDos(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdos"
 	topFrame := &funl.Frame{
 		Syms:     funl.NewSymt(),
@@ -48,7 +48,7 @@ func initSTDos() (err error) {
 			Getter: getStdOSExecWith,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdOSFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdOSFuncs, interpreter)
 	return
 }
 

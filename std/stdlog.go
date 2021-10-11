@@ -2,12 +2,13 @@ package std
 
 import (
 	"fmt"
-	"github.com/anssihalmeaho/funl/funl"
 	"log"
 	"os"
+
+	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDlog() (err error) {
+func initSTDlog(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdlog"
 	topFrame := &funl.Frame{
 		Syms:     funl.NewSymt(),
@@ -24,7 +25,7 @@ func initSTDlog() (err error) {
 			Getter: getStdLogGetDefaultLogger,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdLogFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdLogFuncs, interpreter)
 	return
 }
 
