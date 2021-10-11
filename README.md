@@ -1,4 +1,4 @@
-![](https://github.com/anssihalmeaho/funl/blob/master/hellow.png)
+![](https://github.com/anssihalmeaho/funl/blob/master/funl_logo.png)
 
 # FunL
 FunL is simple dynamically typed, functional programming language.
