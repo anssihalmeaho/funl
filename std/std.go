@@ -14,7 +14,6 @@ type stdFuncInfo struct {
 
 func setSTDFunctions(topFrame *funl.Frame, stdModuleName string, stdFuncs []stdFuncInfo, interpreter *funl.Interpreter) (err error) {
 	nsSid := funl.SymIDMap.Add(stdModuleName)
-	//funl.GetNSDir().Put(nsSid, topFrame)
 	interpreter.NsDir.Put(nsSid, topFrame)
 
 	for _, v := range stdFuncs {
@@ -45,7 +44,6 @@ type StdFuncInfo struct {
 // SetSTDFunctions exposed
 func SetSTDFunctions(topFrame *funl.Frame, stdModuleName string, stdFuncs []StdFuncInfo, interpreter *funl.Interpreter) (err error) {
 	nsSid := funl.SymIDMap.Add(stdModuleName)
-	//funl.GetNSDir().Put(nsSid, topFrame)
 	interpreter.NsDir.Put(nsSid, topFrame)
 
 	for _, v := range stdFuncs {

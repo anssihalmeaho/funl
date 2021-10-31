@@ -25,21 +25,9 @@ type NSAccess struct {
 	sync.RWMutex
 }
 
-//var nsDir NSAccess
-
-/*
-func GetNSDir() *NSAccess {
-	return &nsDir
-}
-*/
-
 type NSTopInfo struct {
 	TopFrame         *Frame
 	SymbolsEvaluated bool
-}
-
-func init() {
-	//nsDir = NSAccess{nsMap: make(map[SymID]*NSTopInfo)}
 }
 
 func (nsa *NSAccess) Print() (s string) {
@@ -229,16 +217,23 @@ func GetArgs(argsAsStr string) (argsItems []*Item, err error) {
 	return
 }
 
-var initExtensions []func() error
+var initExtensions []func(*Interpreter) error
 
 // AddExtensionInitializer can be used for registering initializer
 // for some extension module (registered in init -function)
-func AddExtensionInitializer(initializer func() error) {
+func AddExtensionInitializer(initializer func(*Interpreter) error) {
 	initExtensions = append(initExtensions, initializer)
 }
 
 type Interpreter struct {
 	NsDir *NSAccess
+}
+
+func NewInterpreter() *Interpreter {
+	interpreter := &Interpreter{
+		NsDir: &NSAccess{nsMap: make(map[SymID]*NSTopInfo)},
+	}
+	return interpreter
 }
 
 func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error) (retValue Value, err error) {
@@ -250,9 +245,7 @@ func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName strin
 		return
 	}
 
-	interpreter := &Interpreter{
-		NsDir: &NSAccess{nsMap: make(map[SymID]*NSTopInfo)},
-	}
+	interpreter := NewInterpreter()
 
 	// first create top frame for namespace and put to nsDir
 	topframe := newTopFrameForNS(nspace, interpreter)
@@ -268,7 +261,7 @@ func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName strin
 
 	// call possible extension inits
 	for _, initializer := range initExtensions {
-		if err := initializer(); err != nil {
+		if err := initializer(interpreter); err != nil {
 			runTimeError("Error in extension module init (%v)", err)
 		}
 	}

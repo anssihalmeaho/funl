@@ -241,7 +241,7 @@ func handleWhileOP(frame *Frame, operands []*Item) (retVal Value) {
 	nFrame.Syms = frame.Syms.MakeCopy()
 	nFrame.inProcCall = frame.inProcCall
 	nFrame.Imported = frame.Imported
-	nFrame.Interpreter = frame.Interpreter
+	// nFrame.Interpreter = frame.Interpreter , only in top frame
 
 	nextFrame := &nFrame
 	for {
@@ -325,10 +325,10 @@ func handleCallOP(frame *Frame, operands []*Item) (retVal Value) {
 	}
 	// create new frame
 	nextFrame := Frame{
-		Syms:        NewSymt(),
-		OtherNS:     nil, // TODO: needs to be something more...
-		Imported:    make(map[SymID]*Frame),
-		Interpreter: frame.Interpreter,
+		Syms:     NewSymt(),
+		OtherNS:  nil, // TODO: needs to be something more...
+		Imported: make(map[SymID]*Frame),
+		// Interpreter: frame.Interpreter, only in top frame
 	}
 	isExtProcCall := false
 	// lets take function from first argument

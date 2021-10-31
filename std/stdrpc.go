@@ -21,9 +21,10 @@ Todo
 func initSTDRPC(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdrpc"
 	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
+		Syms:        funl.NewSymt(),
+		OtherNS:     make(map[funl.SymID]funl.ImportInfo),
+		Imported:    make(map[funl.SymID]*funl.Frame),
+		Interpreter: interpreter,
 	}
 	stdRPCFuncs := []stdFuncInfo{
 		{
@@ -75,7 +76,7 @@ func getRPCNewServer(name string) stdFuncType {
 				Kind: funl.StringValue,
 				Data: "",
 			},
-			funl.Value{Kind: funl.OpaqueValue, Data: NewRServer(addr)},
+			funl.Value{Kind: funl.OpaqueValue, Data: NewRServer(frame, addr)},
 		}
 		retVal = funl.MakeListOfValues(frame, values)
 		return
@@ -170,7 +171,7 @@ func getRPCNewExtProxy(name string) stdFuncType {
 			funl.RunTimeError2(frame, "%s: assuming string argument", name)
 		}
 		addr := arguments[0].Data.(string)
-		retVal = funl.Value{Kind: funl.OpaqueValue, Data: NewExtProxy(addr)}
+		retVal = funl.Value{Kind: funl.OpaqueValue, Data: NewExtProxy(frame, addr)}
 		return
 	}
 }
@@ -429,23 +430,16 @@ func (proxy *RProxy) Equals(with funl.OpaqueAPI) bool {
 }
 
 // NewExtProxy ...
-func NewExtProxy(addr string) *RProxy {
+func NewExtProxy(frame *funl.Frame, addr string) *RProxy {
 	return &RProxy{
 		Addr:       addr,
 		Client:     &http.Client{},
-		DecoderVal: getDecoder(),
-		EncoderVal: getEncoder(),
+		DecoderVal: getDecoder(frame),
+		EncoderVal: getEncoder(frame),
 	}
 }
 
-func getDecoder() funl.Value {
-	frame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
-	frame.SetInProcCall(true)
-
+func getDecoder(frame *funl.Frame) funl.Value {
 	decItem := &funl.Item{
 		Type: funl.ValueItem,
 		Data: funl.Value{
@@ -456,14 +450,7 @@ func getDecoder() funl.Value {
 	return funl.HandleEvalOP(frame, []*funl.Item{decItem})
 }
 
-func getEncoder() funl.Value {
-	frame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
-	frame.SetInProcCall(true)
-
+func getEncoder(frame *funl.Frame) funl.Value {
 	encItem := &funl.Item{
 		Type: funl.ValueItem,
 		Data: funl.Value{
@@ -547,14 +534,7 @@ func (server *RServer) Register(name string, procVal funl.Value) error {
 }
 
 // NewRServer ...
-func NewRServer(addr string) *RServer {
-	frame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
-	frame.SetInProcCall(true)
-
+func NewRServer(frame *funl.Frame, addr string) *RServer {
 	mux := http.NewServeMux()
 	server := &http.Server{
 		Addr:    addr,
@@ -563,8 +543,8 @@ func NewRServer(addr string) *RServer {
 	rserver := &RServer{
 		Addr:            addr,
 		Server:          server,
-		DecoderVal:      getDecoder(),
-		EncoderVal:      getEncoder(),
+		DecoderVal:      getDecoder(frame),
+		EncoderVal:      getEncoder(frame),
 		TopFrame:        frame,
 		Procs:           make(map[string]funl.Value),
 		IdleConnsClosed: make(chan struct{}),

@@ -216,7 +216,9 @@ func importNS(frame *funl.Frame, astmap funl.Value) (ok bool, errText string) {
 	}
 
 	nspace := makeNS(frame, nspaceV)
-	funl.AddNStoCache(true, modNameV.Data.(string), nspace, nil)
+
+	interpreter := frame.GetTopFrame().Interpreter
+	funl.AddNStoCache(true, modNameV.Data.(string), nspace, interpreter)
 	return true, ""
 }
 
