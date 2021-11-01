@@ -143,6 +143,16 @@ type fdebugInfo struct {
 	syms      *Symt
 }
 
+// NewTopFrameWithInterpreter returns new top level frame
+func NewTopFrameWithInterpreter(interpreter *Interpreter) *Frame {
+	return &Frame{
+		Syms:     NewSymt(),
+		OtherNS:  make(map[SymID]ImportInfo),
+		Imported: make(map[SymID]*Frame),
+		Interpreter: interpreter,
+	}
+}
+
 // GetTopFrame gets top frame
 func (fr *Frame) GetTopFrame() *Frame {
 	if fr.AccessLink == nil {

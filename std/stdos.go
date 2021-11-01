@@ -13,11 +13,7 @@ import (
 
 func initSTDos(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdos"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdOSFuncs := []stdFuncInfo{
 		{
 			Name:   "reg-signal-handler",

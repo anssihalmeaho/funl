@@ -9,11 +9,7 @@ import (
 
 func initSTDAst(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdast"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdAstFuncs := []stdFuncInfo{
 		{
 			Name:       "func-value-to-ast",

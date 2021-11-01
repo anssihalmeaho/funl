@@ -9,11 +9,7 @@ import (
 
 func initSTDTIME(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdtime"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdTimeFuncs := []stdFuncInfo{
 		{
 			Name:   "sleep",

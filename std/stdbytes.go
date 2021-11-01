@@ -9,11 +9,7 @@ import (
 
 func initSTDBytes(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdbytes"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdBytesFuncs := []stdFuncInfo{
 		{
 			Name:       "str-to-bytes",

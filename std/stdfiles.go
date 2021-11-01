@@ -21,11 +21,7 @@ const (
 
 func initSTDFiles(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdfiles"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdFilesFuncs := []stdFuncInfo{
 		{
 			Name:   "create",

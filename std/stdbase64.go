@@ -9,11 +9,7 @@ import (
 
 func initSTDbase64(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdbase64"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdFuncs := []stdFuncInfo{
 		{
 			Name:       "encode",

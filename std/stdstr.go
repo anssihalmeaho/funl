@@ -9,11 +9,7 @@ import (
 
 func initSTDStr(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdstr"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdStrFuncs := []stdFuncInfo{
 		{
 			Name:       "lowercase",

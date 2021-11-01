@@ -15,11 +15,7 @@ import (
 
 func initSTDHttp(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdhttp"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdHttpFuncs := []stdFuncInfo{
 		{
 			Name:   "do",

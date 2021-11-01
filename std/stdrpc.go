@@ -20,12 +20,7 @@ Todo
 
 func initSTDRPC(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdrpc"
-	topFrame := &funl.Frame{
-		Syms:        funl.NewSymt(),
-		OtherNS:     make(map[funl.SymID]funl.ImportInfo),
-		Imported:    make(map[funl.SymID]*funl.Frame),
-		Interpreter: interpreter,
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdRPCFuncs := []stdFuncInfo{
 		{
 			Name:   "new-server",

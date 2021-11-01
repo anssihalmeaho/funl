@@ -10,11 +10,7 @@ import (
 
 func initSTDlog(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdlog"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdLogFuncs := []stdFuncInfo{
 		{
 			Name:   "get-logger",

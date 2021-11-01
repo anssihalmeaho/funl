@@ -8,11 +8,7 @@ import (
 
 func initSTDMath(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdmath"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdMathFuncs := []stdFuncInfo{
 		{
 			Name:       "is-nan",
