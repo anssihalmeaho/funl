@@ -103,7 +103,7 @@ func AddImportsToNamespaceSub(nspace *NSpace, frame *Frame, interpreter *Interpr
 			var err error
 			importedFrame, found, err = readModuleFromFile(frame.inProcCall, sid, importInfo.importPath, interpreter)
 			if err != nil {
-				importedFrame, found, err = readExtModuleFromFile(sid, importInfo.importPath)
+				importedFrame, found, err = readExtModuleFromFile(sid, importInfo.importPath, interpreter)
 			}
 			if err != nil {
 				runTimeError2(frame, err.Error())

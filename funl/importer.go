@@ -49,7 +49,7 @@ func convertPathToCommonFormat(path string) string {
 	return result
 }
 
-func readExtModuleFromFile(sid SymID, importPath string) (topFrame *Frame, found bool, err error) {
+func readExtModuleFromFile(sid SymID, importPath string, interpreter *Interpreter) (topFrame *Frame, found bool, err error) {
 	// TODO: duplicate code...
 	importSpecs := make(map[string]string)
 	if importPath != "" {
@@ -99,7 +99,7 @@ func readExtModuleFromFile(sid SymID, importPath string) (topFrame *Frame, found
 	}
 
 	// open external plugin module
-	topFrame, err = SetupExtModule(targetPath)
+	topFrame, err = SetupExtModule(targetPath, interpreter)
 	if err == nil {
 		found = true
 	}

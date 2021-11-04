@@ -14,20 +14,18 @@ type FNIHandler struct {
 }
 
 func (fni *FNIHandler) RegExtProc(extProc ExtProcType, extProcName string) (err error) {
-	/*
-		nsSid := SymIDMap.Add(extProcName)
-		nsDir.Put(nsSid, fni.topFrame)
+	nsSid := SymIDMap.Add(extProcName)
+	fni.topFrame.Interpreter.NsDir.Put(nsSid, fni.topFrame)
 
-		epVal := Value{Kind: ExtProcValue, Data: extProc}
-		item := &Item{Type: ValueItem, Data: epVal}
-		err = fni.topFrame.Syms.Add(extProcName, item)
-	*/
+	epVal := Value{Kind: ExtProcValue, Data: extProc}
+	item := &Item{Type: ValueItem, Data: epVal}
+	err = fni.topFrame.Syms.Add(extProcName, item)
 	return
 }
 
 type ExtSetupHandler func(FNIApi) error
 
-func SetupExtModule(targetPath string) (topFrame *Frame, err error) {
+func SetupExtModule(targetPath string, interpreter *Interpreter) (topFrame *Frame, err error) {
 	var plug *plugin.Plugin
 	plug, err = plugin.Open(targetPath)
 	if err != nil {
@@ -42,9 +40,10 @@ func SetupExtModule(targetPath string) (topFrame *Frame, err error) {
 	setupHandler := v.(func(FNIApi) error)
 
 	topFrame = &Frame{
-		Syms:     NewSymt(),
-		OtherNS:  make(map[SymID]ImportInfo),
-		Imported: make(map[SymID]*Frame),
+		Syms:        NewSymt(),
+		OtherNS:     make(map[SymID]ImportInfo),
+		Imported:    make(map[SymID]*Frame),
+		Interpreter: interpreter,
 	}
 	napi := &FNIHandler{topFrame: topFrame}
 	err = setupHandler(napi)
