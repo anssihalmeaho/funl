@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/anssihalmeaho/funl/funl"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/anssihalmeaho/funl/funl"
 )
 
 const (
@@ -18,13 +19,9 @@ const (
 	appendMode = 4
 )
 
-func initSTDFiles() (err error) {
+func initSTDFiles(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdfiles"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdFilesFuncs := []stdFuncInfo{
 		{
 			Name:   "create",
@@ -116,7 +113,7 @@ func initSTDFiles() (err error) {
 		return
 	}
 
-	err = setSTDFunctions(topFrame, stdModuleName, stdFilesFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdFilesFuncs, interpreter)
 	return
 }
 

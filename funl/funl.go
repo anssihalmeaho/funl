@@ -25,19 +25,9 @@ type NSAccess struct {
 	sync.RWMutex
 }
 
-var nsDir NSAccess
-
-func GetNSDir() *NSAccess {
-	return &nsDir
-}
-
 type NSTopInfo struct {
 	TopFrame         *Frame
 	SymbolsEvaluated bool
-}
-
-func init() {
-	nsDir = NSAccess{nsMap: make(map[SymID]*NSTopInfo)}
 }
 
 func (nsa *NSAccess) Print() (s string) {
@@ -93,26 +83,27 @@ func (nsa *NSAccess) FillFromAstNSpaceAndStore(frame *Frame, sid SymID, nspace *
 	nsa.nsMap[sid] = topInfo
 }
 
-func newTopFrameForNS(ns *NSpace) *Frame {
+func newTopFrameForNS(ns *NSpace, interpreter *Interpreter) *Frame {
 	return &Frame{
-		Syms:     NewSymt(),
-		OtherNS:  ns.OtherNS,
-		Imported: make(map[SymID]*Frame),
+		Syms:        NewSymt(),
+		OtherNS:     ns.OtherNS,
+		Imported:    make(map[SymID]*Frame),
+		Interpreter: interpreter,
 	}
 }
 
-func AddImportsToNamespace(nspace *NSpace, frame *Frame) {
-	AddImportsToNamespaceSub(nspace, frame)
+func AddImportsToNamespace(nspace *NSpace, frame *Frame, interpreter *Interpreter) {
+	AddImportsToNamespaceSub(nspace, frame, interpreter)
 }
 
-func AddImportsToNamespaceSub(nspace *NSpace, frame *Frame) {
+func AddImportsToNamespaceSub(nspace *NSpace, frame *Frame, interpreter *Interpreter) {
 	for sid, importInfo := range nspace.OtherNS {
-		importedFrame, found := nsDir.GetTopFrameBySID(sid)
+		importedFrame, found := interpreter.NsDir.GetTopFrameBySID(sid)
 		if !found {
 			var err error
-			importedFrame, found, err = readModuleFromFile(frame.inProcCall, sid, importInfo.importPath)
+			importedFrame, found, err = readModuleFromFile(frame.inProcCall, sid, importInfo.importPath, interpreter)
 			if err != nil {
-				importedFrame, found, err = readExtModuleFromFile(sid, importInfo.importPath)
+				importedFrame, found, err = readExtModuleFromFile(sid, importInfo.importPath, interpreter)
 			}
 			if err != nil {
 				runTimeError2(frame, err.Error())
@@ -226,15 +217,26 @@ func GetArgs(argsAsStr string) (argsItems []*Item, err error) {
 	return
 }
 
-var initExtensions []func() error
+var initExtensions []func(*Interpreter) error
 
 // AddExtensionInitializer can be used for registering initializer
 // for some extension module (registered in init -function)
-func AddExtensionInitializer(initializer func() error) {
+func AddExtensionInitializer(initializer func(*Interpreter) error) {
 	initExtensions = append(initExtensions, initializer)
 }
 
-func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName string, initSTD func() error) (retValue Value, err error) {
+type Interpreter struct {
+	NsDir *NSAccess
+}
+
+func NewInterpreter() *Interpreter {
+	interpreter := &Interpreter{
+		NsDir: &NSAccess{nsMap: make(map[SymID]*NSTopInfo)},
+	}
+	return interpreter
+}
+
+func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error) (retValue Value, err error) {
 	parser := NewParser(NewDefaultOperators(), &srcFileName)
 	var nsName string
 	var nspace *NSpace
@@ -243,37 +245,39 @@ func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName strin
 		return
 	}
 
+	interpreter := NewInterpreter()
+
 	// first create top frame for namespace and put to nsDir
-	topframe := newTopFrameForNS(nspace)
+	topframe := newTopFrameForNS(nspace, interpreter)
 	nsSid := SymIDMap.Add(nsName)
 
-	if err = initSTD(); err != nil {
+	if err = initSTD(interpreter); err != nil {
 		runTimeError("Error in std-lib init (%v)", err)
 	}
 
-	if err = initFunSourceSTD(); err != nil {
+	if err = initFunSourceSTD(interpreter); err != nil {
 		runTimeError("Error in std-lib (fun source) init (%v)", err)
 	}
 
 	// call possible extension inits
 	for _, initializer := range initExtensions {
-		if err := initializer(); err != nil {
+		if err := initializer(interpreter); err != nil {
 			runTimeError("Error in extension module init (%v)", err)
 		}
 	}
 
 	// then put imports to all namespaces
 	topframe.inProcCall = true // NOTE. this was added later as otherwise proc calls failed at main level
-	AddImportsToNamespace(nspace, topframe)
+	AddImportsToNamespace(nspace, topframe, interpreter)
 
 	// then evaluate and assign symbols of namespaces
-	nsDir.FillFromAstNSpaceAndStore(topframe, nsSid, nspace)
+	interpreter.NsDir.FillFromAstNSpaceAndStore(topframe, nsSid, nspace)
 
 	mainSid, found := SymIDMap.Get("main")
 	if !found {
 		runTimeError("Main module not found")
 	}
-	initFrame, found := nsDir.GetTopFrameBySID(mainSid)
+	initFrame, found := interpreter.NsDir.GetTopFrameBySID(mainSid)
 	if !found {
 		runTimeError("Main frame not found")
 	}
@@ -319,11 +323,11 @@ func GetReplCode() string {
 }
 
 // InitFunSourceSTD provided for initializing std externally
-func InitFunSourceSTD() (err error) {
-	return initFunSourceSTD()
+func InitFunSourceSTD(interpreter *Interpreter) (err error) {
+	return initFunSourceSTD(interpreter)
 }
 
-func initFunSourceSTD() (err error) {
+func initFunSourceSTD(interpreter *Interpreter) (err error) {
 	type funModInfo struct {
 		name    string
 		content string
@@ -340,7 +344,7 @@ func initFunSourceSTD() (err error) {
 		"stdsort",
 	}
 	for _, funmodName := range funmodNames {
-		err = AddFunModToNamespace(funmodName, []byte(stdfunMap[funmodName]))
+		err = AddFunModToNamespace(funmodName, []byte(stdfunMap[funmodName]), interpreter)
 		if err != nil {
 			return
 		}

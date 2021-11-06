@@ -1,18 +1,15 @@
 package std
 
 import (
-	"github.com/anssihalmeaho/funl/funl"
 	"strings"
 	"unicode"
+
+	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDStr() (err error) {
+func initSTDStr(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdstr"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdStrFuncs := []stdFuncInfo{
 		{
 			Name:       "lowercase",
@@ -90,7 +87,7 @@ func initSTDStr() (err error) {
 			IsFunction: true,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdStrFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdStrFuncs, interpreter)
 	return
 }
 

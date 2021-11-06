@@ -7,13 +7,9 @@ import (
 	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDbase64() (err error) {
+func initSTDbase64(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdbase64"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdFuncs := []stdFuncInfo{
 		{
 			Name:       "encode",
@@ -26,7 +22,7 @@ func initSTDbase64() (err error) {
 			IsFunction: true,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdFuncs, interpreter)
 	return
 }
 

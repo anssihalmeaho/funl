@@ -7,13 +7,9 @@ import (
 	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDBytes() (err error) {
+func initSTDBytes(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdbytes"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdBytesFuncs := []stdFuncInfo{
 		{
 			Name:       "str-to-bytes",
@@ -41,7 +37,7 @@ func initSTDBytes() (err error) {
 			IsFunction: true,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdBytesFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdBytesFuncs, interpreter)
 
 	nlVal := &OpaqueByteArray{data: []byte("\n")}
 	item := &funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.OpaqueValue, Data: nlVal}}

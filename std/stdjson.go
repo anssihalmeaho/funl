@@ -11,13 +11,9 @@ import (
 	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDJson() (err error) {
+func initSTDJson(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdjson"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdFuncs := []stdFuncInfo{
 		{
 			Name:       "encode",
@@ -30,7 +26,7 @@ func initSTDJson() (err error) {
 			IsFunction: true,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdFuncs, interpreter)
 
 	item := &funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.OpaqueValue, Data: &OpaqueJSONnull{}}}
 	err = topFrame.Syms.Add("null", item)

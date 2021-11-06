@@ -13,13 +13,9 @@ import (
 	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDHttp() (err error) {
+func initSTDHttp(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdhttp"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdHttpFuncs := []stdFuncInfo{
 		{
 			Name:   "do",
@@ -62,7 +58,7 @@ func initSTDHttp() (err error) {
 			Getter: getStdHttpAddResponseHeader,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdHttpFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdHttpFuncs, interpreter)
 	return
 }
 

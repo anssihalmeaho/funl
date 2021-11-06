@@ -7,13 +7,9 @@ import (
 	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDVar() (err error) {
+func initSTDVar(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdvar"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdFuncs := []stdFuncInfo{
 		{
 			Name:   "new",
@@ -36,7 +32,7 @@ func initSTDVar() (err error) {
 			Getter: getStdVarChangeV2,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdFuncs, interpreter)
 	return
 }
 

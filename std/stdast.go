@@ -7,13 +7,9 @@ import (
 	"github.com/anssihalmeaho/funl/funl"
 )
 
-func initSTDAst() (err error) {
+func initSTDAst(interpreter *funl.Interpreter) (err error) {
 	stdModuleName := "stdast"
-	topFrame := &funl.Frame{
-		Syms:     funl.NewSymt(),
-		OtherNS:  make(map[funl.SymID]funl.ImportInfo),
-		Imported: make(map[funl.SymID]*funl.Frame),
-	}
+	topFrame := funl.NewTopFrameWithInterpreter(interpreter)
 	stdAstFuncs := []stdFuncInfo{
 		{
 			Name:       "func-value-to-ast",
@@ -46,7 +42,7 @@ func initSTDAst() (err error) {
 			IsFunction: false,
 		},
 	}
-	err = setSTDFunctions(topFrame, stdModuleName, stdAstFuncs)
+	err = setSTDFunctions(topFrame, stdModuleName, stdAstFuncs, interpreter)
 	return
 }
 
@@ -216,7 +212,9 @@ func importNS(frame *funl.Frame, astmap funl.Value) (ok bool, errText string) {
 	}
 
 	nspace := makeNS(frame, nspaceV)
-	funl.AddNStoCache(true, modNameV.Data.(string), nspace)
+
+	interpreter := frame.GetTopFrame().Interpreter
+	funl.AddNStoCache(true, modNameV.Data.(string), nspace, interpreter)
 	return true, ""
 }
 
