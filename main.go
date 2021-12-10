@@ -57,13 +57,6 @@ func main() {
 	flag.StringVar(&importPackageName, "import", "", "package from which imports are done")
 	flag.Parse()
 
-	/*
-		if importPackageName != "" {
-			fmt.Println(fmt.Sprintf("import: <%s>", importPackageName))
-			return
-		}
-	*/
-
 	if *noPrintPtr {
 		funl.PrintingDisabledInFunctions = true
 	}
