@@ -1,7 +1,14 @@
 package funl
 
 import (
+	"archive/tar"
+	"bytes"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -225,8 +232,13 @@ func AddExtensionInitializer(initializer func(*Interpreter) error) {
 	initExtensions = append(initExtensions, initializer)
 }
 
+type ModuleImporter interface {
+	FindModule(importModName string, extensionName string) (targetPath string, content []byte, err error)
+}
+
 type Interpreter struct {
-	NsDir *NSAccess
+	NsDir    *NSAccess
+	Importer ModuleImporter
 }
 
 func NewInterpreter() *Interpreter {
@@ -236,7 +248,154 @@ func NewInterpreter() *Interpreter {
 	return interpreter
 }
 
+type pack struct {
+	modContents map[string][]byte
+}
+
+func newPack() *pack {
+	return &pack{
+		modContents: make(map[string][]byte),
+	}
+}
+
+type packageImporter struct {
+	mods *pack
+}
+
+func (importer *packageImporter) FindModule(importFileName string, extensionName string) (targetPath string, content []byte, err error) {
+	var modFound bool
+	content, modFound = importer.mods.modContents[importFileName]
+	if !modFound {
+		err = fmt.Errorf("Module not found: %s", importFileName)
+		return
+	}
+	targetPath = importFileName
+	return
+}
+
+func GetModsFromTar(tarContent []byte) (map[string][]byte, error) {
+	result := map[string][]byte{}
+
+	buf := bytes.NewBuffer(tarContent)
+
+	// Open and iterate through the files in the archive.
+	tr := tar.NewReader(buf)
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break // End of archive
+		}
+		if err != nil {
+			return result, err
+		}
+		//fmt.Println(fmt.Sprintf("HEADER: %#v", hdr.FileInfo().IsDir()))
+		if !hdr.FileInfo().IsDir() {
+
+			modContent, err := io.ReadAll(tr)
+			if err != nil {
+				return result, err
+			}
+			_, file := filepath.Split(hdr.Name)
+			parts := strings.Split(file, ".")
+			if l := len(parts); l == 2 {
+				switch parts[1] {
+				case "fnl":
+					result[parts[0]] = modContent
+				case "fpack":
+					subm, err := GetModsFromTar(modContent)
+					if err != nil {
+						return result, err
+					}
+					for k, v := range subm {
+						result[k] = v
+					}
+				}
+			}
+		}
+	}
+
+	return result, nil
+}
+
+func FunlMainWithPackage(argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error) (retValue Value, err error) {
+	data := []byte{}
+	data, err = os.ReadFile(srcFileName)
+	if err != nil {
+		return
+	}
+
+	_, srcFNameExt := filepath.Split(srcFileName)
+	srcFName := strings.Split(srcFNameExt, ".")[0]
+
+	packs := &pack{}
+	var mainContent []byte
+	var isMainFound bool
+	packs.modContents, err = GetModsFromTar(data)
+	if err != nil {
+		return
+	}
+	mainContent, isMainFound = packs.modContents[srcFName]
+
+	//fmt.Println("MODS: ", packs.modContents)
+	if !isMainFound {
+		err = fmt.Errorf("Main module not found in package")
+		return
+	}
+	interpreter := NewInterpreter()
+	interpreter.Importer = &packageImporter{mods: packs}
+	retValue, err = FunlMainWithInterpreter(string(mainContent), argsItems, name, srcFileName, initSTD, interpreter)
+	return
+}
+
+type fileImporter struct{}
+
+func (importer *fileImporter) FindModule(importFileName string, extensionName string) (targetPath string, content []byte, err error) {
+	importFilePath := os.Getenv("FUNLPATH")
+
+	currentWorkDir, oserr := os.Getwd()
+	if oserr != nil {
+		err = oserr
+		return
+	}
+	currentWorkDir += "/"
+
+	// lets firs search from current working dir and its subdirectories
+	targetPath, fileFound := findSourceFile(convertPathToCommonFormat(currentWorkDir), importFileName, extensionName)
+
+	// then try directory from env.var. and its subdirectories
+	if !fileFound {
+		if importFilePath != "" {
+			targetPath, fileFound = findSourceFile(convertPathToCommonFormat(importFilePath), importFileName, extensionName)
+		}
+	}
+	if !fileFound {
+		err = fmt.Errorf("Module not found: %s", importFileName)
+		return
+	}
+
+	content, err = ioutil.ReadFile(targetPath)
+	if err != nil {
+		err = fmt.Errorf("Source file reading failed: %v", err)
+		return
+	}
+
+	return
+}
+
+func FunlMainWithPackImport(impPackName string, content string, argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error) (retValue Value, err error) {
+	interpreter := NewInterpreter()
+	interpreter.Importer = &fileImporter{}
+
+	return FunlMainWithInterpreter(content, argsItems, name, srcFileName, initSTD, interpreter)
+}
+
 func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error) (retValue Value, err error) {
+	interpreter := NewInterpreter()
+	interpreter.Importer = &fileImporter{}
+	return FunlMainWithInterpreter(content, argsItems, name, srcFileName, initSTD, interpreter)
+}
+
+func FunlMainWithInterpreter(content string, argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error, interpreter *Interpreter) (retValue Value, err error) {
 	parser := NewParser(NewDefaultOperators(), &srcFileName)
 	var nsName string
 	var nspace *NSpace
@@ -244,8 +403,6 @@ func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName strin
 	if err != nil {
 		return
 	}
-
-	interpreter := NewInterpreter()
 
 	// first create top frame for namespace and put to nsDir
 	topframe := newTopFrameForNS(nspace, interpreter)

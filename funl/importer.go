@@ -132,34 +132,39 @@ func readModuleFromFile(inProcCall bool, sid SymID, importPath string, interpret
 			fileExtensionName = specFilenameParts[1]
 		}
 	}
-	importFilePath := os.Getenv("FUNLPATH")
 
-	currentWorkDir, oserr := os.Getwd()
-	if oserr != nil {
-		err = oserr
-		return
-	}
-	currentWorkDir += "/"
+	//fmt.Println(fmt.Sprintf("HEP: (%s) (%s)", importModName, importFileName))
+	/*
+		importFilePath := os.Getenv("FUNLPATH")
 
-	// lets firs search from current working dir and its subdirectories
-	targetPath, fileFound := findSourceFile(convertPathToCommonFormat(currentWorkDir), importFileName, fileExtensionName)
-
-	// then try directory from env.var. and its subdirectories
-	if !fileFound {
-		if importFilePath != "" {
-			targetPath, fileFound = findSourceFile(convertPathToCommonFormat(importFilePath), importFileName, fileExtensionName)
+		currentWorkDir, oserr := os.Getwd()
+		if oserr != nil {
+			err = oserr
+			return
 		}
-	}
-	if !fileFound {
-		err = fmt.Errorf("Module not found: %s", importModName)
-		return
-	}
+		currentWorkDir += "/"
 
-	content, err := ioutil.ReadFile(targetPath)
-	if err != nil {
-		err = fmt.Errorf("Source file reading failed: %v", err)
-		return
-	}
+		// lets firs search from current working dir and its subdirectories
+		targetPath, fileFound := findSourceFile(convertPathToCommonFormat(currentWorkDir), importFileName, fileExtensionName)
+
+		// then try directory from env.var. and its subdirectories
+		if !fileFound {
+			if importFilePath != "" {
+				targetPath, fileFound = findSourceFile(convertPathToCommonFormat(importFilePath), importFileName, fileExtensionName)
+			}
+		}
+		if !fileFound {
+			err = fmt.Errorf("Module not found: %s", importModName)
+			return
+		}
+
+		content, err := ioutil.ReadFile(targetPath)
+		if err != nil {
+			err = fmt.Errorf("Source file reading failed: %v", err)
+			return
+		}
+	*/
+	targetPath, content, err := interpreter.Importer.FindModule(importFileName, fileExtensionName)
 
 	topFrame, err = commonAddFunModToNamespace(inProcCall, targetPath, importModName, content, interpreter)
 	if err != nil {
