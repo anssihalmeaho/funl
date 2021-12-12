@@ -383,8 +383,19 @@ func (importer *fileImporter) FindModule(importFileName string, extensionName st
 }
 
 func FunlMainWithPackImport(impPackName string, content string, argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error) (retValue Value, err error) {
+	data := []byte{}
+	data, err = os.ReadFile(impPackName)
+	if err != nil {
+		return
+	}
+
+	packs := &pack{}
+	packs.modContents, err = GetModsFromTar(data)
+	if err != nil {
+		return
+	}
 	interpreter := NewInterpreter()
-	interpreter.Importer = &fileImporter{}
+	interpreter.Importer = &packageImporter{mods: packs}
 
 	return FunlMainWithInterpreter(content, argsItems, name, srcFileName, initSTD, interpreter)
 }
