@@ -50,8 +50,11 @@ func main() {
 	silentPtr := flag.Bool("silent", false, "does not print result of evaluation when returning from program (not silent is default)")
 	noPrintPtr := flag.Bool("noprint", false, "prevents printing from functions (by print-operator)")
 	doRTEPrintPtr := flag.Bool("rteprint", false, "enables printing RTE location and scope")
+	packagePtr := flag.Bool("package", false, "source file is package")
 	var evalStr string
 	flag.StringVar(&evalStr, "eval", "", "evaluate expression")
+	var importPackageName string
+	flag.StringVar(&importPackageName, "import", "", "package from which imports are done")
 	flag.Parse()
 
 	if *noPrintPtr {
@@ -96,6 +99,8 @@ func main() {
 			}
 			if srcFileName == "repl.fnl" {
 				content = []byte(funl.GetReplCode())
+			} else if *packagePtr {
+				// none
 			} else {
 				content, err = ioutil.ReadFile(srcFileName)
 				if err != nil {
@@ -115,7 +120,13 @@ func main() {
 	}
 
 	var retValue funl.Value
-	retValue, err = funl.FunlMainWithArgs(string(content), parsedArgs, name, srcFileName, std.InitSTD)
+	if *packagePtr {
+		retValue, err = funl.FunlMainWithPackage(parsedArgs, name, srcFileName, std.InitSTD)
+	} else if importPackageName != "" {
+		retValue, err = funl.FunlMainWithPackImport(importPackageName, string(content), parsedArgs, name, srcFileName, std.InitSTD)
+	} else {
+		retValue, err = funl.FunlMainWithArgs(string(content), parsedArgs, name, srcFileName, std.InitSTD)
+	}
 	if err != nil {
 		fmt.Println(fmt.Sprintf("Error: %v", err))
 		return

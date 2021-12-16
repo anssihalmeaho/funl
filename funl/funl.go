@@ -2,6 +2,9 @@ package funl
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -226,7 +229,8 @@ func AddExtensionInitializer(initializer func(*Interpreter) error) {
 }
 
 type Interpreter struct {
-	NsDir *NSAccess
+	NsDir    *NSAccess
+	Importer ModuleImporter
 }
 
 func NewInterpreter() *Interpreter {
@@ -236,7 +240,66 @@ func NewInterpreter() *Interpreter {
 	return interpreter
 }
 
+func FunlMainWithPackage(argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error) (retValue Value, err error) {
+	data := []byte{}
+	data, err = os.ReadFile(srcFileName)
+	if err != nil {
+		return
+	}
+	return FunlMainWithPackageContent(data, argsItems, name, srcFileName, initSTD)
+}
+
+func FunlMainWithPackageContent(data []byte, argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error) (retValue Value, err error) {
+	_, srcFNameExt := filepath.Split(srcFileName)
+	srcFName := strings.Split(srcFNameExt, ".")[0]
+
+	packs := &pack{}
+	var mainContent []byte
+	var isMainFound bool
+	packs.modContents, err = GetModsFromTar(data)
+	if err != nil {
+		return
+	}
+	mainContent, isMainFound = packs.modContents[srcFName]
+
+	if !isMainFound {
+		err = fmt.Errorf("Main module not found in package")
+		return
+	}
+	interpreter := NewInterpreter()
+	interpreter.Importer = &packageImporter{mods: packs}
+	retValue, err = FunlMainWithInterpreter(string(mainContent), argsItems, name, srcFileName, initSTD, interpreter)
+	return
+}
+
+func FunlMainWithPackImport(impPackName string, content string, argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error) (retValue Value, err error) {
+	data := []byte{}
+	data, err = os.ReadFile(impPackName)
+	if err != nil {
+		return
+	}
+	return FunlMainWithPackImportContent(data, content, argsItems, name, srcFileName, initSTD)
+}
+
+func FunlMainWithPackImportContent(data []byte, content string, argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error) (retValue Value, err error) {
+	packs := &pack{}
+	packs.modContents, err = GetModsFromTar(data)
+	if err != nil {
+		return
+	}
+	interpreter := NewInterpreter()
+	interpreter.Importer = &packageImporter{mods: packs}
+
+	return FunlMainWithInterpreter(content, argsItems, name, srcFileName, initSTD, interpreter)
+}
+
 func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error) (retValue Value, err error) {
+	interpreter := NewInterpreter()
+	interpreter.Importer = &fileImporter{}
+	return FunlMainWithInterpreter(content, argsItems, name, srcFileName, initSTD, interpreter)
+}
+
+func FunlMainWithInterpreter(content string, argsItems []*Item, name, srcFileName string, initSTD func(*Interpreter) error, interpreter *Interpreter) (retValue Value, err error) {
 	parser := NewParser(NewDefaultOperators(), &srcFileName)
 	var nsName string
 	var nspace *NSpace
@@ -244,8 +307,6 @@ func FunlMainWithArgs(content string, argsItems []*Item, name, srcFileName strin
 	if err != nil {
 		return
 	}
-
-	interpreter := NewInterpreter()
 
 	// first create top frame for namespace and put to nsDir
 	topframe := newTopFrameForNS(nspace, interpreter)
