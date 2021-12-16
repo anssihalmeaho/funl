@@ -1,12 +1,121 @@
 package funl
 
 import (
+	"archive/tar"
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 )
+
+type ModuleImporter interface {
+	FindModule(importModName string, extensionName string) (targetPath string, content []byte, err error)
+}
+
+type pack struct {
+	modContents map[string][]byte
+}
+
+func newPack() *pack {
+	return &pack{
+		modContents: make(map[string][]byte),
+	}
+}
+
+type packageImporter struct {
+	mods *pack
+}
+
+func (importer *packageImporter) FindModule(importFileName string, extensionName string) (targetPath string, content []byte, err error) {
+	var modFound bool
+	content, modFound = importer.mods.modContents[importFileName]
+	if !modFound {
+		err = fmt.Errorf("Module not found: %s", importFileName)
+		return
+	}
+	targetPath = importFileName
+	return
+}
+
+func GetModsFromTar(tarContent []byte) (map[string][]byte, error) {
+	result := map[string][]byte{}
+
+	buf := bytes.NewBuffer(tarContent)
+
+	// Open and iterate through the files in the archive.
+	tr := tar.NewReader(buf)
+	for {
+		hdr, err := tr.Next()
+		if err == io.EOF {
+			break // End of archive
+		}
+		if err != nil {
+			return result, err
+		}
+		if !hdr.FileInfo().IsDir() {
+
+			modContent, err := io.ReadAll(tr)
+			if err != nil {
+				return result, err
+			}
+			_, file := filepath.Split(hdr.Name)
+			parts := strings.Split(file, ".")
+			if l := len(parts); l == 2 {
+				switch parts[1] {
+				case "fnl":
+					result[parts[0]] = modContent
+				case "fpack":
+					subm, err := GetModsFromTar(modContent)
+					if err != nil {
+						return result, err
+					}
+					for k, v := range subm {
+						result[k] = v
+					}
+				}
+			}
+		}
+	}
+
+	return result, nil
+}
+
+func findFromPackageFiles(path, importModName string) (string, []byte, error) {
+	fileExtensionName := "fpack"
+
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		fmt.Printf("\nError in accessing import path: %v \n", err)
+		return "", []byte{}, err
+	}
+	for _, file := range files {
+		if file.IsDir() {
+			targetPath, content, err := findFromPackageFiles(path+file.Name()+"/", importModName)
+			if err == nil {
+				return targetPath, content, nil
+			}
+		} else {
+			filenameParts := strings.Split(file.Name(), ".")
+			if len(filenameParts) == 2 && filenameParts[1] == fileExtensionName {
+				data, err := os.ReadFile(path + file.Name())
+				if err != nil {
+					continue
+				}
+				mods, err := GetModsFromTar(data)
+				if err != nil {
+					continue
+				}
+				if content, isModFound := mods[importModName]; isModFound {
+					return path + file.Name(), content, nil
+				}
+			}
+		}
+	}
+	return "", []byte{}, fmt.Errorf("Module not found in packages (%s)", importModName)
+}
 
 func findSourceFile(path, importModName, fileExtensionName string) (pathAndFilename string, found bool) {
 	files, err := ioutil.ReadDir(path)
@@ -34,6 +143,54 @@ func findSourceFile(path, importModName, fileExtensionName string) (pathAndFilen
 		return path + file.Name(), true
 	}
 	return "", false
+}
+
+type fileImporter struct{}
+
+func (importer *fileImporter) FindModule(importFileName string, extensionName string) (targetPath string, content []byte, err error) {
+	importFilePath := os.Getenv("FUNLPATH")
+
+	currentWorkDir, oserr := os.Getwd()
+	if oserr != nil {
+		err = oserr
+		return
+	}
+	currentWorkDir += "/"
+
+	// lets firs search from current working dir and its subdirectories
+	targetPath, fileFound := findSourceFile(convertPathToCommonFormat(currentWorkDir), importFileName, extensionName)
+
+	// then try directory from env.var. and its subdirectories
+	if !fileFound {
+		if importFilePath != "" {
+			targetPath, fileFound = findSourceFile(convertPathToCommonFormat(importFilePath), importFileName, extensionName)
+		}
+	}
+
+	// lets try to find some packages (.fpack)
+	if !fileFound {
+		targetPath, content, err = findFromPackageFiles(convertPathToCommonFormat(currentWorkDir), importFileName)
+		if err != nil {
+			// then try directory from env.var. and its subdirectories
+			targetPath, content, err = findFromPackageFiles(convertPathToCommonFormat(importFilePath), importFileName)
+		}
+		if err == nil {
+			return
+		}
+	}
+
+	if !fileFound {
+		err = fmt.Errorf("Module not found: %s", importFileName)
+		return
+	}
+
+	content, err = ioutil.ReadFile(targetPath)
+	if err != nil {
+		err = fmt.Errorf("Source file reading failed: %v", err)
+		return
+	}
+
+	return
 }
 
 func convertPathToCommonFormat(path string) string {
