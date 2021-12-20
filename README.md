@@ -80,6 +80,7 @@ in REPL:
 * [Syntax and Concepts](https://github.com/anssihalmeaho/funl/wiki/Syntax-and-concepts)
 * [Concurrency and impure operations](https://github.com/anssihalmeaho/funl/wiki/Concurrency-and-impure-operations)
 * [Importing modules](https://github.com/anssihalmeaho/funl/wiki/Importing-modules)
+* [Packages](https://github.com/anssihalmeaho/funl/wiki/packages)
 * [Operators explained](https://github.com/anssihalmeaho/funl/wiki/Operators-explained)
 * [External Modules](https://github.com/anssihalmeaho/funl/wiki/External-Modules)
 * [Usage as embedded language](https://github.com/anssihalmeaho/funl/wiki/Using-FunL-as-embedded-language)
