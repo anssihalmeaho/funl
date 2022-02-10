@@ -17,6 +17,24 @@ Tic-tac-toe game (program against user).
 ## fizzbuzz.fnl
 FizzBuzz implementation in FunL.
 
+## simpleserver.fnl
+Really simple HTTP server.
+Provides GET /hello API for which it replies with "Hi There !".
+Start server (port number is given as argument):
+
+```
+make
+./funla -args="8003" ./examples/simpleserver.fnl
+```
+
+Then test for example with curl:
+
+```
+curl http://localhost:8003/hello
+
+Hi There !
+```
+
 ## ToDo Application (todo_client.fnl / todo_server.fnl / todo_common.fnl)
 Implementation of HTTP client and server for simple todo-application.
 There is also common module (todo_common) for client and server to use.
