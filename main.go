@@ -9,6 +9,7 @@ import (
 	"runtime/debug"
 	"runtime/pprof"
 
+	"github.com/anssihalmeaho/funl/extensions"
 	"github.com/anssihalmeaho/funl/funl"
 	"github.com/anssihalmeaho/funl/std"
 )
@@ -20,6 +21,8 @@ const doStackMeas = false
 const doMemMeas = false
 
 func main() {
+	extensions.CallMe()
+
 	if doProfiling {
 		f, err := os.Create("fup.prof")
 		if err != nil {

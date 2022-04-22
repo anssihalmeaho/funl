@@ -58,6 +58,11 @@ func NewOpaqueByteArray(data []byte) *OpaqueByteArray {
 	return &OpaqueByteArray{data: data}
 }
 
+// GetBytes provides Go API for reading byte slice
+func (ob *OpaqueByteArray) GetBytes() []byte {
+	return ob.data
+}
+
 func (ob *OpaqueByteArray) TypeName() string {
 	return "bytearray"
 }
