@@ -131,7 +131,7 @@ func evalAndAssignValuesForSymbolsInFrameForNS(frame *Frame, ns *NSpace) {
 		case ValueItem:
 			vi := item.Data.(Value)
 			switch vi.Kind {
-			case IntValue, FloatValue, StringValue, BoolValue, ListValue:
+			case IntValue, FloatValue, StringValue, BoolValue, ListValue, FunctionValue:
 				if !frame.Syms.AddBySID(sid, item) {
 					runTimeError2(frame, "Symbol adding failed")
 				}
