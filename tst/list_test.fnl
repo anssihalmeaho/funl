@@ -55,6 +55,12 @@ testListBasics = proc()
 
 		eq( extend(list() list() list()) list())
 		eq( extend(list() list(4 5 6)) list(4 5 6))
+
+		eq( extend(list(1 2) append(list(3) 4) ) list(1 2 3 4))
+		eq( extend(list() append(list(3) 4) ) list(3 4))
+		eq( extend(list() append(list() 4) ) list(4))
+		eq( extend(list(1 2) append(list(3) 4) append(list(5) 6) ) list(1 2 3 4 5 6))
+		eq( extend(list(1 2) append(list(3) 4) list(5 6)) list(1 2 3 4 5 6))
 	)
 	allRight = call(common_test_util.isAllTrueInList, result)
 	call(ASSURE, allRight, plus('Unexpected result = ', str(result)))

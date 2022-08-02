@@ -120,15 +120,12 @@ func handleExtendOP(frame *Frame, operands []*Item) (retVal Value) {
 			}
 		}
 	}
-	var newTail *ListObject
 	switch argsLen {
 	case 0:
 	case 1:
 		newHead = argvals[0].Data.(*List).Head
-	default:
-		newTail = argvals[argsLen-1].Data.(*List).Tail
 	}
-	retVal = Value{Kind: ListValue, Data: &List{Head: newHead, Tail: newTail}}
+	retVal = Value{Kind: ListValue, Data: &List{Head: newHead, Tail: nil}}
 	return
 }
 
