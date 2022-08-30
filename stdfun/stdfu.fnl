@@ -1,6 +1,22 @@
 
 ns stdfu
 
+select-keys = func(m keylist)
+	keylooper = func(remaining-keys result)
+		if( empty(remaining-keys)
+			result
+			call(func()
+				nextkey = head(remaining-keys)
+				found val = getl(m nextkey):
+				next-result = if(found put(result nextkey val) result)
+				call(keylooper rest(remaining-keys) next-result)
+			end)
+		)
+	end
+
+	call(keylooper keylist map())
+end
+
 pre-decorate = func(pre-handler handler)
 	func()
 		new-args = call(pre-handler argslist():)

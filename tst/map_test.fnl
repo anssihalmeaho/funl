@@ -7,6 +7,30 @@ ASSURE = ut_fwk.VERIFY
 
 import common_test_util
 
+test-select-keys = proc()
+	import stdfu
+
+	results = list(
+		call(stdfu.select-keys map('a' 1 'b' 2 'c' 3) list('b'))
+		call(stdfu.select-keys map('a' 1 'b' 2 'c' 3) list())
+		call(stdfu.select-keys map('a' 1 'b' 2 'c' 3) list('b' 'x'))
+		call(stdfu.select-keys map() list('b' 'x'))
+		call(stdfu.select-keys map('a' 1 'b' 2 'c' 3) list('a' 'b'))
+		call(stdfu.select-keys map() list())
+		call(stdfu.select-keys map(10 'ten' true 'ok' list(1 2) 12) list(list(1 2) 10))
+	)
+	expected-result = list(
+		map('b' 2)
+		map()
+		map('b' 2)
+		map()
+		map('a' 1 'b' 2)
+		map()
+		map(10 'ten' list(1 2) 12)
+	)
+	call(ASSURE eq(results expected-result) plus('unexpected result' str(results)))
+end
+
 testDeletingALotFromMap = proc()
 	import stdfu
 	
