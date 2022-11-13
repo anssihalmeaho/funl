@@ -14,6 +14,60 @@ func init() {
 	_, goBTset = os.LookupEnv("FUNLGOBACKTRACE")
 }
 
+func handleTrylOP(frame *Frame, operands []*Item) (retVal Value) {
+	opName := "tryl"
+
+	if !frame.inProcCall {
+		runTimeError2(frame, "%s not allowed in function", opName)
+	}
+
+	if len(operands) != 1 {
+		runTimeError2(frame, "Wrong amount of arguments for %s (need one)", opName)
+	}
+
+	var val Value
+	var rteText string
+	isFailure := false
+	v := operands[0]
+	switch v.Type {
+	case ValueItem:
+		retVal = v.Data.(Value)
+	case SymbolPathItem, OperCallItem:
+		func() {
+			defer func() {
+				if isFailure {
+					if r := recover(); r != nil {
+						rteText = r.(error).Error()
+					}
+				}
+			}()
+			isFailure = true
+			val = EvalItem(v, frame)
+			isFailure = false
+		}()
+	default:
+		isFailure = true
+	}
+
+	if isFailure {
+		val = Value{Kind: StringValue, Data: ""}
+	}
+
+	values := []Value{
+		{
+			Kind: BoolValue,
+			Data: !isFailure,
+		},
+		{
+			Kind: StringValue,
+			Data: rteText,
+		},
+		val,
+	}
+	retVal = MakeListOfValues(frame, values)
+	return
+}
+
 func handleTryOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "try"
 

@@ -727,6 +727,30 @@ Note. try is not allowed to be called from function (only procedure allowed),
 Usage: try(<expr>)
        try(<expr> <expr>)
 `,
+		"tryl": `
+Operator: tryl
+  Similar to try -operator.
+  Catches runtime error if such happens during evaluation of argument.
+  Difference to try -operator is that tryl returns always list of 3 values
+  which provide information about runtime error happening, error description and
+  evaluated value (in case no error happened)
+
+  Requires one argument, argument can be of any type.
+  Return value is list of following values (in this order):
+  1) bool: true if no runtime error happened, false if runtime error happened
+  2) string: in case runtime error happened contains error text (empty string if no error)
+  3) value: if no value happened then result value of argument evaluated
+     (empty string if error happened)
+
+Note. tryl is not allowed to be called from function (only procedure allowed),
+      otherwise runtime error is generated.
+
+Example:
+  tryl(mul(2 3 'no int')) -> list(false, 'Invalid type for mul', '')
+  tryl(mul(2 3)) -> list(true, '', 6)
+
+Usage: tryl(<expr>)
+`,
 		"select": `
 Operator: select
   Receives input value from any of several channels and calls channel specific
@@ -1160,6 +1184,7 @@ func NewDefaultOperators() Operators {
 		"recv":     OperatorInfo{},
 		"symval":   OperatorInfo{},
 		"try":      OperatorInfo{},
+		"tryl":     OperatorInfo{},
 		"select":   OperatorInfo{},
 		"eval":     OperatorInfo{},
 		"while":    OperatorInfo{},
