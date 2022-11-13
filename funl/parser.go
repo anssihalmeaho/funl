@@ -530,6 +530,8 @@ func operNameToID(opName string) (op OperType, ok bool) {
 		op = SymvalOP
 	case "try":
 		op = TryOP
+	case "tryl":
+		op = TrylOP
 	case "select":
 		op = SelectOP
 	case "eval":

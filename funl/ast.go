@@ -77,6 +77,7 @@ const (
 	RecvOP
 	SymvalOP
 	TryOP
+	TrylOP
 	SelectOP
 	EvalOP
 	WhileOP
@@ -191,6 +192,7 @@ func operTypeFromIntToString(ot OperType) string {
 		RecvOP:     "recv",
 		SymvalOP:   "symval",
 		TryOP:      "try",
+		TrylOP:     "tryl",
 		SelectOP:   "select",
 		EvalOP:     "eval",
 		WhileOP:    "while",

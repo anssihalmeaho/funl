@@ -53,6 +53,7 @@ func init() {
 	operTbl[RecvOP] = handleRecvOP
 	operTbl[SymvalOP] = handleSymvalOP
 	operTbl[TryOP] = handleTryOP
+	operTbl[TrylOP] = handleTrylOP
 	operTbl[SelectOP] = handleSelectOP
 	operTbl[EvalOP] = handleEvalOP
 	operTbl[WhileOP] = handleWhileOP
@@ -146,9 +147,9 @@ type fdebugInfo struct {
 // NewTopFrameWithInterpreter returns new top level frame
 func NewTopFrameWithInterpreter(interpreter *Interpreter) *Frame {
 	return &Frame{
-		Syms:     NewSymt(),
-		OtherNS:  make(map[SymID]ImportInfo),
-		Imported: make(map[SymID]*Frame),
+		Syms:        NewSymt(),
+		OtherNS:     make(map[SymID]ImportInfo),
+		Imported:    make(map[SymID]*Frame),
 		Interpreter: interpreter,
 	}
 }

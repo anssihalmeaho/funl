@@ -101,4 +101,13 @@ testSymvalOper = proc()
 	call(ASSURE, allRight, plus('Unexpected result = ', str(result)))	
 end
 
+testTrylOper = proc()
+	result = list(
+		eq(tryl(mul(2 3 2)) list(true '' 12))
+		eq(tryl(mul(2 3 'X')) list(false 'Invalid type for mul' ''))
+	)
+	allRight = call(common_test_util.isAllTrueInList, result)
+	call(ASSURE, allRight, plus('Unexpected result = ', str(result)))
+end
+
 endns
