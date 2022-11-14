@@ -31,7 +31,7 @@ func handleTrylOP(frame *Frame, operands []*Item) (retVal Value) {
 	v := operands[0]
 	switch v.Type {
 	case ValueItem:
-		retVal = v.Data.(Value)
+		val = v.Data.(Value)
 	case SymbolPathItem, OperCallItem:
 		func() {
 			defer func() {
