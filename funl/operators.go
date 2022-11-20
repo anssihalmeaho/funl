@@ -58,13 +58,13 @@ Usage: not(<boolean-expr>)
 `,
 		"eq": `
 Operator: eq
-  Evaluates two arguments and compares resulting values.
-  Number of arguments need to be 2.
+  Evaluates arguments and compares resulting values.
+  Number of arguments need to be at least 2.
   Return value is boolean type:
     - true: if values are equal
     - false: if values differ
 
-Usage: eq(<expr-1> <expr-2>)
+Usage: eq(<expr-1> <expr-2> ...)
 
 Note. not all types are comparable (function/procedure values)
 `,
@@ -92,7 +92,7 @@ Operator: plus
     - float: evaluates to arithmetic sum
     - string: concatenation of argument strings
 
-  Number of arguments need to be at least 2.
+  Number of arguments need to be at least 1.
   Return value is of type int/float/string depending on type
   of input arguments.
 
@@ -120,7 +120,7 @@ Operator: mul
     - int
     - float
 
-  Number of arguments need to be at least 2.
+  Number of arguments need to be at least 1.
   Return value is multiplication result of input arguments.
   If any of arguments is of type float then result value type is float.
 

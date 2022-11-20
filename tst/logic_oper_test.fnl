@@ -52,9 +52,15 @@ testCombinations = func()
 		not( and( or(ttrue, tfalse), not(tfalse) ) ),
 		not( and( not(and(tfalse, tfalse)), or(tfalse, ttrue), and(not(false), true) , false) ),
 		not( or( and(not(false), ttrue), false, not(true), and(ttrue, ttrue, false)) )
+
+		and(true)
+		and(false)
+
+		or(true)
+		or(false)
 	)
 
-	expected = list(true, false, true, false, true, false)
+	expected = list(true, false, true, false, true, false true false true false)
 
 	eq(result, expected)
 end

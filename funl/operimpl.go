@@ -1397,7 +1397,7 @@ func handleLenOP(frame *Frame, operands []*Item) (retVal Value) {
 
 func handleAndOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "and"
-	if l := len(operands); l < 2 {
+	if l := len(operands); l < 1 {
 		runTimeError2(frame, "Not enough arguments for %s (%d given)", opName, l)
 	}
 	for _, v := range operands {
@@ -1424,7 +1424,7 @@ func handleAndOP(frame *Frame, operands []*Item) (retVal Value) {
 
 func handleOrOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "or"
-	if l := len(operands); l < 2 {
+	if l := len(operands); l < 1 {
 		runTimeError2(frame, "Not enough arguments for %s (%d given)", opName, l)
 	}
 	for _, v := range operands {
@@ -1740,7 +1740,7 @@ func handleMulOP(frame *Frame, operands []*Item) (retVal Value) {
 	var resultF float64 = 1
 	var isAnyFloat bool
 
-	if l := len(operands); l < 2 {
+	if l := len(operands); l < 1 {
 		runTimeError2(frame, "Not enough arguments for %s (%d given)", opName, l)
 	}
 	for _, v := range operands {
@@ -1779,7 +1779,7 @@ func handlePlusOP(frame *Frame, operands []*Item) (retVal Value) {
 	var argType ValueType
 	hasFloats := false
 
-	if l := len(operands); l < 2 {
+	if l := len(operands); l < 1 {
 		runTimeError2(frame, "Not enough arguments for %s (%d given)", opName, l)
 	}
 	for i, v := range operands {

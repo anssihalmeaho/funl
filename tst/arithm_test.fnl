@@ -1,6 +1,21 @@
 
 ns arithm_test
 
+testPlusWithSingleArgument = func()
+	and(
+		eq(plus(10) 10)
+		eq(plus(10.25) 10.25)
+		eq(plus('ok') 'ok')
+	)
+end
+
+testMulWithSingleArgument = func()
+	and(
+		eq(mul(10) 10)
+		eq(mul(0.5) 0.5)
+	)
+end
+
 testSumOfIntegers = func()
 	result = plus(1 ,2, 3)
 	eq(result, 6)
