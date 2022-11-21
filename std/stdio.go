@@ -28,6 +28,10 @@ func initSTDIO(interpreter *funl.Interpreter) (err error) {
 			Name:   "readinput",
 			Getter: getStdIOReadinput,
 		},
+		{
+			Name:   "printfline",
+			Getter: getStdIOPrintfline,
+		},
 	}
 	err = setSTDFunctions(topFrame, stdModuleName, stdIOFuncs, interpreter)
 	return
@@ -45,6 +49,23 @@ func getStdIOPrintf(name string) stdFuncType {
 		}
 
 		fmt.Printf(formattedStrVal.Data.(string))
+		retVal = funl.Value{Kind: funl.BoolValue, Data: true}
+		return
+	}
+}
+
+func getStdIOPrintfline(name string) stdFuncType {
+	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
+		var operands []*funl.Item
+		for _, v := range arguments {
+			operands = append(operands, &funl.Item{Type: funl.ValueItem, Data: v})
+		}
+		formattedStrVal := funl.HandleSprintfOP(frame, operands)
+		if formattedStrVal.Kind != funl.StringValue {
+			funl.RunTimeError2(frame, "%s: assuming string (%#v)", name, formattedStrVal)
+		}
+
+		fmt.Printf(formattedStrVal.Data.(string) + "\n")
 		retVal = funl.Value{Kind: funl.BoolValue, Data: true}
 		return
 	}
