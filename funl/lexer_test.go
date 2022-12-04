@@ -18,9 +18,11 @@ func lextester(t *testing.T, text string, ttokens []token) {
 	}
 	for i, token := range ttokens {
 		if tokens[i].Type != token.Type {
+			t.Logf("Tokens: %#v", tokens)
 			t.Fatalf("Unexpected type (%d): %v, %v (%s)(%s)", i, tokens[i].Type, token.Type, tokens[i].Value, token.Value)
 		}
 		if tokens[i].Value != token.Value {
+			t.Logf("Tokens: %#v", tokens)
 			t.Fatalf("Unexpected value (%d): %s, %s", i, tokens[i].Value, token.Value)
 		}
 	}
@@ -412,4 +414,64 @@ func TestExpander(t *testing.T) {
 		},
 	}
 	lextester(t, text, tokens)
+}
+
+func TestLineComments(t *testing.T) {
+	text := "abc efg # this is line comment\n hmm"
+	tokens := []token{
+		token{
+			Type:  tokenSymbol,
+			Value: "abc",
+		},
+		token{
+			Type:  tokenSymbol,
+			Value: "efg",
+		},
+		token{
+			Type:  tokenLineComment,
+			Value: " this is line comment ",
+		},
+		token{
+			Type:  tokenSymbol,
+			Value: "hmm",
+		},
+	}
+	lextester(t, text, tokens)
+
+	text = "abc efg # this is line comment"
+	tokens = []token{
+		token{
+			Type:  tokenSymbol,
+			Value: "abc",
+		},
+		token{
+			Type:  tokenSymbol,
+			Value: "efg",
+		},
+		token{
+			Type:  tokenLineComment,
+			Value: " this is line comment",
+		},
+	}
+	lextester(t, text, tokens)
+
+	text = "# this is line comment"
+	tokens = []token{
+		token{
+			Type:  tokenLineComment,
+			Value: " this is line comment",
+		},
+	}
+	lextester(t, text, tokens)
+}
+
+func TestMultiLineComments(t *testing.T) {
+	text := "abc efg /* multi line\ncomment is \nhere */ hmm"
+
+	lexer := newTokenizer(NewDefaultOperators())
+	tokens, err := lexer.scan(text)
+	if err != nil {
+		t.Fatalf("error : %v", err)
+	}
+	t.Logf("Tokens: %#v", tokens)
 }

@@ -33,6 +33,8 @@ const (
 	tokenImport
 	tokenEqualsSign
 	tokenExpander
+	tokenLineComment
+	tokenMultiLineComment
 
 	receivingWhitespace lexState = iota
 	receivingAlphabetsAndNumbers
@@ -64,6 +66,7 @@ func (tt tokenType) String() string {
 type collector interface {
 	addChr(rune)
 	addChrStr(string)
+	removeLastIfSame(rune)
 	getTokenFromBuf(tokenType)
 	reportError(error)
 }
@@ -364,14 +367,17 @@ func (s *lineCommentState) setTokenizer(tokenizerAPI collector) {
 }
 
 func (s *lineCommentState) tryProcess(ch rune) (lexState, bool) {
+	s.tokenizer.addChr(ch)
 	return receivingCommentLine, true
 }
 
 func (s *lineCommentState) endingOfProcess() error {
+	s.tokenizer.getTokenFromBuf(tokenLineComment)
 	return nil
 }
 
 func (s *lineCommentState) processLineCommentStart() lexState {
+	s.tokenizer.addChr('#')
 	return receivingCommentLine
 }
 
@@ -386,22 +392,27 @@ func (s *lineCommentState) processMultilineEnd() lexState {
 }
 
 func (s *lineCommentState) processNewline() lexState {
+	s.tokenizer.getTokenFromBuf(tokenLineComment)
 	return unknown
 }
 
 func (s *lineCommentState) processWS() lexState {
+	s.tokenizer.addChr(' ')
 	return receivingCommentLine
 }
 
 func (s *lineCommentState) processAlphanumeric(ch rune) lexState {
+	s.tokenizer.addChr(ch)
 	return receivingCommentLine
 }
 
 func (s *lineCommentState) processStringLimiter() lexState {
+	s.tokenizer.addChrStr("'")
 	return receivingCommentLine
 }
 
 func (s *lineCommentState) processSpecCharacter(ch rune) lexState {
+	s.tokenizer.addChr(ch)
 	return receivingCommentLine
 }
 
@@ -414,6 +425,7 @@ func (s *multilineCommentState) setTokenizer(tokenizerAPI collector) {
 }
 
 func (s *multilineCommentState) tryProcess(ch rune) (lexState, bool) {
+	s.tokenizer.addChr(ch)
 	return receivingCommentBlock, true
 }
 
@@ -422,6 +434,7 @@ func (s *multilineCommentState) endingOfProcess() error {
 }
 
 func (s *multilineCommentState) processLineCommentStart() lexState {
+	s.tokenizer.addChr('#')
 	return receivingCommentBlock
 }
 
@@ -430,26 +443,33 @@ func (s *multilineCommentState) processMultilineStart() lexState {
 }
 
 func (s *multilineCommentState) processMultilineEnd() lexState {
+	s.tokenizer.removeLastIfSame('*')
+	s.tokenizer.getTokenFromBuf(tokenMultiLineComment)
 	return unknown
 }
 
 func (s *multilineCommentState) processNewline() lexState {
+	s.tokenizer.addChr('\n')
 	return receivingCommentBlock
 }
 
 func (s *multilineCommentState) processWS() lexState {
+	s.tokenizer.addChr(' ')
 	return receivingCommentBlock
 }
 
 func (s *multilineCommentState) processAlphanumeric(ch rune) lexState {
+	s.tokenizer.addChr(ch)
 	return receivingCommentBlock
 }
 
 func (s *multilineCommentState) processStringLimiter() lexState {
+	s.tokenizer.addChrStr("'")
 	return receivingCommentBlock
 }
 
 func (s *multilineCommentState) processSpecCharacter(ch rune) lexState {
+	s.tokenizer.addChr(ch)
 	return receivingCommentBlock
 }
 
@@ -631,6 +651,13 @@ func (s *tokenizer) addChr(ch rune) {
 	s.buffer = append([]byte(s.buffer), string(ch)...)
 }
 
+func (s *tokenizer) removeLastIfSame(ch rune) {
+	l := len(s.buffer)
+	if l > 0 && string(s.buffer[l-1]) == string(ch) {
+		s.buffer = s.buffer[:l-1]
+	}
+}
+
 func (s *tokenizer) getTokenFromBuf(tokenKind tokenType) {
 	getOperatorToken := func() tokenType {
 		if s.operators.isOperator(string(s.buffer)) {
@@ -699,25 +726,27 @@ func newTokenizer(operators Operators) *tokenizer {
 
 func tokenAsStr(tt tokenType) string {
 	str, ok := map[tokenType]string{
-		tokenEqualsSign:     "tokenEqualsSign",
-		tokenAs:             "tokenAs",
-		tokenFuncBegin:      "tokenFuncBegin",
-		tokenProcBegin:      "tokenProcBegin",
-		tokenFuncEnd:        "tokenFuncEnd",
-		tokenImport:         "tokenImport",
-		tokenSymbol:         "tokenSymbol",
-		tokenStartNS:        "tokenStartNS",
-		tokenEndNS:          "tokenEndNS",
-		tokenNumber:         "tokenNumber",
-		tokenString:         "tokenString",
-		tokenDot:            "tokenDot",
-		tokenOpenBracket:    "tokenOpenBracket",
-		tokenClosingBracket: "tokenClosingBracket",
-		tokenComma:          "tokenComma",
-		tokenOperator:       "tokenOperator",
-		tokenTrue:           "tokenTrue",
-		tokenFalse:          "tokenFalse",
-		tokenExpander:       "tokenExpander",
+		tokenEqualsSign:       "tokenEqualsSign",
+		tokenAs:               "tokenAs",
+		tokenFuncBegin:        "tokenFuncBegin",
+		tokenProcBegin:        "tokenProcBegin",
+		tokenFuncEnd:          "tokenFuncEnd",
+		tokenImport:           "tokenImport",
+		tokenSymbol:           "tokenSymbol",
+		tokenStartNS:          "tokenStartNS",
+		tokenEndNS:            "tokenEndNS",
+		tokenNumber:           "tokenNumber",
+		tokenString:           "tokenString",
+		tokenDot:              "tokenDot",
+		tokenOpenBracket:      "tokenOpenBracket",
+		tokenClosingBracket:   "tokenClosingBracket",
+		tokenComma:            "tokenComma",
+		tokenOperator:         "tokenOperator",
+		tokenTrue:             "tokenTrue",
+		tokenFalse:            "tokenFalse",
+		tokenExpander:         "tokenExpander",
+		tokenLineComment:      "tokenLineComment",
+		tokenMultiLineComment: "tokenMultiLineComment",
 	}[tt]
 	if !ok {
 		return fmt.Sprintf("Unknown (%d)", int(tt))
