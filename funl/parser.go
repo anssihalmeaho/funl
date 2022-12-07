@@ -13,7 +13,20 @@ type tokenIter struct {
 }
 
 func (iter *tokenIter) tokenize(sourceText string) (err error) {
-	iter.tokens, err = iter.lexer.scan(sourceText)
+	//iter.tokens, err = iter.lexer.scan(sourceText)
+	var tokens []token
+	iter.tokens = []token{}
+	tokens, err = iter.lexer.scan(sourceText)
+	if err != nil {
+		return
+	}
+	for _, token := range tokens {
+		switch token.Type {
+		case tokenMultiLineComment, tokenLineComment:
+		default:
+			iter.tokens = append(iter.tokens, token)
+		}
+	}
 	return
 }
 
