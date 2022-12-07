@@ -79,6 +79,7 @@ func InitSTD(interpreter *funl.Interpreter) (err error) {
 		initSTDbase64,
 		initSTDVar,
 		initSTDRun,
+		initSTDLex,
 	}
 	for _, initf := range inits {
 		err = initf(interpreter)

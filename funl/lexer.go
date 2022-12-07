@@ -473,6 +473,11 @@ func (s *multilineCommentState) processSpecCharacter(ch rune) lexState {
 	return receivingCommentBlock
 }
 
+// Scan exposes tokenizer API
+func (s *tokenizer) Scan(srcText string) ([]token, error) {
+	return s.scan(srcText)
+}
+
 func (s *tokenizer) scan(srcText string) ([]token, error) {
 	// replace LF with CR LF (unix/mac to windows format)
 	sourceText := string(bytes.ReplaceAll([]byte(srcText), []byte{10}, []byte{13, 10}))
@@ -714,6 +719,11 @@ func (s *tokenizer) getTokenFromBuf(tokenKind tokenType) {
 	}
 	s.tokens = append(s.tokens, token)
 	s.buffer = []byte{}
+}
+
+// NewTokenizer exposes tokenizer API
+func NewTokenizer(operators Operators) *tokenizer {
+	return newTokenizer(operators)
 }
 
 func newTokenizer(operators Operators) *tokenizer {
