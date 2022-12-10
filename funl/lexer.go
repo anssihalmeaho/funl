@@ -24,7 +24,6 @@ const (
 	tokenOpenBracket
 	tokenClosingBracket
 	tokenComma
-	tokenOperator
 	tokenTrue
 	tokenFalse
 	tokenFuncBegin
@@ -664,13 +663,6 @@ func (s *tokenizer) removeLastIfSame(ch rune) {
 }
 
 func (s *tokenizer) getTokenFromBuf(tokenKind tokenType) {
-	getOperatorToken := func() tokenType {
-		if s.operators.isOperator(string(s.buffer)) {
-			return tokenOperator
-		}
-		return tokenSymbol
-	}
-
 	getTokenForNumeral := func() tokenType {
 		for _, r := range string(s.buffer) {
 			if !unicode.IsDigit(r) {
@@ -680,9 +672,6 @@ func (s *tokenizer) getTokenFromBuf(tokenKind tokenType) {
 		return tokenNumber
 	}
 
-	if tokenKind == tokenSymbol {
-		tokenKind = getOperatorToken()
-	}
 	if tokenKind == tokenSymbol {
 		tokenKind = getTokenForNumeral()
 	}
@@ -751,7 +740,6 @@ func tokenAsStr(tt tokenType) string {
 		tokenOpenBracket:      "tokenOpenBracket",
 		tokenClosingBracket:   "tokenClosingBracket",
 		tokenComma:            "tokenComma",
-		tokenOperator:         "tokenOperator",
 		tokenTrue:             "tokenTrue",
 		tokenFalse:            "tokenFalse",
 		tokenExpander:         "tokenExpander",

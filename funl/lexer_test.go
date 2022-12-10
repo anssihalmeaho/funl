@@ -70,7 +70,7 @@ func TestLexBasic(t *testing.T) {
 	text := "not(dum.sub, 'aabbcc text'any_more'what text')"
 	tokens := []token{
 		token{
-			Type:  tokenOperator,
+			Type:  tokenSymbol,
 			Value: "not",
 		},
 		token{
@@ -117,7 +117,7 @@ func TestLexNumbers(t *testing.T) {
 	text := "not(2007, 'dum, 2010 text', value1, value2)"
 	tokens := []token{
 		token{
-			Type:  tokenOperator,
+			Type:  tokenSymbol,
 			Value: "not",
 		},
 		token{
@@ -164,7 +164,7 @@ func TestVariousTokens(t *testing.T) {
 	text := "  gt  ( or(.dum.xyz.sub, or( '  any  (( ) and not, textTEXT ' , 2010, xy_z-201)) , not('xxx aa__-c--  zz ')  "
 	tokens := []token{
 		token{
-			Type:  tokenOperator,
+			Type:  tokenSymbol,
 			Value: "gt",
 		},
 		token{
@@ -172,7 +172,7 @@ func TestVariousTokens(t *testing.T) {
 			Value: "(",
 		},
 		token{
-			Type:  tokenOperator,
+			Type:  tokenSymbol,
 			Value: "or",
 		},
 		token{
@@ -208,7 +208,7 @@ func TestVariousTokens(t *testing.T) {
 			Value: ",",
 		},
 		token{
-			Type:  tokenOperator,
+			Type:  tokenSymbol,
 			Value: "or",
 		},
 		token{
@@ -248,7 +248,7 @@ func TestVariousTokens(t *testing.T) {
 			Value: ",",
 		},
 		token{
-			Type:  tokenOperator,
+			Type:  tokenSymbol,
 			Value: "not",
 		},
 		token{
@@ -271,7 +271,7 @@ func TestLexBool(t *testing.T) {
 	text := " not( len(val1.sub, true),  eq(false, val2.f2) ) "
 	tokens := []token{
 		token{
-			Type:  tokenOperator,
+			Type:  tokenSymbol,
 			Value: "not",
 		},
 		token{
@@ -279,7 +279,7 @@ func TestLexBool(t *testing.T) {
 			Value: "(",
 		},
 		token{
-			Type:  tokenOperator,
+			Type:  tokenSymbol,
 			Value: "len",
 		},
 		token{
@@ -315,7 +315,7 @@ func TestLexBool(t *testing.T) {
 			Value: ",",
 		},
 		token{
-			Type:  tokenOperator,
+			Type:  tokenSymbol,
 			Value: "eq",
 		},
 		token{

@@ -705,13 +705,15 @@ func (p *Parser) ParseExpr() (item *Item) {
 	if !hasAny {
 		p.stopOnError(nil, "Invalid expression, nothing found")
 	}
-
 	if isValue(token) {
 		item = p.ParseValue()
-	} else if token.Type == tokenOperator {
-		item = p.ParseOperCall()
 	} else if token.Type == tokenSymbol {
-		item = p.ParseSymbolPath()
+		nextToken, hasAny := p.tokenIter.lookAhead(1)
+		if hasAny && nextToken.Type == tokenOpenBracket {
+			item = p.ParseOperCall()
+		} else {
+			item = p.ParseSymbolPath()
+		}
 	} else {
 		p.stopOnError(token.Lineno, "Invalid expression (%s)", token.Value)
 	}
