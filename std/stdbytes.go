@@ -36,6 +36,11 @@ func initSTDBytes(interpreter *funl.Interpreter) (err error) {
 			Getter:     getStdBytesSplitBy,
 			IsFunction: true,
 		},
+		{
+			Name:       "as-list",
+			Getter:     getStdBytesAsList,
+			IsFunction: true,
+		},
 	}
 	err = setSTDFunctions(topFrame, stdModuleName, stdBytesFuncs, interpreter)
 
@@ -86,10 +91,32 @@ func (ob *OpaqueByteArray) Equals(with funl.OpaqueAPI) bool {
 	return bytes.Equal(ob.data, other.data)
 }
 
+func getStdBytesAsList(name string) stdFuncType {
+	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
+		if l := len(arguments); l != 1 {
+			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), need one", name, l)
+		}
+		if arguments[0].Kind != funl.OpaqueValue {
+			funl.RunTimeError2(frame, "%s: requires opaque value", name)
+		}
+		byteArray, ok := arguments[0].Data.(*OpaqueByteArray)
+		if !ok {
+			funl.RunTimeError2(frame, "%s: argument is not bytearray value", name)
+		}
+
+		resultList := []funl.Value{}
+		for _, byteVal := range byteArray.data {
+			resultList = append(resultList, funl.Value{Kind: funl.IntValue, Data: int(byteVal)})
+		}
+		retVal = funl.MakeListOfValues(frame, resultList)
+		return
+	}
+}
+
 func getStdBytesSplitBy(name string) stdFuncType {
 	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
 		if l := len(arguments); l != 2 {
-			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), need one", name, l)
+			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), need two", name, l)
 		}
 		if arguments[0].Kind != funl.OpaqueValue {
 			funl.RunTimeError2(frame, "%s: requires opaque value", name)
