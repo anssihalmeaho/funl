@@ -603,7 +603,6 @@ func (val Value) String() string {
 	default:
 		return "UNKNOWN VALUE"
 	}
-	return "..."
 }
 
 func (val Value) GoString() string {

@@ -28,7 +28,6 @@ func (l List) String() string {
 		first = false
 		s += fmt.Sprintf("%#v", *v)
 	}
-	return "..."
 }
 
 func (l List) GoString() string {
