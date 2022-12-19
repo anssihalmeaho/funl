@@ -221,6 +221,35 @@ func find(node *Node, key MKey) (MValue, bool) {
 	}
 }
 
+/*
+This is version of find which is optimized so that
+recursive function calls are replaced with
+"tail call recursion" -handling (just looping instead)
+(Go compiler doesn't implement tail call optimization at the moment).
+
+Anyway, this was not taken into use as measurements of execution times
+showed that no real improvement for performance was achieved...
+
+func find(node *Node, key MKey) (MValue, bool) {
+	nextnode := node
+	for {
+		if nextnode == nil {
+			return nil, false
+		}
+		if key > nextnode.Key {
+			nextnode = nextnode.Right
+		} else if key < nextnode.Key {
+			nextnode = nextnode.Left
+		} else {
+			if nextnode.Key == key {
+				return nextnode.Val, true
+			}
+			return nil, false
+		}
+	}
+}
+*/
+
 func balance(node *Node) *Node {
 	if node.Color == RED {
 		return node
