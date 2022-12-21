@@ -670,6 +670,24 @@ func handleConvOP(frame *Frame, operands []*Item) (retVal Value) {
 		default:
 			runTimeError2(frame, "%s: unsupported source type for converting %s", opName, trgType)
 		}
+	case "inthex":
+		switch srcVal.Kind {
+		case IntValue:
+			retVal = Value{Kind: StringValue, Data: fmt.Sprintf("%x", srcVal.Data)}
+		default:
+			runTimeError2(frame, "%s: unsupported source type for converting %s", opName, trgType)
+		}
+	case "hexint":
+		switch srcVal.Kind {
+		case StringValue:
+			val64, err := strconv.ParseInt(srcVal.Data.(string), 16, 64)
+			if err != nil {
+				runTimeError2(frame, "%s: conversion failed: %v", opName, err)
+			}
+			retVal = Value{Kind: IntValue, Data: int(val64)}
+		default:
+			runTimeError2(frame, "%s: unsupported source type for converting %s", opName, trgType)
+		}
 	}
 	return
 }
