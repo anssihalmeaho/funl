@@ -495,6 +495,8 @@ Operator: conv
     - 'list' : converts string to list containing all string characters as items
     - 'float' : converts int value to float value
     - 'int' : converts float value to int or string value to int
+    - 'hexint' : converts hexadecimal string value to int
+    - 'inthex' : converts int value to hexadecimal string
   Return value is converted value.
 
 Examples:
@@ -505,6 +507,8 @@ Examples:
   conv(10.5 'int') -> 10
   conv('100' 'int') -> 100
   conv('abc' 'int') -> 'Not able to convert to int'
+  conv('f0' 'hexint') -> 240
+  conv(240 'inthex') -> 'f0'
 
 Note. If conversion cannot be done Runtime error is generated, exception
       is failing conversion from string to int:
