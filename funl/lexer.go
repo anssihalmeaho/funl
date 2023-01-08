@@ -34,6 +34,8 @@ const (
 	tokenExpander
 	tokenLineComment
 	tokenMultiLineComment
+	tokenStartDoc
+	tokenEndDoc
 
 	receivingWhitespace lexState = iota
 	receivingAlphabetsAndNumbers
@@ -695,6 +697,10 @@ func (s *tokenizer) getTokenFromBuf(tokenKind tokenType) {
 			tokenKind = tokenAs
 		case "import":
 			tokenKind = tokenImport
+		case "doc":
+			tokenKind = tokenStartDoc
+		case "endoc":
+			tokenKind = tokenEndDoc
 		}
 	}
 	if printingOn {
@@ -745,6 +751,8 @@ func tokenAsStr(tt tokenType) string {
 		tokenExpander:         "tokenExpander",
 		tokenLineComment:      "tokenLineComment",
 		tokenMultiLineComment: "tokenMultiLineComment",
+		tokenStartDoc:         "tokenStartDoc",
+		tokenEndDoc:           "tokenEndDoc",
 	}[tt]
 	if !ok {
 		return fmt.Sprintf("Unknown (%d)", int(tt))

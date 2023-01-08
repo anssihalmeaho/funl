@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"runtime/debug"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 )
@@ -484,9 +485,25 @@ func (imp *ImportInfo) SetPath(path string) {
 	imp.importPath = path
 }
 
+func NewDocStrings(val []string) *DocStrings {
+	return &DocStrings{strList: val}
+}
+
+type DocStrings struct {
+	strList []string
+}
+
+func (ds *DocStrings) AsText() string {
+	if ds.strList == nil {
+		return ""
+	}
+	return strings.Join(ds.strList, "\n")
+}
+
 type NSpace struct {
 	Syms    *Symt
 	OtherNS map[SymID]ImportInfo
+	Docs    *DocStrings
 }
 
 func depthPrint(depth int) (s string) {

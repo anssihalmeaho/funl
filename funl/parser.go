@@ -751,6 +751,8 @@ func (p *Parser) ParseLet() (symbol string, item *Item) {
 // ParseNamespace parses namespace definition
 func (p *Parser) ParseNamespace() (nsName string, ns *NSpace) {
 	p.tokenIter.throwAway()
+	ns = &NSpace{OtherNS: make(map[SymID]ImportInfo), Syms: NewSymt()}
+
 	token, hasAny := p.tokenIter.next()
 	if !hasAny {
 		p.stopOnError(nil, "No name for namespace")
@@ -759,8 +761,30 @@ func (p *Parser) ParseNamespace() (nsName string, ns *NSpace) {
 		p.stopOnError(token.Lineno, "No namespace found")
 	}
 	nsName = token.Value
+
+	// parse doc block if there's one
+	token, hasAny = p.tokenIter.lookAhead()
+	if hasAny && token.Type == tokenStartDoc {
+		p.tokenIter.throwAway()
+		docStrings := []string{}
+		for {
+			token, hasAny = p.tokenIter.next()
+			if !hasAny {
+				p.stopOnError(token.Lineno, "Invalid doc block")
+			}
+			if token.Type == tokenEndDoc {
+				break
+			}
+			if token.Type == tokenString {
+				docStrings = append(docStrings, token.Value)
+			} else {
+				p.stopOnError(token.Lineno, "invalid doc block : %s", token.Value)
+			}
+		}
+		ns.Docs = NewDocStrings(docStrings)
+	}
+
 	DebugPrint("namespace start: %s", nsName)
-	ns = &NSpace{OtherNS: make(map[SymID]ImportInfo), Syms: NewSymt()}
 	for {
 		token, hasAny = p.tokenIter.lookAhead()
 		if !hasAny {

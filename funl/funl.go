@@ -31,6 +31,18 @@ type NSAccess struct {
 type NSTopInfo struct {
 	TopFrame         *Frame
 	SymbolsEvaluated bool
+	Docs             *DocStrings
+}
+
+func (nsa *NSAccess) GetNSDoc(sid SymID) (string, bool) {
+	nsa.RLock()
+	defer nsa.RUnlock()
+
+	nsTop, found := nsa.nsMap[sid]
+	if !found {
+		return "", false
+	}
+	return nsTop.Docs.AsText(), true
 }
 
 func (nsa *NSAccess) Print() (s string) {
@@ -79,6 +91,7 @@ func (nsa *NSAccess) FillFromAstNSpaceAndStore(frame *Frame, sid SymID, nspace *
 	topInfo := &NSTopInfo{
 		TopFrame:         frame,
 		SymbolsEvaluated: true, // is this useless..?
+		Docs:             nspace.Docs,
 	}
 
 	nsa.Lock()

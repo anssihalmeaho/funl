@@ -129,6 +129,18 @@ Usage: help('..topic-name...')
 			return
 		} else if operInfo.isOperator(topicStr) {
 			text = operDocs[topicStr]
+		} else {
+			sid, found := SymIDMap.Get(topicStr)
+			if !found {
+				retVal = Value{Kind: StringValue, Data: text}
+				return
+			}
+			interpreter := frame.GetTopFrame().Interpreter
+			doctext, gotIt := interpreter.NsDir.GetNSDoc(sid)
+			if gotIt {
+				retVal = Value{Kind: StringValue, Data: doctext}
+				return
+			}
 		}
 
 		retVal = Value{Kind: StringValue, Data: text}
