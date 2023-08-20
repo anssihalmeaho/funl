@@ -1120,6 +1120,51 @@ Usage: cond(
          <default/else-expr>
        )
 `,
+		"defer": `
+Operator: defer
+  Returns thunk value which contains given expression (given as argument)
+  and related scope but expression is not evaluated yet.
+  Thunk can be evaluated by applying force -operator for thunk.
+
+  defer(<expression>)
+
+  Requires one argument which can be any expression.
+  Return value is thunk -value containing deferred (lazy)
+  evaluation for given expression.
+
+Example:
+  defer(mul(2 3)) -> thunk
+  force(defer(mul(2 3))) -> 6
+
+Usage: defer(<expression>)
+`,
+		"force": `
+Operator: force
+  Evaluates given expression following way:
+  1) if argument is thunk value and not yet evaluated
+     then it's evaluated (and value is stored to thunk)
+  2) if argument is thunk value and already evaluated
+     then evaluated value is returned
+  3) if argument is not thunk -value expression is evaluated
+     and evaluated value returned
+
+  As thunk -value implements memoization it's evaluated
+  at most one time, other attempts to evaluate it return
+  just previously evaluated value (memoization).
+
+  force(<thunk-value> / <expression>)
+
+  Requires one argument which can be thunk -value or
+  any other expression.
+  Return value is evaluated value.
+
+Example:
+  force(defer(mul(2 3))) -> 6
+  force(mul(2 3)) -> 6
+  force(1) -> 1
+
+Usage: force(<thunk-value> / <expression>)
+`,
 		"help": `
 Operator: help
   Returns documentation about certain language topic
@@ -1209,6 +1254,8 @@ func NewDefaultOperators() Operators {
 		"cond":     OperatorInfo{},
 		"help":     OperatorInfo{},
 		"recwith":  OperatorInfo{},
+		"defer":    OperatorInfo{},
+		"force":    OperatorInfo{},
 	}
 }
 

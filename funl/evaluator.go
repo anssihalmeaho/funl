@@ -74,6 +74,8 @@ func init() {
 	operTbl[CondOP] = handleCondOP
 	operTbl[HelpOP] = handleHelpOP
 	operTbl[RecwithOP] = handleRecwithOP
+	operTbl[DeferOP] = handleDeferOP
+	operTbl[ForceOP] = handleForceOP
 }
 
 func RunTimeError(format string, args ...interface{}) {

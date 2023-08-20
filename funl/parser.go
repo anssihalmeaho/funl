@@ -585,6 +585,10 @@ func operNameToID(opName string) (op OperType, ok bool) {
 		op = HelpOP
 	case "recwith":
 		op = RecwithOP
+	case "defer":
+		op = DeferOP
+	case "force":
+		op = ForceOP
 	default:
 		return
 	}

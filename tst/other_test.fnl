@@ -7,37 +7,56 @@ ASSURE = ut_fwk.VERIFY
 
 import common_test_util
 
+test-thunk = func()
+	make-thunk = func(a b)
+		defer(mul(a b))
+	end
+
+	x = 2
+	result = list(
+		eq( force(defer(plus(1 2))) 3 )
+		eq( force(defer(plus(1 x))) 3 )
+		eq( force(force(defer(plus(1 x)))) 3 )
+		eq( force(force(defer(defer(plus(1 2))))) 3 )
+		eq( force(plus(1 2)) 3 )
+		eq( force(1) 1 )
+		eq( force(call(make-thunk 2 3)) 6 )
+	)
+	allRight = call(common_test_util.isAllTrueInList result)
+	call(ASSURE allRight plus('Unexpected result = ' str(result)))
+end
+
 testTypeOper = func()
 	result = list(
-		eq(type('some text'), 'string'),
-		eq(type(123), 'int'),
-		eq(type(true), 'bool'),
-		eq(type(func() 1 end), 'function'),
-		eq(type(proc() 1 end), 'function'), # should it be something else..?
-		eq(type(chan()), 'channel'),
-		eq(type(list(1, 2, 3)), 'list'),
-		true
+		eq(type('some text') 'string')
+		eq(type(123) 'int')
+		eq(type(true) 'bool')
+		eq(type(func() 1 end) 'function')
+		eq(type(proc() 1 end) 'function') # should it be something else..?
+		eq(type(chan()) 'channel')
+		eq(type(list(1 2 3)) 'list')
+		eq(type(defer(1)) 'thunk')
 	)
-	allRight = call(common_test_util.isAllTrueInList, result)
-	call(ASSURE, allRight, plus('Unexpected result = ', str(result)))
+	allRight = call(common_test_util.isAllTrueInList result)
+	call(ASSURE allRight plus('Unexpected result = ' str(result)))
 end
 
 testStrOper = func()
 	import stdstr
 	result = list(
-		eq(str(123), '123'),
-		eq(str(true), 'true'),
-		eq(str(not(true)), 'false'),
-		eq(str('abc def'), 'abc def'),
-		eq(str(list(1, 2, 3)), 'list(1, 2, 3)'),
-		call(stdstr.startswith str(func() 1 end), 'func-value'), # maybe should be something else...
-		eq(str(chan()), 'chan-value'), # maybe should be something else...
-		eq(str( div(float(5), float(10))), '0.5'),
-		eq(str(float(50)), '50.0'),
-		true
+		eq(str(123) '123')
+		eq(str(true) 'true')
+		eq(str(not(true)) 'false')
+		eq(str('abc def') 'abc def')
+		eq(str(list(1 2 3)) 'list(1, 2, 3)')
+		call(stdstr.startswith str(func() 1 end) 'func-value') # maybe should be something else...
+		eq(str(chan()) 'chan-value') # maybe should be something else...
+		eq(str( div(float(5) float(10))) '0.5')
+		eq(str(float(50)), '50.0')
+		eq(str(defer(1)) 'thunk')
 	)
-	allRight = call(common_test_util.isAllTrueInList, result)
-	call(ASSURE, allRight, plus('Unexpected result = ', str(result)))
+	allRight = call(common_test_util.isAllTrueInList result)
+	call(ASSURE allRight plus('Unexpected result = ' str(result)))
 end
 
 testTypeConversion = func()
@@ -62,7 +81,6 @@ testTypeConversion = func()
 		eq(conv('123', 'string'), '123'),
 		eq(conv(123, 'int'), 123),
 		eq(conv(list(1,2,3), 'list'), list(1, 2, 3)),
-		true
 	)
 	allRight = call(common_test_util.isAllTrueInList, result)
 	call(ASSURE, allRight, plus('Unexpected result = ', str(result)))
@@ -80,7 +98,6 @@ testErrorOper = proc()
 		eq(try(error()), 'RTE:'),
 		eq(try(error('some explanation', '...and more')), 'RTE:some explanation...and more'),
 		eq(try(error('some explanation:', 123)), 'RTE:some explanation:123'),
-		true
 	)
 	allRight = call(common_test_util.isAllTrueInList, result)
 	call(ASSURE, allRight, plus('Unexpected result = ', str(result)))
@@ -95,7 +112,6 @@ testSymvalOper = proc()
 		eq(symval('some_symbol'), 123),
 		not(eq(symval('some_other_symbol'), 123)),
 		eq(symval(name(some_symbol)), 123),
-		true
 	)
 	allRight = call(common_test_util.isAllTrueInList, result)
 	call(ASSURE, allRight, plus('Unexpected result = ', str(result)))	

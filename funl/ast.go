@@ -28,6 +28,7 @@ const (
 	FloatValue
 	OpaqueValue
 	MapValue
+	ThunkValue
 
 	ValueItem ItemType = iota
 	SymbolPathItem
@@ -98,6 +99,8 @@ const (
 	CondOP
 	HelpOP
 	RecwithOP
+	DeferOP
+	ForceOP
 	MaximumOP
 )
 
@@ -213,6 +216,8 @@ func operTypeFromIntToString(ot OperType) string {
 		CondOP:     "cond",
 		HelpOP:     "help",
 		RecwithOP:  "recwith",
+		DeferOP:    "defer",
+		ForceOP:    "force",
 		MaximumOP:  "MAX",
 	}[ot]
 	if !ok {
@@ -538,6 +543,8 @@ func (item *Item) Print(depth int) (s string) {
 		case FloatValue:
 			floatv := vi.Data.(float64)
 			s = fmt.Sprintf("%v", floatv)
+		case ThunkValue:
+			return "thunk"
 		default:
 			s = "UNKNOWN VALUE"
 		}
@@ -600,6 +607,8 @@ func (val Value) String() string {
 		return "chan-value"
 	case ExtProcValue:
 		return "ext-proc"
+	case ThunkValue:
+		return "thunk"
 	default:
 		return "UNKNOWN VALUE"
 	}
@@ -627,6 +636,13 @@ type Function struct {
 	Lineno      int
 	Pos         int
 	SrcFileName string
+}
+
+type Thunk struct {
+	EvaluatedValue *Value
+	Expr           *Item
+	AccessLink     *Frame
+	sync.Mutex
 }
 
 func (f *Function) Show() {

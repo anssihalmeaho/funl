@@ -16,6 +16,55 @@ func HandleSprintfOP(frame *Frame, operands []*Item) (retVal Value) {
 	return handleSprintfOP(frame, operands)
 }
 
+func handleDeferOP(frame *Frame, operands []*Item) (retVal Value) {
+	opName := "defer"
+	if l := len(operands); l != 1 {
+		runTimeError2(frame, "%s: wrong amount of arguments (%d), need one", opName, l)
+	}
+	retVal = Value{
+		Kind: ThunkValue,
+		Data: &Thunk{Expr: operands[0], AccessLink: frame},
+	}
+	return
+}
+
+func handleForceOP(frame *Frame, operands []*Item) (retVal Value) {
+	opName := "force"
+	if l := len(operands); l != 1 {
+		runTimeError2(frame, "%s: wrong amount of arguments (%d), need one", opName, l)
+	}
+	v := operands[0]
+	var val Value
+	switch v.Type {
+	case ValueItem:
+		val = v.Data.(Value)
+	case SymbolPathItem, OperCallItem:
+		val = EvalItem(v, frame)
+	default:
+		runTimeError2(frame, "something wrong (%s)", opName)
+	}
+
+	if val.Kind == ThunkValue {
+		thunk := val.Data.(*Thunk)
+
+		thunk.Lock()
+		if thunk.EvaluatedValue == nil {
+			evalValue := EvalItem(thunk.Expr, thunk.AccessLink)
+			thunk.EvaluatedValue = &evalValue
+			thunk.Unlock()
+
+			retVal = evalValue
+		} else {
+			retVal = *thunk.EvaluatedValue
+			thunk.Unlock()
+		}
+
+	} else {
+		retVal = val
+	}
+	return
+}
+
 func handleSprintfOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "sprintf"
 	if l := len(operands); l == 0 {
@@ -1342,6 +1391,8 @@ func handleTypeOP(frame *Frame, operands []*Item) (retVal Value) {
 		typeName = "map"
 	case ExtProcValue:
 		typeName = "ext-proc"
+	case ThunkValue:
+		typeName = "thunk"
 	default:
 		runTimeError2(frame, "%s: unknown type (%d)", opName, val.Kind)
 	}
