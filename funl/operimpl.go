@@ -47,6 +47,10 @@ func handleForceOP(frame *Frame, operands []*Item) (retVal Value) {
 	if val.Kind == ThunkValue {
 		thunk := val.Data.(*Thunk)
 
+		if thunk.AccessLink.inProcCall && !frame.inProcCall {
+			runTimeError2(frame, "thunk evaluation in function cannot call procedure")
+		}
+
 		thunk.Lock()
 		if thunk.EvaluatedValue == nil {
 			evalValue := EvalItem(thunk.Expr, thunk.AccessLink)

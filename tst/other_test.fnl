@@ -7,6 +7,65 @@ ASSURE = ut_fwk.VERIFY
 
 import common_test_util
 
+top-thunk = defer(call(proc() 'top level' end))
+
+test-thunk-error = proc()
+	case-1 = proc()
+		get-thunk = proc()
+			defer(call(proc() 'ok' end))
+		end
+
+		pure-f = func(tunkki)
+			force(tunkki)
+		end
+
+		tryl(call(pure-f call(get-thunk)))
+	end
+
+	case-2 = proc()
+		pure-f = func(tunkki)
+			force(tunkki)
+		end
+
+		tryl(call(pure-f top-thunk))
+	end
+
+	case-3 = proc()
+		get-thunk = proc()
+			import stdio
+			defer(call(stdio.printfline '%s %s %s' 'in' 'ext' 'proc'))
+		end
+
+		pure-f = func(tunkki)
+			force(tunkki)
+		end
+
+		tryl(call(pure-f call(get-thunk)))
+	end
+
+	case-4 = proc()
+		get-thunk = proc()
+			import stdstr
+			defer(call(stdstr.uppercase 'to upper'))
+		end
+
+		pure-f = func(tunkki)
+			force(tunkki)
+		end
+
+		tryl(call(pure-f call(get-thunk)))
+	end
+
+	result = list(
+		not(head(call(case-1)))
+		not(head(call(case-2)))
+		not(head(call(case-3)))
+		not(head(call(case-4)))
+	)
+	allRight = call(common_test_util.isAllTrueInList result)
+	call(ASSURE allRight plus('Unexpected result = ' str(result)))
+end
+
 test-thunk = func()
 	make-thunk = func(a b)
 		defer(mul(a b))
