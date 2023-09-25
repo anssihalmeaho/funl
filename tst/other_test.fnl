@@ -7,6 +7,10 @@ ASSURE = ut_fwk.VERIFY
 
 import common_test_util
 
+# note. here's expression without let definition
+#       this is just to test that interpreter accepts it
+plus(1 2 3)
+
 test-several-expressions-in-func = proc()
 	result = list(
 		eq( call(proc() plus(1 2) plus(3 4) plus(5 6) end) 11)

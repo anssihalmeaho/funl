@@ -858,7 +858,17 @@ func (p *Parser) ParseNamespace() (nsName string, ns *NSpace) {
 				}
 				p.tokenIter.throwAway()
 			} else {
-				p.stopOnError(token.Lineno, "Unexpected token : %s", token.Value)
+				expression := p.ParseExpr()
+				if expression.Type == OperCallItem {
+					wasteName := getWastedName()
+					SymIDMap.Add(wasteName)
+					if err := ns.Syms.Add(wasteName, expression); err != nil {
+						p.stopOnError(token.Lineno, "Failed to add _ symbol (%s)", wasteName)
+					}
+				} else {
+					p.stopOnError(token.Lineno, "Unexpected token : %s", token.Value)
+				}
+
 			}
 		default:
 			p.stopOnError(token.Lineno, "invalid let definition : %s", token.Value)
