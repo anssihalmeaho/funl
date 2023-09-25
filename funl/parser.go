@@ -369,8 +369,23 @@ BlockLoop:
 				}
 				p.tokenIter.throwAway()
 			} else {
-				funcData.Body = p.ParseExpr()
-				setBodyFound(token.Lineno)
+				expression := p.ParseExpr()
+				if expression.Type == OperCallItem {
+					lookupToken, hasNextToken := p.tokenIter.lookAhead()
+					if hasNextToken && lookupToken.Type == tokenFuncEnd {
+						funcData.Body = expression
+						setBodyFound(token.Lineno)
+					} else {
+						wasteName := getWastedName()
+						SymIDMap.Add(wasteName)
+						if err := funcData.NSpace.Syms.Add(wasteName, expression); err != nil {
+							p.stopOnError(nil, "Failed to add _ symbol (%s)", wasteName)
+						}
+					}
+				} else {
+					funcData.Body = expression
+					setBodyFound(token.Lineno)
+				}
 			}
 		case tokenStartNS:
 			p.stopOnError(token.Lineno, "Namespace definition not allowed in function")
