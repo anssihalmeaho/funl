@@ -7,6 +7,24 @@ ASSURE = ut_fwk.VERIFY
 
 import common_test_util
 
+# note. here's expression without let definition
+#       this is just to test that interpreter accepts it
+plus(1 2 3)
+
+test-several-expressions-in-func = proc()
+	result = list(
+		eq( call(proc() plus(1 2) plus(3 4) plus(5 6) end) 11)
+
+		eq( call(proc() _ = plus(1 2) _ = plus(3 4) plus(5 6) end) 11)
+		eq( call(proc() _ = plus(1 2) _ _ = list(3 4): plus(5 6) end) 11)
+
+		not(head(tryl(eval('call(proc() 10 20 30 end)'))))
+		not(head(tryl(eval('call(proc() x=1 y=2 y x end)'))))
+	)
+	allRight = call(common_test_util.isAllTrueInList result)
+	call(ASSURE allRight plus('Unexpected result = ' str(result)))
+end
+
 top-thunk = defer(call(proc() 'top level' end))
 
 test-thunk-error = proc()
