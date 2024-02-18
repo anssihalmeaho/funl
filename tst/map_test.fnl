@@ -7,6 +7,60 @@ ASSURE = ut_fwk.VERIFY
 
 import common_test_util
 
+test-write-if-not-found = proc()
+	import stdfu
+
+	results = list(
+		call(stdfu.write-if-not-found map(1 'a' 2 'b' 3 'c') map())
+		call(stdfu.write-if-not-found map(1 'a' 2 'b' 3 'c') map(2 'x' 4 'y' 10 'no'))
+		call(stdfu.write-if-not-found map(1 'a' 2 'b' 3 'c' 4 'd') map(2 'x' 4 'y' 10 'no'))
+		call(stdfu.write-if-not-found map() map(2 'x' 4 'y' 10 'no'))
+	)
+	expected-result = list(
+		map(1 'a' 2 'b' 3 'c')
+		map(1 'a' 2 'b' 3 'c' 4 'y' 10 'no')
+		map(1 'a' 2 'b' 3 'c' 4 'd' 10 'no')
+		map(2 'x' 4 'y' 10 'no')
+	)
+	call(ASSURE eq(results expected-result) plus('unexpected result' str(results)))
+end
+
+test-write-all = proc()
+	import stdfu
+
+	results = list(
+		call(stdfu.write-all map(1 'a' 2 'b' 3 'c') map())
+		call(stdfu.write-all map(1 'a' 2 'b' 3 'c') map(2 'x' 4 'y' 10 'no'))
+		call(stdfu.write-all map(1 'a' 2 'b' 3 'c' 4 'd') map(2 'x' 4 'y' 10 'no'))
+		call(stdfu.write-all map() map(2 'x' 4 'y' 10 'no'))
+	)
+	expected-result = list(
+		map(1 'a' 2 'b' 3 'c')
+		map(1 'a' 2 'x' 3 'c' 4 'y' 10 'no')
+		map(1 'a' 2 'x' 3 'c' 4 'y' 10 'no')
+		map(2 'x' 4 'y' 10 'no')
+	)
+	call(ASSURE eq(results expected-result) plus('unexpected result' str(results)))
+end
+
+test-write-if-found = proc()
+	import stdfu
+
+	results = list(
+		call(stdfu.write-if-found map(1 'a' 2 'b' 3 'c') map())
+		call(stdfu.write-if-found map(1 'a' 2 'b' 3 'c') map(2 'x' 4 'y' 10 'no'))
+		call(stdfu.write-if-found map(1 'a' 2 'b' 3 'c' 4 'd') map(2 'x' 4 'y' 10 'no'))
+		call(stdfu.write-if-found map() map(2 'x' 4 'y' 10 'no'))
+	)
+	expected-result = list(
+		map(1 'a' 2 'b' 3 'c')
+		map(1 'a' 2 'x' 3 'c')
+		map(1 'a' 2 'x' 3 'c' 4 'y')
+		map()
+	)
+	call(ASSURE eq(results expected-result) plus('unexpected result' str(results)))
+end
+
 test-select-keys = proc()
 	import stdfu
 

@@ -377,4 +377,61 @@ pairs-to-map = func(kv-list)
 	call(loop pair-to-map kv-list map())
 end
 
+# overwrites key-value if found, ignored if not found
+write-if-found = func(src delta)
+	add-to = func(result kvs)
+		if(empty(kvs)
+			result
+			call(func()
+				key val = head(kvs):
+				next = if(in(result key)
+					put(del(result key) key val)
+					result
+				)
+				call(add-to next rest(kvs))
+			end)
+		)
+	end
+
+	call(add-to src keyvals(delta))
+end
+
+# writes key-values regardless is it found or not
+write-all = func(src delta)
+	add-to = func(result kvs)
+		if(empty(kvs)
+			result
+			call(func()
+				key val = head(kvs):
+				next = if(in(result key)
+					put(del(result key) key val)
+					put(result key val)
+				)
+				call(add-to next rest(kvs))
+			end)
+		)
+	end
+
+	call(add-to src keyvals(delta))
+end
+
+# write key-values which are not yet found
+write-if-not-found = func(src delta)
+	add-to = func(result kvs)
+		if(empty(kvs)
+			result
+			call(func()
+				key val = head(kvs):
+				next = if(in(result key)
+					result
+					put(result key val)
+				)
+				call(add-to next rest(kvs))
+			end)
+		)
+	end
+
+	call(add-to src keyvals(delta))
+end
+
 endns
