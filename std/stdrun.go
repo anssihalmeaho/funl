@@ -13,9 +13,42 @@ func initSTDRun(interpreter *funl.Interpreter) (err error) {
 			Getter: getAddToModCache,
 			//IsFunction: true,
 		},
+		{
+			Name:       "backtrace",
+			Getter:     getBacktrace,
+			IsFunction: true,
+		},
 	}
 	err = setSTDFunctions(topFrame, stdModuleName, stdAstFuncs, interpreter)
 	return
+}
+
+func getBacktrace(name string) stdFuncType {
+	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
+		stack := []funl.Value{}
+
+		// if debug printing disabled in pure functions return just empty list
+		if funl.PrintingDisabledInFunctions {
+			retVal = funl.MakeListOfValues(frame, stack)
+			return
+		}
+
+		prevFrame := frame
+		for {
+			if prevFrame == nil {
+				break
+			}
+			mapv := funl.HandleMapOP(frame, []*funl.Item{})
+			mapv = putToMap(frame, mapv, "line", funl.Value{Kind: funl.IntValue, Data: prevFrame.FuncProto.Lineno})
+			mapv = putToMap(frame, mapv, "file", funl.Value{Kind: funl.StringValue, Data: prevFrame.FuncProto.SrcFileName})
+			mapv = putToMap(frame, mapv, "args", funl.MakeListOfValues(frame, prevFrame.EvaluatedArgs))
+
+			stack = append(stack, mapv)
+			prevFrame = prevFrame.Previous
+		}
+		retVal = funl.MakeListOfValues(frame, stack)
+		return
+	}
 }
 
 func getAddToModCache(name string) stdFuncType {

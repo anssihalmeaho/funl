@@ -138,6 +138,7 @@ type Frame struct {
 	inProcCall    bool
 	EvaluatedArgs []Value
 	Interpreter   *Interpreter
+	Previous      *Frame
 }
 
 type fdebugInfo struct {
@@ -255,6 +256,7 @@ func handleWhileOP(frame *Frame, operands []*Item) (retVal Value) {
 	nFrame.inProcCall = frame.inProcCall
 	nFrame.Imported = frame.Imported
 	// nFrame.Interpreter = frame.Interpreter , only in top frame
+	nFrame.Previous = frame.Previous
 
 	nextFrame := &nFrame
 	for {
@@ -342,6 +344,7 @@ func handleCallOP(frame *Frame, operands []*Item) (retVal Value) {
 		OtherNS:  nil, // TODO: needs to be something more...
 		Imported: make(map[SymID]*Frame),
 		// Interpreter: frame.Interpreter, only in top frame
+		Previous: frame,
 	}
 	isExtProcCall := false
 	// lets take function from first argument
