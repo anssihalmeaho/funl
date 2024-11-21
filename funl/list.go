@@ -95,7 +95,6 @@ func handleExtendOP(frame *Frame, operands []*Item) (retVal Value) {
 		}
 		argvals = append(argvals, argval)
 	}
-	argsLen := len(argvals)
 
 	var prevnew *ListObject
 	var nextnew *ListObject
@@ -118,11 +117,6 @@ func handleExtendOP(frame *Frame, operands []*Item) (retVal Value) {
 				prevnew.Next = nextnew
 			}
 		}
-	}
-	switch argsLen {
-	case 0:
-	case 1:
-		newHead = argvals[0].Data.(*List).Head
 	}
 	retVal = Value{Kind: ListValue, Data: &List{Head: newHead, Tail: nil}}
 	return
