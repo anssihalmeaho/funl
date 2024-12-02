@@ -154,6 +154,7 @@ func evalAndAssignValuesForSymbolsInFrameForNS(frame *Frame, ns *NSpace) {
 					Syms:     NewSymt(),
 					OtherNS:  make(map[SymID]ImportInfo),
 					Imported: make(map[SymID]*Frame),
+					Previous: frame,
 				}
 				fillSymsForFunc(subframe.Syms, vi.Data.(*Function))
 			}
