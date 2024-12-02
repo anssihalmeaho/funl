@@ -39,9 +39,15 @@ func getBacktrace(name string) stdFuncType {
 				break
 			}
 			mapv := funl.HandleMapOP(frame, []*funl.Item{})
-			mapv = putToMap(frame, mapv, "line", funl.Value{Kind: funl.IntValue, Data: prevFrame.FuncProto.Lineno})
-			mapv = putToMap(frame, mapv, "file", funl.Value{Kind: funl.StringValue, Data: prevFrame.FuncProto.SrcFileName})
-			mapv = putToMap(frame, mapv, "args", funl.MakeListOfValues(frame, prevFrame.EvaluatedArgs))
+			if prevFrame.FuncProto == nil {
+				mapv = putToMap(frame, mapv, "line", funl.Value{Kind: funl.IntValue, Data: 0})
+				mapv = putToMap(frame, mapv, "file", funl.Value{Kind: funl.StringValue, Data: "-"})
+				mapv = putToMap(frame, mapv, "args", funl.MakeListOfValues(frame, []funl.Value{}))
+			} else {
+				mapv = putToMap(frame, mapv, "line", funl.Value{Kind: funl.IntValue, Data: prevFrame.FuncProto.Lineno})
+				mapv = putToMap(frame, mapv, "file", funl.Value{Kind: funl.StringValue, Data: prevFrame.FuncProto.SrcFileName})
+				mapv = putToMap(frame, mapv, "args", funl.MakeListOfValues(frame, prevFrame.EvaluatedArgs))
+			}
 
 			stack = append(stack, mapv)
 			prevFrame = prevFrame.Previous
