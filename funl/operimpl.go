@@ -682,6 +682,12 @@ func handleConvOP(frame *Frame, operands []*Item) (retVal Value) {
 			retVal = srcVal
 		case IntValue:
 			retVal = Value{Kind: FloatValue, Data: float64(srcVal.Data.(int))}
+		case StringValue:
+			floatVal, err := strconv.ParseFloat(srcVal.Data.(string), 64)
+			if err != nil {
+				runTimeError2(frame, "%s: cannot convert to float (%v)", opName, err)
+			}
+			retVal = Value{Kind: FloatValue, Data: floatVal}
 		default:
 			runTimeError2(frame, "%s: unsupported source type for converting %s", opName, trgType)
 		}

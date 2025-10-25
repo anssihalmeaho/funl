@@ -493,7 +493,7 @@ Operator: conv
   having one of follwong values:
     - 'string' : converts 1st argument to string
     - 'list' : converts string to list containing all string characters as items
-    - 'float' : converts int value to float value
+    - 'float' : converts int value or string value to float value
     - 'int' : converts float value to int or string value to int
     - 'hexint' : converts hexadecimal string value to int
     - 'inthex' : converts int value to hexadecimal string
@@ -504,6 +504,7 @@ Examples:
   conv(list(1 2 3) 'string') -> 'list(1, 2, 3)'
   conv('abcd' 'list') -> list('a', 'b', 'c', 'd')
   conv(100 'float') -> 100 (float)
+  conv('10.25' 'float') -> 10.25 (float)
   conv(10.5 'int') -> 10
   conv('100' 'int') -> 100
   conv('abc' 'int') -> 'Not able to convert to int'

@@ -137,27 +137,30 @@ testStrOper = func()
 end
 
 testTypeConversion = func()
-	floatVal1 = div(float(5), float(10))
-	floatVal2 = div(float(55), float(10))
+	floatVal1 = div(float(5) float(10))
+	floatVal2 = div(float(55) float(10))
 
 	result = list(
-		eq(conv(floatVal1, 'float'), floatVal1),
-		eq(conv(123, 'float'), float(123)),
+		eq(conv(floatVal1 'float') floatVal1)
+		eq(conv(123 'float') float(123))
 
-		eq(conv(floatVal1, 'string'), '0.5'),
-		eq(conv(floatVal2, 'string'), '5.5'),
-		eq(conv(float(123), 'int'), 123),
-		eq(conv(floatVal1, 'int'), 0),
-		eq(conv(floatVal2, 'int'), 5),
+		eq(conv(floatVal1 'string') '0.5')
+		eq(conv(floatVal2 'string') '5.5')
+		eq(conv(float(123) 'int') 123)
+		eq(conv(floatVal1 'int') 0)
+		eq(conv(floatVal2 'int') 5)
 
-		eq(conv('123', 'int'), 123),
-		eq(conv(list(1,2,3), 'string'), 'list(1, 2, 3)'),
-		eq(conv(123, 'string'), '123'),
-		eq(conv(123, 'int'), 123),
-		eq(conv(false, 'bool'), false),
-		eq(conv('123', 'string'), '123'),
-		eq(conv(123, 'int'), 123),
-		eq(conv(list(1,2,3), 'list'), list(1, 2, 3)),
+		eq(conv('123' 'int') 123)
+		eq(conv(list(1 2 3) 'string') 'list(1, 2, 3)')
+		eq(conv(123 'string') '123')
+		eq(conv(123 'int') 123)
+		eq(conv(false 'bool') false)
+		eq(conv('123' 'string') '123')
+		eq(conv(123 'int') 123)
+		eq(conv(list(1 2 3) 'list') list(1 2 3))
+
+		eq(conv('10.25' 'float') 10.25)
+		eq(conv('10' 'float') 10.0)
 	)
 	allRight = call(common_test_util.isAllTrueInList, result)
 	call(ASSURE, allRight, plus('Unexpected result = ', str(result)))
