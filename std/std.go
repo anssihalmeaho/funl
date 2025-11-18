@@ -61,7 +61,7 @@ func SetSTDFunctions(topFrame *funl.Frame, stdModuleName string, stdFuncs []StdF
 	return
 }
 
-//InitSTD is used for initializing standard library
+// InitSTD is used for initializing standard library
 func InitSTD(interpreter *funl.Interpreter) (err error) {
 	inits := []func(*funl.Interpreter) error{
 		initSTDIO,
@@ -80,6 +80,7 @@ func InitSTD(interpreter *funl.Interpreter) (err error) {
 		initSTDVar,
 		initSTDRun,
 		initSTDLex,
+		initSTDCsv,
 	}
 	for _, initf := range inits {
 		err = initf(interpreter)

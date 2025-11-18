@@ -404,6 +404,7 @@ func initFunSourceSTD(interpreter *Interpreter) (err error) {
 		"stdpp",
 		"stdpr",
 		"stdsort",
+		"stdcsv2",
 	}
 	for _, funmodName := range funmodNames {
 		err = AddFunModToNamespace(funmodName, []byte(stdfunMap[funmodName]), interpreter)
