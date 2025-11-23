@@ -4,15 +4,32 @@ ns stdfilu
 import stdfiles
 import stdfu
 
-get-files-by-ext = proc(path, extension)
+slurp = proc(filename)
+	ok err content = call(read-file filename):
+	if(ok content error(err))
+end
+
+read-file = proc(filename)
+	file = call(stdfiles.open filename stdfiles.r)
+	if(eq(type(file) 'string')
+		list(false file '')
+		call(proc()
+			content = call(stdfiles.read-all file)
+			call(stdfiles.close file)
+			list(true '' content)
+		end)
+	)
+end
+
+get-files-by-ext = proc(path extension)
 	matcher = func(filename)
-		in(filename, plus('.', extension))
+		in(filename plus('.' extension))
 	end
 
-	result = call(stdfiles.read-dir, path)
-	if( eq(type(result), 'string'),
-		result,
-		call(stdfu.filter, keys(result), matcher)
+	result = call(stdfiles.read-dir path)
+	if( eq(type(result) 'string')
+		result
+		call(stdfu.filter keys(result) matcher)
 	)
 end 
 
