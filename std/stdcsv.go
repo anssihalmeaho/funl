@@ -28,14 +28,49 @@ func initSTDCsv(interpreter *funl.Interpreter) (err error) {
 
 func getCSVWriteAll(name string) stdFuncType {
 	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
-		if l := len(arguments); l != 1 {
-			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), needs one", name, l)
+		l := len(arguments)
+		if l != 1 && l != 2 {
+			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d)", name, l)
 		}
 		if arguments[0].Kind != funl.ListValue {
 			funl.RunTimeError2(frame, "%s: requires list value", name)
 		}
+		if l == 2 && arguments[1].Kind != funl.MapValue {
+			funl.RunTimeError2(frame, "%s: requires map value", name)
+		}
 		buf := bytes.NewBuffer([]byte{})
 		w := csv.NewWriter(buf)
+
+		// read options map
+		optionsMap := funl.HandleMapOP(frame, []*funl.Item{})
+		if l == 2 {
+			optionsMap = arguments[1]
+		}
+		keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{{Type: funl.ValueItem, Data: optionsMap}})
+		kvListIter := funl.NewListIterator(keyvals)
+		for {
+			nextKV := kvListIter.Next()
+			if nextKV == nil {
+				break
+			}
+			kvIter := funl.NewListIterator(*nextKV)
+			keyv := *(kvIter.Next())
+			valv := *(kvIter.Next())
+			if keyv.Kind != funl.StringValue {
+				continue // just skip...
+			}
+			switch keyv.Data.(string) {
+			case "comma":
+				if valv.Kind == funl.StringValue {
+					w.Comma = []rune(valv.Data.(string))[0]
+				}
+			case "useCRLF":
+				if valv.Kind == funl.BoolValue {
+					w.UseCRLF = valv.Data.(bool)
+				}
+			}
+		}
+
 		listIter := funl.NewListIterator(arguments[0])
 		for {
 			nextItem := listIter.Next()
@@ -92,17 +127,61 @@ func getCSVWriteAll(name string) stdFuncType {
 
 func getCSVReadAll(name string) stdFuncType {
 	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
-		if l := len(arguments); l != 1 {
-			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), needs one", name, l)
+		l := len(arguments)
+		if l != 1 && l != 2 {
+			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d)", name, l)
 		}
 		if arguments[0].Kind != funl.OpaqueValue {
 			funl.RunTimeError2(frame, "%s: requires opaque value", name)
 		}
+		if l == 2 && arguments[1].Kind != funl.MapValue {
+			funl.RunTimeError2(frame, "%s: requires map value", name)
+		}
+
 		byteArray, ok := arguments[0].Data.(*OpaqueByteArray)
 		if !ok {
 			funl.RunTimeError2(frame, "%s: argument is not bytearray value", name)
 		}
 		reader := csv.NewReader(bytes.NewReader(byteArray.data))
+
+		// read options map
+		optionsMap := funl.HandleMapOP(frame, []*funl.Item{})
+		if l == 2 {
+			optionsMap = arguments[1]
+		}
+		keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{{Type: funl.ValueItem, Data: optionsMap}})
+		kvListIter := funl.NewListIterator(keyvals)
+		for {
+			nextKV := kvListIter.Next()
+			if nextKV == nil {
+				break
+			}
+			kvIter := funl.NewListIterator(*nextKV)
+			keyv := *(kvIter.Next())
+			valv := *(kvIter.Next())
+			if keyv.Kind != funl.StringValue {
+				continue // just skip...
+			}
+			switch keyv.Data.(string) {
+			case "comma":
+				if valv.Kind == funl.StringValue {
+					reader.Comma = []rune(valv.Data.(string))[0]
+				}
+			case "comment":
+				if valv.Kind == funl.StringValue {
+					reader.Comment = []rune(valv.Data.(string))[0]
+				}
+			case "lazyquotes":
+				if valv.Kind == funl.BoolValue {
+					reader.LazyQuotes = valv.Data.(bool)
+				}
+			case "trim-leading-space":
+				if valv.Kind == funl.BoolValue {
+					reader.TrimLeadingSpace = valv.Data.(bool)
+				}
+			}
+		}
+
 		records, err := reader.ReadAll()
 		if err != nil {
 			return funl.MakeListOfValues(frame, []funl.Value{
