@@ -18,7 +18,10 @@ end
 csv-to-maps = func(bytes)
 	import stdcsv
 
-	ok err lines = call(stdcsv.read-all bytes):
+	ok err lines = if( eq(len(argslist()) 2)
+		call(stdcsv.read-all bytes last(argslist()))
+		call(stdcsv.read-all bytes)
+	):
 	if(ok
 		list(true '' call(lines-to-maps lines))
 		list(false err map())
@@ -47,7 +50,10 @@ maps-to-csv = func(header maps)
 	import stdcsv
 
 	lines = call(maps-to-lines header maps)
-	call(stdcsv.write-all lines)
+	if( eq(len(argslist()) 3)
+		call(stdcsv.write-all lines last(argslist()))
+		call(stdcsv.write-all lines)
+	)
 end
 
 endns
