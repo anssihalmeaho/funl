@@ -135,7 +135,7 @@ func decodeJSON(name string, frame *funl.Frame, indata []byte) (ok bool, errText
 		}
 	}()
 
-	var res interface{}
+	var res any
 	d := json.NewDecoder(bytes.NewBuffer(indata))
 	d.UseNumber()
 	if err := d.Decode(&res); err != nil {
@@ -188,7 +188,7 @@ func traverseValuesEncode(frame *funl.Frame, inValue funl.Value, prevsl []byte) 
 		var floatAsBytes []byte
 		if math.Trunc(floatVal) == floatVal {
 			// its whole number
-			floatAsBytes = []byte(fmt.Sprintf("%.1f", floatVal))
+			floatAsBytes = fmt.Appendf(nil, "%.1f", floatVal)
 		} else {
 			floatAsBytes = []byte(strconv.FormatFloat(floatVal, 'f', -1, 64))
 		}
@@ -247,7 +247,7 @@ func traverseValuesEncode(frame *funl.Frame, inValue funl.Value, prevsl []byte) 
 	panic(fmt.Errorf("Unexpected type: %v", inValue))
 }
 
-func traverseValues(frame *funl.Frame, intf interface{}) funl.Value {
+func traverseValues(frame *funl.Frame, intf any) funl.Value {
 	val := reflect.ValueOf(intf)
 	if intf == nil {
 		return funl.Value{Kind: funl.OpaqueValue, Data: &OpaqueJSONnull{}}

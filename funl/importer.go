@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"maps"
 	"os"
 	"path/filepath"
 	"strings"
@@ -72,9 +73,7 @@ func GetModsFromTar(tarContent []byte) (map[string][]byte, error) {
 					if err != nil {
 						return result, err
 					}
-					for k, v := range subm {
-						result[k] = v
-					}
+					maps.Copy(result, subm)
 				}
 			}
 		}
@@ -184,7 +183,7 @@ func (importer *fileImporter) FindModule(importFileName string, extensionName st
 		return
 	}
 
-	content, err = ioutil.ReadFile(targetPath)
+	content, err = os.ReadFile(targetPath)
 	if err != nil {
 		err = fmt.Errorf("Source file reading failed: %v", err)
 		return
@@ -210,7 +209,7 @@ func readExtModuleFromFile(sid SymID, importPath string, interpreter *Interprete
 	// TODO: duplicate code...
 	importSpecs := make(map[string]string)
 	if importPath != "" {
-		for _, onepart := range strings.Split(importPath, ";") {
+		for onepart := range strings.SplitSeq(importPath, ";") {
 			splits := strings.Split(onepart, ":")
 			if len(splits) != 2 {
 				continue
@@ -267,7 +266,7 @@ func readExtModuleFromFile(sid SymID, importPath string, interpreter *Interprete
 func readModuleFromFile(inProcCall bool, sid SymID, importPath string, interpreter *Interpreter) (topFrame *Frame, found bool, err error) {
 	importSpecs := make(map[string]string)
 	if importPath != "" {
-		for _, onepart := range strings.Split(importPath, ";") {
+		for onepart := range strings.SplitSeq(importPath, ";") {
 			splits := strings.Split(onepart, ":")
 			if len(splits) != 2 {
 				continue

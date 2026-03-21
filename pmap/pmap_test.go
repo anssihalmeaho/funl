@@ -2,6 +2,7 @@ package pmap
 
 import (
 	"fmt"
+	"maps"
 	"math/rand"
 	"sync"
 	"testing"
@@ -199,12 +200,12 @@ func TestSeveralVersions(t *testing.T) {
 	allValues := make(map[int]string)
 
 	prevRbmap := NewRBMap()
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		newv := mVersions{
 			Gomap: make(map[int]string),
 			Rbmap: prevRbmap,
 		}
-		for j := 0; j < 20; j++ {
+		for range 20 {
 			rkey := r.Intn(1000)
 			rvalue := fmt.Sprintf("val-%d", rkey)
 			_, foundAlready := allValues[rkey]
@@ -267,7 +268,7 @@ func TestBigger(t *testing.T) {
 	sourceMap := map[int]string{}
 	s := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(s)
-	for i := 0; i < 30; i++ {
+	for range 30 {
 		rval := r.Intn(1000)
 		sourceMap[rval] = fmt.Sprintf("val-%d", rval)
 	}
@@ -624,7 +625,7 @@ func findFromRBmap(rbmap *RBMap, key int) int {
 func getBenchMap() map[int]int {
 	dum := 1
 	m := make(map[int]int)
-	for i := 0; i < 10*1000; i++ {
+	for i := range 10 * 1000 {
 		m[i] = dum
 	}
 	/*
@@ -714,9 +715,7 @@ func BenchmarkPutItemGomapDeepCopy(b *testing.B) {
 
 	makeDeepcopy := func(prevm map[int]int) map[int]int {
 		newm := make(map[int]int)
-		for k, v := range prevm {
-			newm[k] = v
-		}
+		maps.Copy(newm, prevm)
 		return newm
 	}
 
@@ -772,14 +771,14 @@ func TestParaRBmap(t *testing.T) {
 		defer wg.Done()
 
 		num := SOME
-		for i := 0; i < 500; i++ {
+		for range 500 {
 			myrbmap = putItemsRBmap(myrbmap, num, num+10)
 			num++
 		}
 	}
 
 	numOfGorotutines := 10
-	for ind := 0; ind < numOfGorotutines; ind++ {
+	for range numOfGorotutines {
 		wg.Add(1)
 		go adder(rbmap)
 	}

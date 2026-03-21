@@ -93,7 +93,7 @@ func (p *Parser) SetErrorHandler(peh ParseErrorHandler) {
 	p.errorHandler = peh
 }
 
-func (p *Parser) stopOnError(line interface{}, format string, args ...interface{}) {
+func (p *Parser) stopOnError(line any, format string, args ...any) {
 	lineStr := ""
 	if line != nil {
 		lineStr = fmt.Sprintf("line %d: ", line.(int)) // atoi ??

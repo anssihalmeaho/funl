@@ -93,7 +93,7 @@ func handleSprintfOP(frame *Frame, operands []*Item) (retVal Value) {
 	if !ok {
 		runTimeError2(frame, "%s: argument is not string value", opName)
 	}
-	var args []interface{}
+	var args []any
 	for _, operand := range operands[1:] {
 
 		var srcVal Value
@@ -222,7 +222,7 @@ func handleFloatOP(frame *Frame, operands []*Item) (retVal Value) {
 type evalErrHandler struct{}
 
 func (eh *evalErrHandler) HandleParseError(errorText string) {
-	runTimeError(errorText)
+	runTimeError("%s", errorText)
 }
 
 // HandleEvalOP can be used from Go code
@@ -362,7 +362,7 @@ func handleSymvalOP(frame *Frame, operands []*Item) (retVal Value) {
 		runTimeError2(frame, "%s assumes string as argument", opName)
 	}
 	var sp SymbolPath
-	for _, symstr := range strings.Split(srcVal.Data.(string), ".") {
+	for symstr := range strings.SplitSeq(srcVal.Data.(string), ".") {
 		symsid, found := SymIDMap.Get(symstr)
 		if !found {
 			runTimeError2(frame, "%s: symbol not found (%s)", opName, srcVal.Data.(string))
@@ -407,7 +407,7 @@ func handlePrintOP(frame *Frame, operands []*Item) (retVal Value) {
 		}
 	}
 
-	text := ""
+	var text strings.Builder
 	for _, v := range operands {
 		var val Value
 		switch v.Type {
@@ -420,12 +420,12 @@ func handlePrintOP(frame *Frame, operands []*Item) (retVal Value) {
 		}
 		switch val.Kind {
 		case StringValue:
-			text += val.Data.(string)
+			text.WriteString(val.Data.(string))
 		default:
-			text += val.String()
+			text.WriteString(val.String())
 		}
 	}
-	fmt.Println(text)
+	fmt.Println(text.String())
 	retVal = Value{Kind: BoolValue, Data: true}
 	return
 }
@@ -433,7 +433,7 @@ func handlePrintOP(frame *Frame, operands []*Item) (retVal Value) {
 func handleErrorOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "error"
 
-	errorText := ""
+	var errorText strings.Builder
 	for _, v := range operands {
 		var val Value
 		switch v.Type {
@@ -446,12 +446,12 @@ func handleErrorOP(frame *Frame, operands []*Item) (retVal Value) {
 		}
 		switch val.Kind {
 		case StringValue:
-			errorText += val.Data.(string)
+			errorText.WriteString(val.Data.(string))
 		default:
-			errorText += val.String()
+			errorText.WriteString(val.String())
 		}
 	}
-	runTimeError2(frame, "%s", errorText)
+	runTimeError2(frame, "%s", errorText.String())
 	return
 }
 
@@ -1577,7 +1577,7 @@ func handleIfOP(frame *Frame, operands []*Item) (retVal Value) {
 func handleEqOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "eq"
 	var argType ValueType
-	var comparedValue interface{}
+	var comparedValue any
 
 	if l := len(operands); l < 2 {
 		runTimeError2(frame, "Not enough arguments for %s (%d given)", opName, l)
@@ -1854,7 +1854,7 @@ func handlePlusOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "plus"
 	sum := 0
 	var sumF float64 = 0
-	text := ""
+	var text strings.Builder
 	var argType ValueType
 	hasFloats := false
 
@@ -1887,7 +1887,7 @@ func handlePlusOP(frame *Frame, operands []*Item) (retVal Value) {
 			sumF += floatv
 		case StringValue:
 			strv := argval.Data.(string)
-			text += strv
+			text.WriteString(strv)
 		default:
 			runTimeError2(frame, "Invalid type for %s", opName)
 		}
@@ -1900,7 +1900,7 @@ func handlePlusOP(frame *Frame, operands []*Item) (retVal Value) {
 	case IntValue:
 		retVal = Value{Kind: IntValue, Data: sum}
 	case StringValue:
-		retVal = Value{Kind: StringValue, Data: text}
+		retVal = Value{Kind: StringValue, Data: text.String()}
 	default:
 		runTimeError2(frame, "Invalid type for %s", opName)
 	}

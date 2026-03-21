@@ -16,7 +16,7 @@ const (
 type MKey int
 
 //MValue is map value
-type MValue interface{}
+type MValue any
 
 //Node is node of tree
 type Node struct {

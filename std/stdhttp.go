@@ -6,7 +6,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -238,7 +237,7 @@ func getDoHandler(name string, argAdd int, infoHandler func(*funl.Frame, funl.Va
 		}
 
 		// get body if there is one
-		if body, err := ioutil.ReadAll(response.Body); err == nil {
+		if body, err := io.ReadAll(response.Body); err == nil {
 			bodyAsByteArr := &OpaqueByteArray{data: body}
 			respKVs = append(respKVs, &funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "body"}})
 			respKVs = append(respKVs, &funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.OpaqueValue, Data: bodyAsByteArr}})
@@ -517,7 +516,7 @@ func getStdHttpRegHandler(name string) stdFuncType {
 				},
 			}
 			// get body if there is one
-			if body, err := ioutil.ReadAll(r.Body); err == nil {
+			if body, err := io.ReadAll(r.Body); err == nil {
 				bodyAsByteArr := &OpaqueByteArray{data: body}
 				reqKVs = append(reqKVs, &funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "body"}})
 				reqKVs = append(reqKVs, &funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.OpaqueValue, Data: bodyAsByteArr}})

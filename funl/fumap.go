@@ -5,11 +5,12 @@ import (
 	"encoding/binary"
 	"fmt"
 	"hash/fnv"
+	"strings"
 
 	"github.com/anssihalmeaho/funl/pmap"
 )
 
-//PMap is persistent map
+// PMap is persistent map
 type PMap struct {
 	Rbm       *pmap.RBMap
 	itemCount int
@@ -111,7 +112,8 @@ func areEqualMaps(frame *Frame, m1, m2 *PMap) bool {
 }
 
 func (pm PMap) String() string {
-	s := "map("
+	var s strings.Builder
+	s.WriteString("map(")
 	first := true
 	visitor := func(node *pmap.Node) {
 		item, ok := node.Val.(NodeValue)
@@ -122,16 +124,16 @@ func (pm PMap) String() string {
 			return
 		}
 		if !first {
-			s += ", "
+			s.WriteString(", ")
 		}
 		first = false
-		s += fmt.Sprintf("%#v : %#v", item.Val.Key, item.Val.Val)
+		s.WriteString(fmt.Sprintf("%#v : %#v", item.Val.Key, item.Val.Val))
 		for _, nextitem := range item.SameKeyValues {
-			s += fmt.Sprintf("%#v : %#v, ", nextitem.Key, nextitem.Val)
+			s.WriteString(fmt.Sprintf("%#v : %#v, ", nextitem.Key, nextitem.Val))
 		}
 	}
 	pm.Rbm.VisitAll(visitor)
-	return s + ")"
+	return s.String() + ")"
 }
 
 func (pm PMap) GoString() string {
@@ -315,7 +317,7 @@ func getMatchingValue(nval *NodeValue, keyVal Value) (retVal Value, found bool) 
 	return
 }
 
-//HandleMapOP is for std usage
+// HandleMapOP is for std usage
 func HandleMapOP(frame *Frame, operands []*Item) (retVal Value) {
 	return handleMapOP(frame, operands)
 }
@@ -554,7 +556,7 @@ func handleValsOP(frame *Frame, operands []*Item) (retVal Value) {
 	return
 }
 
-//HandleKeyvalsOP is for std usage
+// HandleKeyvalsOP is for std usage
 func HandleKeyvalsOP(frame *Frame, operands []*Item) (retVal Value) {
 	return handleKeyvalsOP(frame, operands)
 }
@@ -915,7 +917,7 @@ func delCommon(rteIfNotExist bool, opName string, frame *Frame, operands []*Item
 	return
 }
 
-//HandlePutOP is for std usage
+// HandlePutOP is for std usage
 func HandlePutOP(frame *Frame, operands []*Item) (retVal Value) {
 	return handlePutOP(frame, operands)
 }
