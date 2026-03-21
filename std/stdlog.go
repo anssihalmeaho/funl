@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/anssihalmeaho/funl/funl"
 )
@@ -103,11 +104,11 @@ func getStdLogGetDefaultLogger(name string) stdFuncType {
 			if l := len(wArguments); l == 0 {
 				funl.RunTimeError2(frame, "Logger assumes at least one argument")
 			}
-			var textOutput string
+			var textOutput strings.Builder
 			for _, argval := range wArguments {
-				textOutput += fmt.Sprintf("%s%s", separator, argval)
+				textOutput.WriteString(fmt.Sprintf("%s%s", separator, argval))
 			}
-			logger.Println(textOutput)
+			logger.Println(textOutput.String())
 			return funl.Value{Kind: funl.BoolValue, Data: true}
 		}
 

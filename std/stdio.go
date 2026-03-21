@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/anssihalmeaho/funl/funl"
 )
@@ -73,7 +74,7 @@ func getStdIOPrintfline(name string) stdFuncType {
 
 func getStdIOPrintline(name string) stdFuncType {
 	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
-		var s string
+		var s strings.Builder
 		for _, v := range arguments {
 			var sval string
 			switch v.Kind {
@@ -82,9 +83,9 @@ func getStdIOPrintline(name string) stdFuncType {
 			default:
 				sval = fmt.Sprintf("%v", v)
 			}
-			s += sval
+			s.WriteString(sval)
 		}
-		fmt.Printf("%s\n", s)
+		fmt.Printf("%s\n", s.String())
 		retVal = funl.Value{Kind: funl.BoolValue, Data: true}
 		return
 	}
@@ -92,7 +93,7 @@ func getStdIOPrintline(name string) stdFuncType {
 
 func getStdIOPrintout(name string) stdFuncType {
 	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
-		var s string
+		var s strings.Builder
 		for _, v := range arguments {
 			var sval string
 			switch v.Kind {
@@ -101,9 +102,9 @@ func getStdIOPrintout(name string) stdFuncType {
 			default:
 				sval = fmt.Sprintf("%v", v)
 			}
-			s += sval
+			s.WriteString(sval)
 		}
-		fmt.Printf("%s", s)
+		fmt.Printf("%s", s.String())
 		retVal = funl.Value{Kind: funl.BoolValue, Data: true}
 		return
 	}

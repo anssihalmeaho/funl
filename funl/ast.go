@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"runtime/debug"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 )
@@ -104,7 +105,7 @@ const (
 	MaximumOP
 )
 
-//OpaqueAPI is interface for opaque type
+// OpaqueAPI is interface for opaque type
 type OpaqueAPI interface {
 	TypeName() string
 	Str() string
@@ -553,11 +554,11 @@ func (item *Item) Print(depth int) (s string) {
 		s = sp.ToString()
 	case OperCallItem:
 		opc := item.Data.(OpCall)
-		s2 := ""
+		var s2 strings.Builder
 		for _, v := range opc.Operands {
-			s2 += (v.Print(depth) + ", ")
+			s2.WriteString((v.Print(depth) + ", "))
 		}
-		s += fmt.Sprintf("op-call: %d, (operands: %s)", opc.OperID, s2)
+		s += fmt.Sprintf("op-call: %d, (operands: %s)", opc.OperID, s2.String())
 	default:
 		s = "UNKNOWN ITEM"
 	}
