@@ -18,8 +18,8 @@ func main() {
 
 	out.Write([]byte("package funl \n\nfunc init() {\n"))
 	for _, f := range fs {
-		if strings.HasSuffix(f.Name(), ".fnl") {
-			keyStr := `"` + strings.TrimSuffix(f.Name(), ".fnl") + `"`
+		if before, ok := strings.CutSuffix(f.Name(), ".fnl"); ok {
+			keyStr := `"` + before + `"`
 			out.Write([]byte("\n\tstdfunMap[" + keyStr + "] = `"))
 			f, err := os.Open("./stdfun/" + f.Name())
 			if err != nil {

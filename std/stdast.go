@@ -158,7 +158,7 @@ func parseFunctionProto(frame *funl.Frame, funcProto *funl.Function) funl.Value 
 type parserErrHandler struct{}
 
 func (eh *parserErrHandler) HandleParseError(errorText string) {
-	funl.RunTimeError(errorText)
+	funl.RunTimeError("%s", errorText)
 }
 
 func getLetNameValue(frame *funl.Frame, pairList *funl.Value) (string, funl.Value) {

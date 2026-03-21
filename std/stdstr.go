@@ -282,7 +282,7 @@ func getStdStrReplace(name string) stdFuncType {
 		if l := len(arguments); l != 3 {
 			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), need three", name, l)
 		}
-		for i := 0; i < 3; i++ {
+		for i := range 3 {
 			if arguments[i].Kind != funl.StringValue {
 				funl.RunTimeError2(frame, "%s: requires string value (%d. argument)", name, i+1)
 			}

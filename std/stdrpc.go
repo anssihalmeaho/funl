@@ -5,7 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"sync"
 
@@ -268,7 +268,7 @@ func (server *RServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Write(dataBytes)
 	}
 
-	reqBody, err := ioutil.ReadAll(r.Body)
+	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		writeErrorResponse(err, "")
 		return
@@ -357,7 +357,7 @@ func (proxy *RProxy) MakeRemoteCall(frame *funl.Frame, rprocName string, arsgLis
 		return makeErrorReturnList(frame, err)
 	}
 	defer resp.Body.Close()
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return makeErrorReturnList(frame, err)
 	}

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+
 	"os"
 	"runtime"
 	"runtime/debug"
@@ -89,7 +89,7 @@ func main() {
 		}
 
 		if evalStr != "" {
-			content = []byte(fmt.Sprintf("ns main main = proc() %s end endns", evalStr))
+			content = fmt.Appendf(nil, "ns main main = proc() %s end endns", evalStr)
 			name = "main"
 		} else {
 			others := flag.Args()
@@ -105,7 +105,7 @@ func main() {
 			} else if *packagePtr {
 				// none
 			} else {
-				content, err = ioutil.ReadFile(srcFileName)
+				content, err = os.ReadFile(srcFileName)
 				if err != nil {
 					fmt.Println(fmt.Sprintf("Source file reading failed: %v", err))
 					return
@@ -118,7 +118,7 @@ func main() {
 		if fargs != "" {
 			argStr = "," + fargs
 		}
-		content = []byte(fmt.Sprintf("ns main import %s main = proc() call(%s.%s%s) end endns", modName, modName, name, argStr))
+		content = fmt.Appendf(nil, "ns main import %s main = proc() call(%s.%s%s) end endns", modName, modName, name, argStr)
 		name = "main"
 	}
 

@@ -93,7 +93,7 @@ func handleSprintfOP(frame *Frame, operands []*Item) (retVal Value) {
 	if !ok {
 		runTimeError2(frame, "%s: argument is not string value", opName)
 	}
-	var args []interface{}
+	var args []any
 	for _, operand := range operands[1:] {
 
 		var srcVal Value
@@ -222,7 +222,7 @@ func handleFloatOP(frame *Frame, operands []*Item) (retVal Value) {
 type evalErrHandler struct{}
 
 func (eh *evalErrHandler) HandleParseError(errorText string) {
-	runTimeError(errorText)
+	runTimeError("%s", errorText)
 }
 
 // HandleEvalOP can be used from Go code
@@ -362,7 +362,7 @@ func handleSymvalOP(frame *Frame, operands []*Item) (retVal Value) {
 		runTimeError2(frame, "%s assumes string as argument", opName)
 	}
 	var sp SymbolPath
-	for _, symstr := range strings.Split(srcVal.Data.(string), ".") {
+	for symstr := range strings.SplitSeq(srcVal.Data.(string), ".") {
 		symsid, found := SymIDMap.Get(symstr)
 		if !found {
 			runTimeError2(frame, "%s: symbol not found (%s)", opName, srcVal.Data.(string))
@@ -1577,7 +1577,7 @@ func handleIfOP(frame *Frame, operands []*Item) (retVal Value) {
 func handleEqOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "eq"
 	var argType ValueType
-	var comparedValue interface{}
+	var comparedValue any
 
 	if l := len(operands); l < 2 {
 		runTimeError2(frame, "Not enough arguments for %s (%d given)", opName, l)

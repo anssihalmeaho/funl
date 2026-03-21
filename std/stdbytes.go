@@ -134,7 +134,7 @@ func getStdBytesSplitBy(name string) stdFuncType {
 		}
 
 		var resultList []funl.Value
-		for _, bslice := range bytes.Split(byteArray.data, separatorByteArray.data) {
+		for bslice := range bytes.SplitSeq(byteArray.data, separatorByteArray.data) {
 			resultList = append(resultList, funl.Value{Kind: funl.OpaqueValue, Data: &OpaqueByteArray{data: bslice}})
 		}
 		retVal = funl.MakeListOfValues(frame, resultList)

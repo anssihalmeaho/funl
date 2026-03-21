@@ -78,21 +78,21 @@ func init() {
 	operTbl[ForceOP] = handleForceOP
 }
 
-func RunTimeError(format string, args ...interface{}) {
+func RunTimeError(format string, args ...any) {
 	runTimeError2(nil, format, args...)
 }
 
-func runTimeError(format string, args ...interface{}) {
+func runTimeError(format string, args ...any) {
 	runTimeError2(nil, format, args...)
 }
 
-func RunTimeError2(frame *Frame, format string, args ...interface{}) {
+func RunTimeError2(frame *Frame, format string, args ...any) {
 	runTimeError2(frame, format, args...)
 }
 
 var PrintingRTElocationAndScopeEnabled bool
 
-func runTimeError2(frame *Frame, format string, args ...interface{}) {
+func runTimeError2(frame *Frame, format string, args ...any) {
 	if false {
 		fmt.Printf("\nruntime error: "+format+"\n", args...)
 	}
@@ -183,7 +183,7 @@ func (fr *Frame) GetFuncDebugInfos(prev []fdebugInfo) []fdebugInfo {
 	return fr.AccessLink.GetFuncDebugInfos(append(prev, fdeb))
 }
 
-//GetSymItemsOfImportedModule finds symbol table for module
+// GetSymItemsOfImportedModule finds symbol table for module
 func (fr *Frame) GetSymItemsOfImportedModule(modSid SymID) (*Symt, bool) {
 	frame, found := fr.Imported[modSid]
 	if !found {
@@ -320,7 +320,7 @@ func handleWhileOP(frame *Frame, operands []*Item) (retVal Value) {
 	}
 }
 
-//HandleCallOP for std lib usage
+// HandleCallOP for std lib usage
 func HandleCallOP(frame *Frame, operands []*Item) (retVal Value) {
 	return handleCallOP(frame, operands)
 }

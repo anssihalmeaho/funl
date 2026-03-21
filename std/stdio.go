@@ -49,7 +49,7 @@ func getStdIOPrintf(name string) stdFuncType {
 			funl.RunTimeError2(frame, "%s: assuming string (%#v)", name, formattedStrVal)
 		}
 
-		fmt.Printf(formattedStrVal.Data.(string))
+		fmt.Printf("%s", formattedStrVal.Data.(string))
 		retVal = funl.Value{Kind: funl.BoolValue, Data: true}
 		return
 	}
@@ -66,7 +66,7 @@ func getStdIOPrintfline(name string) stdFuncType {
 			funl.RunTimeError2(frame, "%s: assuming string (%#v)", name, formattedStrVal)
 		}
 
-		fmt.Printf(formattedStrVal.Data.(string) + "\n")
+		fmt.Printf("%s", formattedStrVal.Data.(string)+"\n")
 		retVal = funl.Value{Kind: funl.BoolValue, Data: true}
 		return
 	}

@@ -2,6 +2,7 @@ package funl
 
 import (
 	"fmt"
+	"maps"
 	"math"
 	"runtime"
 	"runtime/debug"
@@ -345,9 +346,7 @@ func (sym *Symt) MakeCopy() *Symt {
 	defer sym.RUnlock()
 
 	newsyms := NewSymt()
-	for k, v := range sym.mapped {
-		newsyms.mapped[k] = v
-	}
+	maps.Copy(newsyms.mapped, sym.mapped)
 	for _, v := range sym.ordered {
 		newsyms.ordered = append(newsyms.ordered, v)
 	}
@@ -496,7 +495,7 @@ type NSpace struct {
 }
 
 func depthPrint(depth int) (s string) {
-	for i := 0; i < depth; i++ {
+	for range depth {
 		s = s + ".."
 	}
 	return
@@ -511,7 +510,7 @@ func (ns *NSpace) Print(depth int) (s string) {
 
 type Item struct {
 	Type             ItemType
-	Data             interface{}
+	Data             any
 	Expand           bool
 	ExpandArgIndexes map[int]bool
 }
@@ -567,7 +566,7 @@ func (item *Item) Print(depth int) (s string) {
 
 type Value struct {
 	Kind ValueType
-	Data interface{}
+	Data any
 }
 
 func (val Value) String() string {

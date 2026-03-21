@@ -15,7 +15,7 @@ type ExtProcType struct {
 
 var debugPrintOn = false
 
-func DebugPrint(format string, args ...interface{}) {
+func DebugPrint(format string, args ...any) {
 	if debugPrintOn {
 		fmt.Println()
 		fmt.Printf(format, args...)
@@ -109,7 +109,7 @@ func AddImportsToNamespaceSub(nspace *NSpace, frame *Frame, interpreter *Interpr
 				importedFrame, found, err = readExtModuleFromFile(sid, importInfo.importPath, interpreter)
 			}
 			if err != nil {
-				runTimeError2(frame, err.Error())
+				runTimeError2(frame, "%s", err.Error())
 			}
 			if !found {
 				runTimeError2(frame, "Namespace top frame not found: %s", SymIDMap.AsString(sid))
