@@ -71,7 +71,7 @@ func getRPCNewServer(name string) stdFuncType {
 				Kind: funl.StringValue,
 				Data: "",
 			},
-			funl.Value{Kind: funl.OpaqueValue, Data: NewRServer(frame, addr)},
+			{Kind: funl.OpaqueValue, Data: NewRServer(frame, addr)},
 		}
 		retVal = funl.MakeListOfValues(frame, values)
 		return
@@ -291,7 +291,7 @@ func (server *RServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	callArgs := []*funl.Item{
-		&funl.Item{
+		{
 			Type: funl.ValueItem,
 			Data: procVal,
 		},
@@ -470,11 +470,11 @@ type RServer struct {
 
 func encode(frame *funl.Frame, encoderVal funl.Value, val funl.Value) string {
 	encArgs := []*funl.Item{
-		&funl.Item{
+		{
 			Type: funl.ValueItem,
 			Data: encoderVal,
 		},
-		&funl.Item{
+		{
 			Type: funl.ValueItem,
 			Data: val,
 		},
@@ -485,11 +485,11 @@ func encode(frame *funl.Frame, encoderVal funl.Value, val funl.Value) string {
 
 func decode(frame *funl.Frame, decoderVal funl.Value, s string) funl.Value {
 	decArgs := []*funl.Item{
-		&funl.Item{
+		{
 			Type: funl.ValueItem,
 			Data: decoderVal,
 		},
-		&funl.Item{
+		{
 			Type: funl.ValueItem,
 			Data: funl.Value{Kind: funl.StringValue, Data: s},
 		},

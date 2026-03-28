@@ -20,7 +20,7 @@ func TestListIterator1(t *testing.T) {
 		t.Errorf("List assumed, got: %d", list1.Kind)
 	}
 	appendArgs := []*Item{
-		&Item{Type: ValueItem, Data: list1},
+		{Type: ValueItem, Data: list1},
 		&d,
 		&e,
 	}
@@ -108,7 +108,7 @@ func TestListIterator3(t *testing.T) {
 		t.Errorf("List assumed, got: %d", list1.Kind)
 	}
 	appendArgs := []*Item{
-		&Item{Type: ValueItem, Data: list1},
+		{Type: ValueItem, Data: list1},
 		&d,
 		&e,
 	}
@@ -162,7 +162,7 @@ func TestListEmptyList(t *testing.T) {
 		t.Errorf("List assumed, got: %d", retVal.Kind)
 	}
 
-	isEmptyVal := handleEmptyOP(nil, []*Item{&Item{Type: ValueItem, Data: retVal}})
+	isEmptyVal := handleEmptyOP(nil, []*Item{{Type: ValueItem, Data: retVal}})
 	if isEmptyVal.Kind != BoolValue {
 		t.Fatalf("Funny value, bool expected")
 	}
@@ -188,7 +188,7 @@ func TestListAddToFront(t *testing.T) {
 	}
 
 	appendArgs := []*Item{
-		&Item{Type: ValueItem, Data: retVal},
+		{Type: ValueItem, Data: retVal},
 		&d,
 		&e,
 	}
@@ -197,52 +197,52 @@ func TestListAddToFront(t *testing.T) {
 		t.Errorf("List assumed, got: %d", list2.Kind)
 	}
 
-	tailVal := handleLastOP(nil, []*Item{&Item{Type: ValueItem, Data: list2}})
+	tailVal := handleLastOP(nil, []*Item{{Type: ValueItem, Data: list2}})
 	if tailVal != c.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", c, tailVal)
 	}
 
-	headVal := handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: list2}})
+	headVal := handleHeadOP(nil, []*Item{{Type: ValueItem, Data: list2}})
 	if headVal != d.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", d, headVal)
 	}
 
 	// lets check original remains same
-	tailVal = handleLastOP(nil, []*Item{&Item{Type: ValueItem, Data: retVal}})
+	tailVal = handleLastOP(nil, []*Item{{Type: ValueItem, Data: retVal}})
 	if tailVal != c.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", c, tailVal)
 	}
 
-	headVal = handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: retVal}})
+	headVal = handleHeadOP(nil, []*Item{{Type: ValueItem, Data: retVal}})
 	if headVal != a.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", a, headVal)
 	}
 
 	// lets check rest of new one
-	restList1 := handleRestOP(nil, []*Item{&Item{Type: ValueItem, Data: list2}})
-	isEmptyRest := handleEmptyOP(nil, []*Item{&Item{Type: ValueItem, Data: restList1}})
+	restList1 := handleRestOP(nil, []*Item{{Type: ValueItem, Data: list2}})
+	isEmptyRest := handleEmptyOP(nil, []*Item{{Type: ValueItem, Data: restList1}})
 	if isEmptyRest.Data.(bool) != false {
 		t.Errorf("should not be empty")
 	}
 
-	headOfRest := handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: restList1}})
+	headOfRest := handleHeadOP(nil, []*Item{{Type: ValueItem, Data: restList1}})
 	if headOfRest != e.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", e, headOfRest)
 	}
 
-	tailOfRest := handleLastOP(nil, []*Item{&Item{Type: ValueItem, Data: restList1}})
+	tailOfRest := handleLastOP(nil, []*Item{{Type: ValueItem, Data: restList1}})
 	if tailOfRest != c.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", c, tailOfRest)
 	}
 
 	// lets check still further rest of new one
-	restList2 := handleRestOP(nil, []*Item{&Item{Type: ValueItem, Data: restList1}})
-	isEmptyRest = handleEmptyOP(nil, []*Item{&Item{Type: ValueItem, Data: restList2}})
+	restList2 := handleRestOP(nil, []*Item{{Type: ValueItem, Data: restList1}})
+	isEmptyRest = handleEmptyOP(nil, []*Item{{Type: ValueItem, Data: restList2}})
 	if isEmptyRest.Data.(bool) != false {
 		t.Errorf("should not be empty")
 	}
 
-	headOfRest = handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: restList2}})
+	headOfRest = handleHeadOP(nil, []*Item{{Type: ValueItem, Data: restList2}})
 	if headOfRest != a.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", a, headOfRest)
 	}
@@ -268,7 +268,7 @@ func TestListBeingShared(t *testing.T) {
 	}
 
 	appendArgs := []*Item{
-		&Item{Type: ValueItem, Data: retVal},
+		{Type: ValueItem, Data: retVal},
 		&d,
 	}
 	list2 := handleAppendOP(nil, appendArgs)
@@ -276,61 +276,61 @@ func TestListBeingShared(t *testing.T) {
 		t.Errorf("List assumed, got: %d", list2.Kind)
 	}
 
-	tailVal := handleLastOP(nil, []*Item{&Item{Type: ValueItem, Data: list2}})
+	tailVal := handleLastOP(nil, []*Item{{Type: ValueItem, Data: list2}})
 	if tailVal != d.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", d, tailVal)
 	}
 
-	headVal := handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: list2}})
+	headVal := handleHeadOP(nil, []*Item{{Type: ValueItem, Data: list2}})
 	if headVal != a.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", a, headVal)
 	}
 
-	tailVal = handleLastOP(nil, []*Item{&Item{Type: ValueItem, Data: retVal}})
+	tailVal = handleLastOP(nil, []*Item{{Type: ValueItem, Data: retVal}})
 	if tailVal != c.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", d, tailVal)
 	}
 
-	headVal = handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: retVal}})
+	headVal = handleHeadOP(nil, []*Item{{Type: ValueItem, Data: retVal}})
 	if headVal != a.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", a, headVal)
 	}
 
-	restList2 := handleRestOP(nil, []*Item{&Item{Type: ValueItem, Data: list2}})
-	isEmptyRest := handleEmptyOP(nil, []*Item{&Item{Type: ValueItem, Data: restList2}})
+	restList2 := handleRestOP(nil, []*Item{{Type: ValueItem, Data: list2}})
+	isEmptyRest := handleEmptyOP(nil, []*Item{{Type: ValueItem, Data: restList2}})
 	if isEmptyRest.Data.(bool) != false {
 		t.Errorf("should not be empty")
 	}
 
-	headOfRest := handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: restList2}})
+	headOfRest := handleHeadOP(nil, []*Item{{Type: ValueItem, Data: restList2}})
 	if headOfRest != b.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", b, headOfRest)
 	}
 
-	tailOfRest := handleLastOP(nil, []*Item{&Item{Type: ValueItem, Data: restList2}})
+	tailOfRest := handleLastOP(nil, []*Item{{Type: ValueItem, Data: restList2}})
 	if tailOfRest != d.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", d, tailOfRest)
 	}
 
-	restList1 := handleRestOP(nil, []*Item{&Item{Type: ValueItem, Data: retVal}})
-	isEmptyRest = handleEmptyOP(nil, []*Item{&Item{Type: ValueItem, Data: restList1}})
+	restList1 := handleRestOP(nil, []*Item{{Type: ValueItem, Data: retVal}})
+	isEmptyRest = handleEmptyOP(nil, []*Item{{Type: ValueItem, Data: restList1}})
 	if isEmptyRest.Data.(bool) != false {
 		t.Errorf("should not be empty")
 	}
 
-	headOfRest = handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: restList1}})
+	headOfRest = handleHeadOP(nil, []*Item{{Type: ValueItem, Data: restList1}})
 	if headOfRest != b.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", b, headOfRest)
 	}
 
-	tailOfRest = handleLastOP(nil, []*Item{&Item{Type: ValueItem, Data: restList1}})
+	tailOfRest = handleLastOP(nil, []*Item{{Type: ValueItem, Data: restList1}})
 	if tailOfRest != c.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", c, tailOfRest)
 	}
 
 	// yet 3rd list from original
 	appendArgs = []*Item{
-		&Item{Type: ValueItem, Data: retVal},
+		{Type: ValueItem, Data: retVal},
 		&e,
 		&f,
 	}
@@ -338,31 +338,31 @@ func TestListBeingShared(t *testing.T) {
 	if list3.Kind != ListValue {
 		t.Errorf("List assumed, got: %d", list3.Kind)
 	}
-	tailVal = handleLastOP(nil, []*Item{&Item{Type: ValueItem, Data: list3}})
+	tailVal = handleLastOP(nil, []*Item{{Type: ValueItem, Data: list3}})
 	if tailVal != f.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", f, tailVal)
 	}
 
-	headVal = handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: list3}})
+	headVal = handleHeadOP(nil, []*Item{{Type: ValueItem, Data: list3}})
 	if headVal != a.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", a, headVal)
 	}
 
 	// yet 4th list from second
 	appendArgs = []*Item{
-		&Item{Type: ValueItem, Data: retVal},
+		{Type: ValueItem, Data: retVal},
 		&g,
 	}
 	list4 := handleAppendOP(nil, appendArgs)
 	if list4.Kind != ListValue {
 		t.Errorf("List assumed, got: %d", list4.Kind)
 	}
-	tailVal = handleLastOP(nil, []*Item{&Item{Type: ValueItem, Data: list4}})
+	tailVal = handleLastOP(nil, []*Item{{Type: ValueItem, Data: list4}})
 	if tailVal != g.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", g, tailVal)
 	}
 
-	headVal = handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: list4}})
+	headVal = handleHeadOP(nil, []*Item{{Type: ValueItem, Data: list4}})
 	if headVal != a.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", a, headVal)
 	}
@@ -382,7 +382,7 @@ func TestListOK(t *testing.T) {
 		t.Errorf("List assumed, got: %d", retVal.Kind)
 	}
 
-	isEmptyVal := handleEmptyOP(nil, []*Item{&Item{Type: ValueItem, Data: retVal}})
+	isEmptyVal := handleEmptyOP(nil, []*Item{{Type: ValueItem, Data: retVal}})
 	if isEmptyVal.Kind != BoolValue {
 		t.Fatalf("Funny value, bool expected")
 	}
@@ -390,36 +390,36 @@ func TestListOK(t *testing.T) {
 		t.Errorf("should not be empty")
 	}
 
-	headVal := handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: retVal}})
+	headVal := handleHeadOP(nil, []*Item{{Type: ValueItem, Data: retVal}})
 
 	if headVal != a.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", a, headVal)
 	}
 
-	isEmptyVal = handleEmptyOP(nil, []*Item{&Item{Type: ValueItem, Data: retVal}})
+	isEmptyVal = handleEmptyOP(nil, []*Item{{Type: ValueItem, Data: retVal}})
 	if isEmptyVal.Data.(bool) != false {
 		t.Errorf("should not be empty")
 	}
 
-	tailVal := handleLastOP(nil, []*Item{&Item{Type: ValueItem, Data: retVal}})
+	tailVal := handleLastOP(nil, []*Item{{Type: ValueItem, Data: retVal}})
 
 	if tailVal != b.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", b, tailVal)
 	}
 
-	restList := handleRestOP(nil, []*Item{&Item{Type: ValueItem, Data: retVal}})
+	restList := handleRestOP(nil, []*Item{{Type: ValueItem, Data: retVal}})
 
-	isEmptyRest := handleEmptyOP(nil, []*Item{&Item{Type: ValueItem, Data: restList}})
+	isEmptyRest := handleEmptyOP(nil, []*Item{{Type: ValueItem, Data: restList}})
 	if isEmptyRest.Data.(bool) != false {
 		t.Errorf("should not be empty")
 	}
 
-	headOfRest := handleHeadOP(nil, []*Item{&Item{Type: ValueItem, Data: restList}})
+	headOfRest := handleHeadOP(nil, []*Item{{Type: ValueItem, Data: restList}})
 	if headOfRest != b.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", b, headOfRest)
 	}
 
-	tailOfRest := handleLastOP(nil, []*Item{&Item{Type: ValueItem, Data: restList}})
+	tailOfRest := handleLastOP(nil, []*Item{{Type: ValueItem, Data: restList}})
 	if tailOfRest != b.Data {
 		t.Errorf("Not head that was assumed: expected: %#v, got: %#v", b, tailOfRest)
 	}

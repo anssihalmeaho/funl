@@ -218,7 +218,7 @@ func traverseValuesEncode(frame *funl.Frame, inValue funl.Value, prevsl []byte) 
 	case funl.MapValue:
 		var mapAsBytes []byte
 		mapAsBytes = append(mapAsBytes, []byte("{")...)
-		keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{&funl.Item{Type: funl.ValueItem, Data: inValue}})
+		keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{{Type: funl.ValueItem, Data: inValue}})
 		kvListIter := funl.NewListIterator(keyvals)
 		isFirstRound := true
 		for {
@@ -284,9 +284,9 @@ func traverseValues(frame *funl.Frame, intf any) funl.Value {
 			keyv := funl.Value{Kind: funl.StringValue, Data: k.String()}
 			valv := traverseValues(frame, v.Interface())
 			putArgs := []*funl.Item{
-				&funl.Item{Type: funl.ValueItem, Data: mapval},
-				&funl.Item{Type: funl.ValueItem, Data: keyv},
-				&funl.Item{Type: funl.ValueItem, Data: valv},
+				{Type: funl.ValueItem, Data: mapval},
+				{Type: funl.ValueItem, Data: keyv},
+				{Type: funl.ValueItem, Data: valv},
 			}
 			mapval = funl.HandlePutOP(frame, putArgs)
 			if mapval.Kind != funl.MapValue {

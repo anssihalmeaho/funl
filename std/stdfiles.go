@@ -222,20 +222,20 @@ func getStdFilesFInfoMap(name string) stdFuncType {
 		}
 		fileInfo := fInfo.info
 		moperands := []*funl.Item{
-			&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "name"}},
-			&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: fileInfo.Name()}},
+			{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "name"}},
+			{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: fileInfo.Name()}},
 
-			&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "size"}},
-			&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.IntValue, Data: int(fileInfo.Size())}},
+			{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "size"}},
+			{Type: funl.ValueItem, Data: funl.Value{Kind: funl.IntValue, Data: int(fileInfo.Size())}},
 
-			&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "mode"}},
-			&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: fmt.Sprintf("%v", fileInfo.Mode())}},
+			{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "mode"}},
+			{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: fmt.Sprintf("%v", fileInfo.Mode())}},
 
-			&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "modtime"}},
-			&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: fmt.Sprintf("%v", fileInfo.ModTime())}},
+			{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "modtime"}},
+			{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: fmt.Sprintf("%v", fileInfo.ModTime())}},
 
-			&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "is-dir"}},
-			&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.BoolValue, Data: fileInfo.IsDir()}},
+			{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "is-dir"}},
+			{Type: funl.ValueItem, Data: funl.Value{Kind: funl.BoolValue, Data: fileInfo.IsDir()}},
 		}
 		retVal = funl.HandleMapOP(frame, moperands)
 		return
@@ -356,11 +356,11 @@ func getStdFilesReadAt(name string) stdFuncType {
 			n = maxcount
 		}
 		retValues := []funl.Value{
-			funl.Value{
+			{
 				Kind: funl.BoolValue,
 				Data: isEOF,
 			},
-			funl.Value{
+			{
 				Kind: funl.OpaqueValue,
 				Data: &OpaqueByteArray{data: rbuf[:n]},
 			},
@@ -457,11 +457,11 @@ func getStdFilesRead(name string) stdFuncType {
 			n = maxcount
 		}
 		retValues := []funl.Value{
-			funl.Value{
+			{
 				Kind: funl.BoolValue,
 				Data: isEOF,
 			},
-			funl.Value{
+			{
 				Kind: funl.OpaqueValue,
 				Data: &OpaqueByteArray{data: rbuf[:n]},
 			},

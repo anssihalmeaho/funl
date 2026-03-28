@@ -83,7 +83,7 @@ func (mux *OpaqueHttpMux) Equals(with funl.OpaqueAPI) bool {
 }
 
 func applyForEachKeyVal(frame *funl.Frame, name string, mapVal funl.Value, handler func(keyStr, valStr string)) {
-	keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{&funl.Item{Type: funl.ValueItem, Data: mapVal}})
+	keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{{Type: funl.ValueItem, Data: mapVal}})
 	kvListIter := funl.NewListIterator(keyvals)
 	for {
 		nextKV := kvListIter.Next()
@@ -181,9 +181,9 @@ func getDoHandler(name string, argAdd int, infoHandler func(*funl.Frame, funl.Va
 			keyv := funl.Value{Kind: funl.StringValue, Data: hk}
 			valv := funl.MakeListOfValues(frame, hvalues)
 			putArgs := []*funl.Item{
-				&funl.Item{Type: funl.ValueItem, Data: headerMapval},
-				&funl.Item{Type: funl.ValueItem, Data: keyv},
-				&funl.Item{Type: funl.ValueItem, Data: valv},
+				{Type: funl.ValueItem, Data: headerMapval},
+				{Type: funl.ValueItem, Data: keyv},
+				{Type: funl.ValueItem, Data: valv},
 			}
 			headerMapval = funl.HandlePutOP(frame, putArgs)
 			if headerMapval.Kind != funl.MapValue {
@@ -265,7 +265,7 @@ func getStdHttpDoWith(name string) stdFuncType {
 
 		client := &http.Client{}
 
-		keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{&funl.Item{Type: funl.ValueItem, Data: v}})
+		keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{{Type: funl.ValueItem, Data: v}})
 		kvListIter := funl.NewListIterator(keyvals)
 		for {
 			nextKV := kvListIter.Next()
@@ -429,9 +429,9 @@ func getStdHttpRegHandler(name string) stdFuncType {
 				keyv := funl.Value{Kind: funl.StringValue, Data: hk}
 				valv := funl.MakeListOfValues(frame, hvalues)
 				putArgs := []*funl.Item{
-					&funl.Item{Type: funl.ValueItem, Data: queryMapval},
-					&funl.Item{Type: funl.ValueItem, Data: keyv},
-					&funl.Item{Type: funl.ValueItem, Data: valv},
+					{Type: funl.ValueItem, Data: queryMapval},
+					{Type: funl.ValueItem, Data: keyv},
+					{Type: funl.ValueItem, Data: valv},
 				}
 				queryMapval = funl.HandlePutOP(frame, putArgs)
 				if queryMapval.Kind != funl.MapValue {
@@ -449,9 +449,9 @@ func getStdHttpRegHandler(name string) stdFuncType {
 				keyv := funl.Value{Kind: funl.StringValue, Data: hk}
 				valv := funl.MakeListOfValues(frame, hvalues)
 				putArgs := []*funl.Item{
-					&funl.Item{Type: funl.ValueItem, Data: headerMapval},
-					&funl.Item{Type: funl.ValueItem, Data: keyv},
-					&funl.Item{Type: funl.ValueItem, Data: valv},
+					{Type: funl.ValueItem, Data: headerMapval},
+					{Type: funl.ValueItem, Data: keyv},
+					{Type: funl.ValueItem, Data: valv},
 				}
 				headerMapval = funl.HandlePutOP(frame, putArgs)
 				if headerMapval.Kind != funl.MapValue {
@@ -524,18 +524,18 @@ func getStdHttpRegHandler(name string) stdFuncType {
 			reqm := funl.HandleMapOP(frame, reqKVs)
 
 			argsForCall := []*funl.Item{
-				&funl.Item{
+				{
 					Type: funl.ValueItem,
 					Data: arguments[2],
 				},
-				&funl.Item{
+				{
 					Type: funl.ValueItem,
 					Data: funl.Value{
 						Kind: funl.OpaqueValue,
 						Data: &OpaqueResponseWriter{w: w},
 					},
 				},
-				&funl.Item{
+				{
 					Type: funl.ValueItem,
 					Data: reqm,
 				},

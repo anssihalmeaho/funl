@@ -496,12 +496,13 @@ func (s *tokenizer) scan(srcText string) ([]token, error) {
 		}
 		makeSureItsStarNext = false
 
-		if c == '/' {
+		switch c {
+		case '/':
 			if prevC != 0 && prevC == '*' {
 				newState = currentState.processMultilineEnd()
 				goto nextPlease
 			}
-		} else if c == '*' {
+		case '*':
 			if prevC != 0 && prevC == '/' {
 				newState = currentState.processMultilineStart()
 				goto nextPlease

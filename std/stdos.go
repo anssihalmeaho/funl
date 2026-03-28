@@ -59,7 +59,7 @@ func getStdOSExecWith(name string) stdFuncType {
 		if arguments[0].Kind != funl.MapValue {
 			funl.RunTimeError2(frame, "%s: requires map value", name)
 		}
-		keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{&funl.Item{Type: funl.ValueItem, Data: arguments[0]}})
+		keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{{Type: funl.ValueItem, Data: arguments[0]}})
 		kvListIter := funl.NewListIterator(keyvals)
 		for {
 			nextKV := kvListIter.Next()
@@ -242,9 +242,9 @@ func getStdOSGetEnv(name string) stdFuncType {
 				keyv := funl.Value{Kind: funl.StringValue, Data: pair[0]}
 				valv := funl.Value{Kind: funl.StringValue, Data: pair[1]}
 				putArgs := []*funl.Item{
-					&funl.Item{Type: funl.ValueItem, Data: envMapval},
-					&funl.Item{Type: funl.ValueItem, Data: keyv},
-					&funl.Item{Type: funl.ValueItem, Data: valv},
+					{Type: funl.ValueItem, Data: envMapval},
+					{Type: funl.ValueItem, Data: keyv},
+					{Type: funl.ValueItem, Data: valv},
 				}
 				envMapval = funl.HandlePutOP(frame, putArgs)
 				if envMapval.Kind != funl.MapValue {
@@ -313,18 +313,18 @@ func getStdOSregSignalHandler(name string) stdFuncType {
 				sigNum, _ := sig.(syscall.Signal)
 
 				argsForCall := []*funl.Item{
-					&funl.Item{
+					{
 						Type: funl.ValueItem,
 						Data: arguments[0],
 					},
-					&funl.Item{
+					{
 						Type: funl.ValueItem,
 						Data: funl.Value{
 							Kind: funl.IntValue,
 							Data: int(sigNum),
 						},
 					},
-					&funl.Item{
+					{
 						Type: funl.ValueItem,
 						Data: funl.Value{
 							Kind: funl.StringValue,

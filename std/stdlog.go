@@ -42,7 +42,7 @@ func getStdLogGetDefaultLogger(name string) stdFuncType {
 				funl.RunTimeError2(frame, "%s: assuming map as 1st argument", name)
 			}
 
-			keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{&funl.Item{Type: funl.ValueItem, Data: arguments[0]}})
+			keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{{Type: funl.ValueItem, Data: arguments[0]}})
 			kvListIter := funl.NewListIterator(keyvals)
 			for {
 				nextKV := kvListIter.Next()
@@ -121,7 +121,7 @@ func getStdLogGetDefaultLogger(name string) stdFuncType {
 	}
 }
 
-//get-logger (<proc/ext-proc>) -> ext-proc (stdlog handler which serailizes and calls handler)
+// get-logger (<proc/ext-proc>) -> ext-proc (stdlog handler which serailizes and calls handler)
 func getStdLogGetLogger(name string) stdFuncType {
 	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
 		l := len(arguments)
@@ -143,7 +143,7 @@ func getStdLogGetLogger(name string) stdFuncType {
 				funl.RunTimeError2(frame, "%s: assuming map as 2nd argument", name)
 			}
 
-			keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{&funl.Item{Type: funl.ValueItem, Data: arguments[1]}})
+			keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{{Type: funl.ValueItem, Data: arguments[1]}})
 			kvListIter := funl.NewListIterator(keyvals)
 			for {
 				nextKV := kvListIter.Next()
@@ -179,11 +179,11 @@ func getStdLogGetLogger(name string) stdFuncType {
 				funl.RunTimeError2(frame, "Logger assumes at least one argument")
 			}
 			argsForCall := []*funl.Item{
-				&funl.Item{
+				{
 					Type: funl.ValueItem,
 					Data: arguments[0],
 				},
-				&funl.Item{
+				{
 					Type: funl.ValueItem,
 					Data: funl.MakeListOfValues(wFrame, wArguments),
 				},
