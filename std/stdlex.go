@@ -54,16 +54,16 @@ func getTokenize(name string) stdFuncType {
 			mapval := funl.HandleMapOP(frame, []*funl.Item{})
 
 			putArgs := []*funl.Item{
-				&funl.Item{Type: funl.ValueItem, Data: mapval},
-				&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "value"}},
-				&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: token.Value}},
+				{Type: funl.ValueItem, Data: mapval},
+				{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "value"}},
+				{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: token.Value}},
 			}
 			mapval = funl.HandlePutOP(frame, putArgs)
 
 			putArgs = []*funl.Item{
-				&funl.Item{Type: funl.ValueItem, Data: mapval},
-				&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "type"}},
-				&funl.Item{Type: funl.ValueItem, Data: funl.Value{
+				{Type: funl.ValueItem, Data: mapval},
+				{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "type"}},
+				{Type: funl.ValueItem, Data: funl.Value{
 					Kind: funl.StringValue,
 					Data: fmt.Sprintf("%s", token.Type),
 				}},
@@ -71,9 +71,9 @@ func getTokenize(name string) stdFuncType {
 			mapval = funl.HandlePutOP(frame, putArgs)
 
 			putArgs = []*funl.Item{
-				&funl.Item{Type: funl.ValueItem, Data: mapval},
-				&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "line"}},
-				&funl.Item{Type: funl.ValueItem, Data: funl.Value{
+				{Type: funl.ValueItem, Data: mapval},
+				{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "line"}},
+				{Type: funl.ValueItem, Data: funl.Value{
 					Kind: funl.IntValue,
 					Data: token.Lineno,
 				}},
@@ -81,9 +81,9 @@ func getTokenize(name string) stdFuncType {
 			mapval = funl.HandlePutOP(frame, putArgs)
 
 			putArgs = []*funl.Item{
-				&funl.Item{Type: funl.ValueItem, Data: mapval},
-				&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "pos"}},
-				&funl.Item{Type: funl.ValueItem, Data: funl.Value{
+				{Type: funl.ValueItem, Data: mapval},
+				{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "pos"}},
+				{Type: funl.ValueItem, Data: funl.Value{
 					Kind: funl.IntValue,
 					Data: token.Pos,
 				}},

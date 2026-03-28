@@ -48,9 +48,9 @@ func initSTDAst(interpreter *funl.Interpreter) (err error) {
 
 func putToMap(frame *funl.Frame, prevmap funl.Value, name string, value funl.Value) funl.Value {
 	putArgs := []*funl.Item{
-		&funl.Item{Type: funl.ValueItem, Data: prevmap},
-		&funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: name}},
-		&funl.Item{Type: funl.ValueItem, Data: value},
+		{Type: funl.ValueItem, Data: prevmap},
+		{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: name}},
+		{Type: funl.ValueItem, Data: value},
 	}
 	return funl.HandlePutOP(frame, putArgs)
 }
@@ -92,7 +92,7 @@ func parseItem(frame *funl.Frame, item *funl.Item) funl.Value {
 		opcall := item.Data.(funl.OpCall)
 		operatorName := fmt.Sprintf("%s", opcall.OperID)
 		operList := []funl.Value{
-			funl.Value{Kind: funl.StringValue, Data: operatorName},
+			{Kind: funl.StringValue, Data: operatorName},
 		}
 		for _, operand := range opcall.Operands {
 			operList = append(operList, parseItem(frame, operand))
@@ -119,7 +119,7 @@ func parseNS(frame *funl.Frame, ns funl.NSpace) funl.Value {
 	for _, sid := range ns.Syms.Keys() {
 		symvalue := parseItem(frame, symbolMap[sid])
 		symname := funl.SymIDMap.AsString(sid)
-		pairSlice := []funl.Value{funl.Value{Kind: funl.StringValue, Data: symname}, symvalue}
+		pairSlice := []funl.Value{{Kind: funl.StringValue, Data: symname}, symvalue}
 		pair := funl.MakeListOfValues(frame, pairSlice)
 		letvalues = append(letvalues, pair)
 	}
@@ -258,7 +258,7 @@ func makeNS(frame *funl.Frame, nsV funl.Value) *funl.NSpace {
 	if importsV.Kind != funl.MapValue {
 		funl.RunTimeError2(frame, "imports is invalid")
 	}
-	keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{&funl.Item{Type: funl.ValueItem, Data: importsV}})
+	keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{{Type: funl.ValueItem, Data: importsV}})
 	kvListIter := funl.NewListIterator(keyvals)
 	otherNSMap := make(map[funl.SymID]funl.ImportInfo)
 	for {
@@ -494,7 +494,7 @@ func makeItem(frame *funl.Frame, astmap funl.Value) *funl.Item {
 		}
 
 		var operands []*funl.Item
-		for _, argVal := range ops[1:len(ops)] {
+		for _, argVal := range ops[1:] {
 			operandItem := makeItem(frame, *argVal)
 			operands = append(operands, operandItem)
 		}

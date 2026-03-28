@@ -73,7 +73,7 @@ func getAddToModCache(name string) stdFuncType {
 		nspace := &funl.NSpace{OtherNS: make(map[funl.SymID]funl.ImportInfo), Syms: funl.NewSymt()}
 
 		// loop symbol to value mappings
-		keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{&funl.Item{Type: funl.ValueItem, Data: arguments[1]}})
+		keyvals := funl.HandleKeyvalsOP(frame, []*funl.Item{{Type: funl.ValueItem, Data: arguments[1]}})
 		kvListIter := funl.NewListIterator(keyvals)
 		for {
 			nextKV := kvListIter.Next()
