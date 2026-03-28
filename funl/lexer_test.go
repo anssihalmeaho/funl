@@ -31,7 +31,7 @@ func lextester(t *testing.T, text string, ttokens []token) {
 func TestJustSymbols(t *testing.T) {
 	text := "2010"
 	tokens := []token{
-		token{
+		{
 			Type:  tokenNumber,
 			Value: "2010",
 		},
@@ -39,7 +39,7 @@ func TestJustSymbols(t *testing.T) {
 	lextester(t, text, tokens)
 	text = "dum_name"
 	tokens = []token{
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "dum_name",
 		},
@@ -69,43 +69,43 @@ func TestNonAllowedChar(t *testing.T) {
 func TestLexBasic(t *testing.T) {
 	text := "not(dum.sub, 'aabbcc text'any_more'what text')"
 	tokens := []token{
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "not",
 		},
-		token{
+		{
 			Type:  tokenOpenBracket,
 			Value: "(",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "dum",
 		},
-		token{
+		{
 			Type:  tokenDot,
 			Value: ".",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "sub",
 		},
-		token{
+		{
 			Type:  tokenComma,
 			Value: ",",
 		},
-		token{
+		{
 			Type:  tokenString,
 			Value: "aabbcc text",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "any_more",
 		},
-		token{
+		{
 			Type:  tokenString,
 			Value: "what text",
 		},
-		token{
+		{
 			Type:  tokenClosingBracket,
 			Value: ")",
 		},
@@ -116,43 +116,43 @@ func TestLexBasic(t *testing.T) {
 func TestLexNumbers(t *testing.T) {
 	text := "not(2007, 'dum, 2010 text', value1, value2)"
 	tokens := []token{
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "not",
 		},
-		token{
+		{
 			Type:  tokenOpenBracket,
 			Value: "(",
 		},
-		token{
+		{
 			Type:  tokenNumber,
 			Value: "2007",
 		},
-		token{
+		{
 			Type:  tokenComma,
 			Value: ",",
 		},
-		token{
+		{
 			Type:  tokenString,
 			Value: "dum, 2010 text",
 		},
-		token{
+		{
 			Type:  tokenComma,
 			Value: ",",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "value1",
 		},
-		token{
+		{
 			Type:  tokenComma,
 			Value: ",",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "value2",
 		},
-		token{
+		{
 			Type:  tokenClosingBracket,
 			Value: ")",
 		},
@@ -163,103 +163,103 @@ func TestLexNumbers(t *testing.T) {
 func TestVariousTokens(t *testing.T) {
 	text := "  gt  ( or(.dum.xyz.sub, or( '  any  (( ) and not, textTEXT ' , 2010, xy_z-201)) , not('xxx aa__-c--  zz ')  "
 	tokens := []token{
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "gt",
 		},
-		token{
+		{
 			Type:  tokenOpenBracket,
 			Value: "(",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "or",
 		},
-		token{
+		{
 			Type:  tokenOpenBracket,
 			Value: "(",
 		},
-		token{
+		{
 			Type:  tokenDot,
 			Value: ".",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "dum",
 		},
-		token{
+		{
 			Type:  tokenDot,
 			Value: ".",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "xyz",
 		},
-		token{
+		{
 			Type:  tokenDot,
 			Value: ".",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "sub",
 		},
-		token{
+		{
 			Type:  tokenComma,
 			Value: ",",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "or",
 		},
-		token{
+		{
 			Type:  tokenOpenBracket,
 			Value: "(",
 		},
-		token{
+		{
 			Type:  tokenString,
 			Value: "  any  (( ) and not, textTEXT ",
 		},
-		token{
+		{
 			Type:  tokenComma,
 			Value: ",",
 		},
-		token{
+		{
 			Type:  tokenNumber,
 			Value: "2010",
 		},
-		token{
+		{
 			Type:  tokenComma,
 			Value: ",",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "xy_z-201",
 		},
-		token{
+		{
 			Type:  tokenClosingBracket,
 			Value: ")",
 		},
-		token{
+		{
 			Type:  tokenClosingBracket,
 			Value: ")",
 		},
-		token{
+		{
 			Type:  tokenComma,
 			Value: ",",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "not",
 		},
-		token{
+		{
 			Type:  tokenOpenBracket,
 			Value: "(",
 		},
-		token{
+		{
 			Type:  tokenString,
 			Value: "xxx aa__-c--  zz ",
 		},
-		token{
+		{
 			Type:  tokenClosingBracket,
 			Value: ")",
 		},
@@ -270,83 +270,83 @@ func TestVariousTokens(t *testing.T) {
 func TestLexBool(t *testing.T) {
 	text := " not( len(val1.sub, true),  eq(false, val2.f2) ) "
 	tokens := []token{
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "not",
 		},
-		token{
+		{
 			Type:  tokenOpenBracket,
 			Value: "(",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "len",
 		},
-		token{
+		{
 			Type:  tokenOpenBracket,
 			Value: "(",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "val1",
 		},
-		token{
+		{
 			Type:  tokenDot,
 			Value: ".",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "sub",
 		},
-		token{
+		{
 			Type:  tokenComma,
 			Value: ",",
 		},
-		token{
+		{
 			Type:  tokenTrue,
 			Value: "true",
 		},
-		token{
+		{
 			Type:  tokenClosingBracket,
 			Value: ")",
 		},
-		token{
+		{
 			Type:  tokenComma,
 			Value: ",",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "eq",
 		},
-		token{
+		{
 			Type:  tokenOpenBracket,
 			Value: "(",
 		},
-		token{
+		{
 			Type:  tokenFalse,
 			Value: "false",
 		},
-		token{
+		{
 			Type:  tokenComma,
 			Value: ",",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "val2",
 		},
-		token{
+		{
 			Type:  tokenDot,
 			Value: ".",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "f2",
 		},
-		token{
+		{
 			Type:  tokenClosingBracket,
 			Value: ")",
 		},
-		token{
+		{
 			Type:  tokenClosingBracket,
 			Value: ")",
 		},
@@ -381,7 +381,7 @@ func TestEscapingSubStr(t *testing.T) {
 	bq := `\`
 	text := "'any " + bq + "'sub dum" + bq + "'text'"
 	tokens := []token{
-		token{
+		{
 			Type:  tokenString,
 			Value: "any 'sub dum'text",
 		},
@@ -389,7 +389,7 @@ func TestEscapingSubStr(t *testing.T) {
 	lextester(t, text, tokens)
 	text = "'any " + bq + bq + "sub dum" + bq + bq + "text'"
 	tokens = []token{
-		token{
+		{
 			Type:  tokenString,
 			Value: "any " + bq + "sub dum" + bq + "text",
 		},
@@ -400,15 +400,15 @@ func TestEscapingSubStr(t *testing.T) {
 func TestExpander(t *testing.T) {
 	text := "xyz: dum"
 	tokens := []token{
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "xyz",
 		},
-		token{
+		{
 			Type:  tokenExpander,
 			Value: ":",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "dum",
 		},
@@ -419,19 +419,19 @@ func TestExpander(t *testing.T) {
 func TestLineComments(t *testing.T) {
 	text := "abc efg # this is line comment\n hmm"
 	tokens := []token{
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "abc",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "efg",
 		},
-		token{
+		{
 			Type:  tokenLineComment,
 			Value: " this is line comment ",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "hmm",
 		},
@@ -440,15 +440,15 @@ func TestLineComments(t *testing.T) {
 
 	text = "abc efg # this is line comment"
 	tokens = []token{
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "abc",
 		},
-		token{
+		{
 			Type:  tokenSymbol,
 			Value: "efg",
 		},
-		token{
+		{
 			Type:  tokenLineComment,
 			Value: " this is line comment",
 		},
@@ -457,7 +457,7 @@ func TestLineComments(t *testing.T) {
 
 	text = "# this is line comment"
 	tokens = []token{
-		token{
+		{
 			Type:  tokenLineComment,
 			Value: " this is line comment",
 		},

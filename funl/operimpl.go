@@ -566,7 +566,7 @@ func handleCaseOP(frame *Frame, operands []*Item) (retVal Value) {
 		}
 
 		argsForEq := []*Item{
-			&Item{
+			{
 				Type: ValueItem,
 				Data: matchVal,
 			},
@@ -1153,7 +1153,7 @@ func handleFindOP(frame *Frame, operands []*Item) (retVal Value) {
 				break
 			}
 			argsForEq := []*Item{
-				&Item{
+				{
 					Type: ValueItem,
 					Data: *nextItemval,
 				},
@@ -1305,7 +1305,7 @@ func handleInOP(frame *Frame, operands []*Item) (retVal Value) {
 				break
 			}
 			argsForEq := []*Item{
-				&Item{
+				{
 					Type: ValueItem,
 					Data: *nextItemval,
 				},
@@ -1324,14 +1324,14 @@ func handleInOP(frame *Frame, operands []*Item) (retVal Value) {
 
 	case MapValue:
 		argsForGetl := []*Item{
-			&Item{Type: ValueItem, Data: seqval},
-			&Item{Type: ValueItem, Data: itemval},
+			{Type: ValueItem, Data: seqval},
+			{Type: ValueItem, Data: itemval},
 		}
 		lval := handleGetlOP(frame, argsForGetl)
 		if lval.Kind != ListValue {
 			runTimeError2(frame, "%s: expecting list", opName)
 		}
-		headVal := handleHeadOP(frame, []*Item{&Item{Type: ValueItem, Data: lval}})
+		headVal := handleHeadOP(frame, []*Item{{Type: ValueItem, Data: lval}})
 		if headVal.Kind != BoolValue {
 			runTimeError2(frame, "%s: expecting bool as first in list", opName)
 		}
@@ -1657,11 +1657,11 @@ func handleEqOP(frame *Frame, operands []*Item) (retVal Value) {
 					return
 				}
 				argsForEq := []*Item{
-					&Item{
+					{
 						Type: ValueItem,
 						Data: *itemval1,
 					},
-					&Item{
+					{
 						Type: ValueItem,
 						Data: *itemval2,
 					},

@@ -237,7 +237,7 @@ func handleSendOP(frame *Frame, operands []*Item) (retVal Value) {
 		if mapVal.Kind != MapValue {
 			runTimeError2(frame, "%s: requires map value", opName)
 		}
-		keyvals := handleKeyvalsOP(frame, []*Item{&Item{Type: ValueItem, Data: mapVal}})
+		keyvals := handleKeyvalsOP(frame, []*Item{{Type: ValueItem, Data: mapVal}})
 		kvListIter := NewListIterator(keyvals)
 		for {
 			nextKV := kvListIter.Next()
@@ -317,7 +317,7 @@ func handleRecwithOP(frame *Frame, operands []*Item) (retVal Value) {
 	if mapVal.Kind != MapValue {
 		runTimeError2(frame, "%s: requires map value", opName)
 	}
-	keyvals := handleKeyvalsOP(frame, []*Item{&Item{Type: ValueItem, Data: mapVal}})
+	keyvals := handleKeyvalsOP(frame, []*Item{{Type: ValueItem, Data: mapVal}})
 	kvListIter := NewListIterator(keyvals)
 	for {
 		nextKV := kvListIter.Next()

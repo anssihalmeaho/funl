@@ -8,14 +8,14 @@ import (
 func TestItemsWithCollidingKeys(t *testing.T) {
 	mapval := handleMapOP(nil, []*Item{})
 	mapval = handlePutOP(nil, []*Item{
-		&Item{Type: ValueItem, Data: mapval},
-		&Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 0}},
-		&Item{Type: ValueItem, Data: Value{Kind: StringValue, Data: "int-0"}},
+		{Type: ValueItem, Data: mapval},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 0}},
+		{Type: ValueItem, Data: Value{Kind: StringValue, Data: "int-0"}},
 	})
 	mapval = handlePutOP(nil, []*Item{
-		&Item{Type: ValueItem, Data: mapval},
-		&Item{Type: ValueItem, Data: Value{Kind: FloatValue, Data: 0.0}},
-		&Item{Type: ValueItem, Data: Value{Kind: StringValue, Data: "float-0"}},
+		{Type: ValueItem, Data: mapval},
+		{Type: ValueItem, Data: Value{Kind: FloatValue, Data: 0.0}},
+		{Type: ValueItem, Data: Value{Kind: StringValue, Data: "float-0"}},
 	})
 	//t.Logf("%s", mapval)
 }
@@ -23,9 +23,9 @@ func TestItemsWithCollidingKeys(t *testing.T) {
 func TestReuseDeletedItemInPut(t *testing.T) {
 	defaultVal := &Item{Type: ValueItem, Data: Value{Kind: StringValue, Data: "not found"}}
 	nums := []Item{
-		Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 10}},
-		Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 20}},
-		Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 30}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 10}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 20}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 30}},
 	}
 
 	mapval := handleMapOP(nil, []*Item{})
@@ -71,9 +71,9 @@ func TestReuseDeletedItemInPut(t *testing.T) {
 
 func TestMapKeyDeletion(t *testing.T) {
 	nums := []Item{
-		Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 10}},
-		Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 20}},
-		Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 30}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 10}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 20}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 30}},
 	}
 
 	mapval := handleMapOP(nil, []*Item{})
@@ -217,9 +217,9 @@ func TestMapKeyDeletion(t *testing.T) {
 
 func TestMapOKfloatKeys(t *testing.T) {
 	nums := []Item{
-		Item{Type: ValueItem, Data: Value{Kind: FloatValue, Data: 0.01}},
-		Item{Type: ValueItem, Data: Value{Kind: FloatValue, Data: 0.2}},
-		Item{Type: ValueItem, Data: Value{Kind: FloatValue, Data: 3.0}},
+		{Type: ValueItem, Data: Value{Kind: FloatValue, Data: 0.01}},
+		{Type: ValueItem, Data: Value{Kind: FloatValue, Data: 0.2}},
+		{Type: ValueItem, Data: Value{Kind: FloatValue, Data: 3.0}},
 	}
 
 	mapval := handleMapOP(nil, []*Item{})
@@ -248,9 +248,9 @@ func TestMapOKfloatKeys(t *testing.T) {
 
 func TestMapOKintKeys(t *testing.T) {
 	nums := []Item{
-		Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 10}},
-		Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 20}},
-		Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 30}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 10}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 20}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 30}},
 	}
 
 	mapval := handleMapOP(nil, []*Item{})
@@ -279,9 +279,9 @@ func TestMapOKintKeys(t *testing.T) {
 
 func TestMapOKstringKeys(t *testing.T) {
 	nums := []Item{
-		Item{Type: ValueItem, Data: Value{Kind: StringValue, Data: "something ABC"}},
-		Item{Type: ValueItem, Data: Value{Kind: StringValue, Data: "something DEF"}},
-		Item{Type: ValueItem, Data: Value{Kind: StringValue, Data: "something GHI"}},
+		{Type: ValueItem, Data: Value{Kind: StringValue, Data: "something ABC"}},
+		{Type: ValueItem, Data: Value{Kind: StringValue, Data: "something DEF"}},
+		{Type: ValueItem, Data: Value{Kind: StringValue, Data: "something GHI"}},
 	}
 
 	mapval := handleMapOP(nil, []*Item{})
@@ -310,9 +310,9 @@ func TestMapOKstringKeys(t *testing.T) {
 
 func TestMapOKListAsKeys(t *testing.T) {
 	operands1 := []*Item{
-		&Item{Type: ValueItem, Data: Value{Kind: StringValue, Data: "something ABC"}},
-		&Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 20}},
-		&Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 30}},
+		{Type: ValueItem, Data: Value{Kind: StringValue, Data: "something ABC"}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 20}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 30}},
 	}
 	list1 := handleListOP(nil, operands1)
 	if list1.Kind != ListValue {
@@ -320,9 +320,9 @@ func TestMapOKListAsKeys(t *testing.T) {
 	}
 
 	operands2 := []*Item{
-		&Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 10}},
-		&Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 20}},
-		&Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 30}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 10}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 20}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 30}},
 	}
 	list2 := handleListOP(nil, operands2)
 	if list2.Kind != ListValue {
@@ -330,8 +330,8 @@ func TestMapOKListAsKeys(t *testing.T) {
 	}
 
 	operands3 := []*Item{
-		&Item{Type: ValueItem, Data: Value{Kind: StringValue, Data: "something JKL"}},
-		&Item{Type: ValueItem, Data: Value{Kind: IntValue, Data: 40}},
+		{Type: ValueItem, Data: Value{Kind: StringValue, Data: "something JKL"}},
+		{Type: ValueItem, Data: Value{Kind: IntValue, Data: 40}},
 	}
 	list3 := handleListOP(nil, operands3)
 	if list3.Kind != ListValue {
@@ -339,9 +339,9 @@ func TestMapOKListAsKeys(t *testing.T) {
 	}
 
 	nums := []Item{
-		Item{Type: ValueItem, Data: list1},
-		Item{Type: ValueItem, Data: list2},
-		Item{Type: ValueItem, Data: list3},
+		{Type: ValueItem, Data: list1},
+		{Type: ValueItem, Data: list2},
+		{Type: ValueItem, Data: list3},
 	}
 
 	mapval := handleMapOP(nil, []*Item{})

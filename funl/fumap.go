@@ -264,7 +264,7 @@ func (nh *NodeHandler) HandleSameKey(srcNode *pmap.Node, key pmap.MKey, val pmap
 	// lets check if there is same value by using eq -operator
 	for _, v := range keyvalues {
 		argsForEq := []*Item{
-			&Item{
+			{
 				Type: ValueItem,
 				Data: v.Key,
 			},
@@ -298,7 +298,7 @@ func getMatchingValue(nval *NodeValue, keyVal Value) (retVal Value, found bool) 
 	}
 	for _, v := range keyvalues {
 		argsForEq := []*Item{
-			&Item{
+			{
 				Type: ValueItem,
 				Data: v.Key,
 			},
@@ -364,9 +364,9 @@ func handleMapOP(frame *Frame, operands []*Item) (retVal Value) {
 
 		// lets add key-value to map
 		putArgs := []*Item{
-			&Item{Type: ValueItem, Data: mapval},
-			&Item{Type: ValueItem, Data: keyv},
-			&Item{Type: ValueItem, Data: valv},
+			{Type: ValueItem, Data: mapval},
+			{Type: ValueItem, Data: keyv},
+			{Type: ValueItem, Data: valv},
 		}
 		mapval = handlePutOP(frame, putArgs)
 		if mapval.Kind != MapValue {
@@ -593,14 +593,14 @@ func handleKeyvalsOP(frame *Frame, operands []*Item) (retVal Value) {
 		}
 		if !item.Deleted {
 			kvpair := []*Item{
-				&Item{Type: ValueItem, Data: item.Val.Key},
-				&Item{Type: ValueItem, Data: item.Val.Val},
+				{Type: ValueItem, Data: item.Val.Key},
+				{Type: ValueItem, Data: item.Val.Val},
 			}
 			keyItems = append(keyItems, &Item{Type: ValueItem, Data: handleListOP(frame, kvpair)})
 			for _, nextitem := range item.SameKeyValues {
 				kvpair := []*Item{
-					&Item{Type: ValueItem, Data: nextitem.Key},
-					&Item{Type: ValueItem, Data: nextitem.Val},
+					{Type: ValueItem, Data: nextitem.Key},
+					{Type: ValueItem, Data: nextitem.Val},
 				}
 				keyItems = append(keyItems, &Item{Type: ValueItem, Data: handleListOP(frame, kvpair)})
 			}
@@ -685,11 +685,11 @@ func commonGetOP(opName string, argCount int, isGetl bool, frame *Frame, operand
 	if !found {
 		if isGetl {
 			argsForReturnList := []*Item{
-				&Item{
+				{
 					Type: ValueItem,
 					Data: Value{Kind: BoolValue, Data: false},
 				},
-				&Item{
+				{
 					Type: ValueItem,
 					Data: Value{Kind: BoolValue, Data: false},
 				},
@@ -717,11 +717,11 @@ func commonGetOP(opName string, argCount int, isGetl bool, frame *Frame, operand
 	if len(nval.SameKeyValues) == 0 {
 		//lets check still that keys are actually equal, although hashes are...
 		argsForEq := []*Item{
-			&Item{
+			{
 				Type: ValueItem,
 				Data: nval.Val.Key,
 			},
-			&Item{
+			{
 				Type: ValueItem,
 				Data: keyVal,
 			},
@@ -737,11 +737,11 @@ func commonGetOP(opName string, argCount int, isGetl bool, frame *Frame, operand
 		// keys are matching, return value
 		if isGetl {
 			argsForReturnList := []*Item{
-				&Item{
+				{
 					Type: ValueItem,
 					Data: Value{Kind: BoolValue, Data: true},
 				},
-				&Item{
+				{
 					Type: ValueItem,
 					Data: nval.Val.Val,
 				},
@@ -756,11 +756,11 @@ func commonGetOP(opName string, argCount int, isGetl bool, frame *Frame, operand
 	if found {
 		if isGetl {
 			argsForReturnList := []*Item{
-				&Item{
+				{
 					Type: ValueItem,
 					Data: Value{Kind: BoolValue, Data: true},
 				},
-				&Item{
+				{
 					Type: ValueItem,
 					Data: retVal,
 				},
@@ -772,7 +772,7 @@ func commonGetOP(opName string, argCount int, isGetl bool, frame *Frame, operand
 NotFound:
 	if isGetl {
 		argsForReturnList := []*Item{
-			&Item{
+			{
 				Type: ValueItem,
 				Data: Value{Kind: BoolValue, Data: false},
 			},
@@ -799,11 +799,11 @@ func handleDellOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "dell"
 	newMapVal, keyFound := delCommon(false, opName, frame, operands)
 	argsForReturnList := []*Item{
-		&Item{
+		{
 			Type: ValueItem,
 			Data: Value{Kind: BoolValue, Data: keyFound},
 		},
-		&Item{
+		{
 			Type: ValueItem,
 			Data: newMapVal,
 		},
