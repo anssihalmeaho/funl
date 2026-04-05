@@ -1,6 +1,8 @@
 package std
 
 import (
+	"os"
+
 	"github.com/anssihalmeaho/funl/funl"
 )
 
@@ -18,9 +20,127 @@ func initSTDRun(interpreter *funl.Interpreter) (err error) {
 			Getter:     getBacktrace,
 			IsFunction: true,
 		},
+		{
+			Name:   "run-sub-package",
+			Getter: getRunSubPackage,
+		},
+		{
+			Name:   "run-sub-pack-raw",
+			Getter: getRunSubPackRaw,
+		},
+		{
+			Name:   "run-sub",
+			Getter: getRunSub,
+		},
 	}
 	err = setSTDFunctions(topFrame, stdModuleName, stdAstFuncs, interpreter)
 	return
+}
+
+func getRunSub(name string) stdFuncType {
+	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
+		l := len(arguments)
+		if l != 1 && l != 2 {
+			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), need one or two", name, l)
+		}
+		if arguments[0].Kind != funl.StringValue {
+			funl.RunTimeError2(frame, "%s: assuming string", name)
+		}
+		srcFileName := arguments[0].Data.(string)
+		if l == 2 && arguments[1].Kind != funl.ListValue {
+			funl.RunTimeError2(frame, "%s: assuming list as 2nd argument", name)
+		}
+		args := []*funl.Item{}
+		if l == 2 {
+			lit := funl.NewListIterator(arguments[1])
+			for {
+				nextv := lit.Next()
+				if nextv == nil {
+					break
+				}
+				args = append(args, &funl.Item{Type: funl.ValueItem, Data: *nextv})
+			}
+		}
+
+		content, err := os.ReadFile(srcFileName)
+		if err != nil {
+			return makeTripletList(frame, false, err.Error(), funl.Value{Kind: funl.StringValue, Data: ""})
+		}
+		val, err := funl.FunlMainWithArgs(string(content), args, "main", srcFileName, InitSTD)
+		if err != nil {
+			return makeTripletList(frame, false, err.Error(), val)
+		}
+		return makeTripletList(frame, true, "", val)
+	}
+}
+
+func getRunSubPackRaw(name string) stdFuncType {
+	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
+		l := len(arguments)
+		if l != 2 && l != 3 {
+			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), need two or three", name, l)
+		}
+		if arguments[0].Kind != funl.StringValue {
+			funl.RunTimeError2(frame, "%s: assuming string", name)
+		}
+		if arguments[1].Kind != funl.OpaqueValue {
+			funl.RunTimeError2(frame, "%s: assuming opaque value", name)
+		}
+		if l == 3 && arguments[2].Kind != funl.ListValue {
+			funl.RunTimeError2(frame, "%s: assuming list as 2nd argument", name)
+		}
+		args := []*funl.Item{}
+		if l == 3 {
+			lit := funl.NewListIterator(arguments[2])
+			for {
+				nextv := lit.Next()
+				if nextv == nil {
+					break
+				}
+				args = append(args, &funl.Item{Type: funl.ValueItem, Data: *nextv})
+			}
+		}
+		srcFileName := arguments[0].Data.(string)
+		rawDataBytes := arguments[1].Data.(*OpaqueByteArray)
+		val, err := funl.FunlMainWithPackageContent(rawDataBytes.data, args, "main", srcFileName, InitSTD)
+		if err != nil {
+			return makeTripletList(frame, false, err.Error(), val)
+		}
+		return makeTripletList(frame, true, "", val)
+	}
+}
+
+func getRunSubPackage(name string) stdFuncType {
+	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
+		l := len(arguments)
+		if l != 1 && l != 2 {
+			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), need one or two", name, l)
+		}
+		if arguments[0].Kind != funl.StringValue {
+			funl.RunTimeError2(frame, "%s: assuming string", name)
+		}
+		if l == 2 && arguments[1].Kind != funl.ListValue {
+			funl.RunTimeError2(frame, "%s: assuming list as 2nd argument", name)
+		}
+		args := []*funl.Item{}
+		if l == 2 {
+			lit := funl.NewListIterator(arguments[1])
+			for {
+				nextv := lit.Next()
+				if nextv == nil {
+					break
+				}
+				args = append(args, &funl.Item{Type: funl.ValueItem, Data: *nextv})
+			}
+		}
+
+		importName := arguments[0].Data.(string)
+		val, err := funl.FunlMainWithPackage(args, "main", importName, InitSTD)
+		if err != nil {
+			return makeTripletList(frame, false, err.Error(), val)
+		}
+		return makeTripletList(frame, true, "", val)
+	}
 }
 
 func getBacktrace(name string) stdFuncType {
