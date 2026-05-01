@@ -25,6 +25,11 @@ func initSTDJson(interpreter *funl.Interpreter) (err error) {
 			Getter:     getStdJSONdecode,
 			IsFunction: true,
 		},
+		{
+			Name:       "pretty",
+			Getter:     getStdJSONpretty,
+			IsFunction: true,
+		},
 	}
 	err = setSTDFunctions(topFrame, stdModuleName, stdFuncs, interpreter)
 
@@ -50,6 +55,29 @@ func (opa *OpaqueJSONnull) Str() string {
 func (opa *OpaqueJSONnull) Equals(with funl.OpaqueAPI) bool {
 	_, ok := with.(*OpaqueJSONnull)
 	return ok
+}
+
+func getStdJSONpretty(name string) stdFuncType {
+	return func(frame *funl.Frame, arguments []funl.Value) (retVal funl.Value) {
+		if l := len(arguments); l != 1 {
+			funl.RunTimeError2(frame, "%s: wrong amount of arguments (%d), need one", name, l)
+		}
+		var inputBytes []byte
+		var prettyJSON bytes.Buffer
+		switch arg := arguments[0]; arg.Kind {
+		case funl.OpaqueValue:
+			inputBytes = arg.Data.(*OpaqueByteArray).data
+		case funl.StringValue:
+			inputBytes = []byte(arg.Data.(string))
+		default:
+			funl.RunTimeError2(frame, "%s: unsupported argument type", name)
+		}
+		err := json.Indent(&prettyJSON, inputBytes, "", "  ")
+		if err != nil {
+			funl.RunTimeError2(frame, "%s: %v", name, err)
+		}
+		return funl.Value{Kind: funl.StringValue, Data: prettyJSON.String()}
+	}
 }
 
 // encode(<VALUE>) -> list(bool, string, opaque:bytearray)
