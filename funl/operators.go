@@ -76,11 +76,18 @@ Operator: if
     - true: 2nd argument is evaluated and returned as value
     - false: 3rd argument is evaluated and returned as value
 
-  Number of arguments need to be 3.
+  Number of arguments need to be 3 or 2.
+
+  2 arguments case:
+  If number of arguments is 2 then 1st is condition and if
+  condition is true then 2nd argument is evaluated.
+  If condition evalutes to false then false is returned as value.
+
   Return value is evaluated value of either 2nd or 3rd argument
-  expression.
+  expression (or false in 2 arguments case and condition being false).
 
 Usage: if(<condition-expression> <expr-1> <expr-2>)
+       if(<condition-expression> <expr-1>)
 `,
 		"plus": `
 Operator: plus
