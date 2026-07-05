@@ -1551,7 +1551,8 @@ func handleNotOP(frame *Frame, operands []*Item) (retVal Value) {
 
 func handleIfOP(frame *Frame, operands []*Item) (retVal Value) {
 	opName := "if"
-	if l := len(operands); l != 3 {
+	l := len(operands)
+	if l != 3 && l != 2 {
 		runTimeError2(frame, "Wrong amount of arguments for %s (%d given)", opName, l)
 	}
 	var argval Value
@@ -1569,7 +1570,11 @@ func handleIfOP(frame *Frame, operands []*Item) (retVal Value) {
 	if argval.Data.(bool) {
 		retVal = EvalItem(operands[1], frame)
 	} else {
-		retVal = EvalItem(operands[2], frame)
+		if l == 3 {
+			retVal = EvalItem(operands[2], frame)
+		} else {
+			retVal = Value{Kind: BoolValue, Data: false}
+		}
 	}
 	return
 }
