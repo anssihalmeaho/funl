@@ -103,6 +103,7 @@ const (
 	RecwithOP
 	DeferOP
 	ForceOP
+	RetOP
 	MaximumOP
 )
 
@@ -220,6 +221,7 @@ func operTypeFromIntToString(ot OperType) string {
 		RecwithOP:  "recwith",
 		DeferOP:    "defer",
 		ForceOP:    "force",
+		RetOP:      "return",
 		MaximumOP:  "MAX",
 	}[ot]
 	if !ok {

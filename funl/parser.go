@@ -604,6 +604,8 @@ func operNameToID(opName string) (op OperType, ok bool) {
 		op = DeferOP
 	case "force":
 		op = ForceOP
+	case "return":
+		op = RetOP
 	default:
 		return
 	}

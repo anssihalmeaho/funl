@@ -76,6 +76,7 @@ func init() {
 	operTbl[RecwithOP] = handleRecwithOP
 	operTbl[DeferOP] = handleDeferOP
 	operTbl[ForceOP] = handleForceOP
+	operTbl[RetOP] = handleRetOP
 }
 
 func RunTimeError(format string, args ...any) {
@@ -136,6 +137,7 @@ type Frame struct {
 	AccessLink    *Frame // nil if root
 	Imported      map[SymID]*Frame
 	inProcCall    bool
+	evalResult    *Value
 	EvaluatedArgs []Value
 	Interpreter   *Interpreter
 	Previous      *Frame
@@ -316,8 +318,34 @@ func handleWhileOP(frame *Frame, operands []*Item) (retVal Value) {
 			if !nextFrame.Syms.AddBySIDByOverwriteIfNeeded(sid, letvalitem) {
 				runTimeError2(frame, "Symbol add failed")
 			}
+			if nextFrame.evalResult != nil {
+				retVal = *nextFrame.evalResult
+				return
+			}
 		}
 	}
+}
+
+func handleRetOP(frame *Frame, operands []*Item) (retVal Value) {
+	opName := "return"
+	if l := len(operands); l != 1 {
+		runTimeError2(frame, "%s operator needs one argument (%d given)", opName, l)
+	}
+
+	v := operands[0]
+	var val Value
+	switch v.Type {
+	case ValueItem:
+		val = v.Data.(Value)
+	case SymbolPathItem, OperCallItem:
+		val = EvalItem(v, frame)
+	default:
+		runTimeError2(frame, "something wrong (%s)", opName)
+	}
+
+	retVal = val
+	frame.evalResult = &val
+	return
 }
 
 // HandleCallOP for std lib usage
@@ -428,6 +456,10 @@ func handleCallOP(frame *Frame, operands []*Item) (retVal Value) {
 		letvalitem := &Item{Type: ValueItem, Data: EvalItem(letitem, &nextFrame)}
 		if !nextFrame.Syms.AddBySID(sid, letvalitem) {
 			runTimeError2(frame, "Symbol add failed")
+		}
+		if nextFrame.evalResult != nil {
+			retVal = *nextFrame.evalResult
+			return
 		}
 	}
 	retVal = EvalItemV2(nextFrame.FuncProto.Body, &nextFrame, &AddInfo{evaluatingBody: true})

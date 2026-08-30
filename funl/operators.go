@@ -1173,6 +1173,17 @@ Example:
 
 Usage: force(<thunk-value> / <expression>)
 `,
+		"return": `
+Operator: return
+  Returns from function/procedure call with evaluated value of given argument.
+  Stops evaluation of remaining let-definitions and function/procedure body
+  and function/procedure returns with value given as argument.
+  It can be used also with while -operator to stop iteration and return value from function/procedure.
+
+  Return value is evaluated value of given argument.
+
+Usage: return(<value>)
+`,
 		"help": `
 Operator: help
   Returns documentation about certain language topic
@@ -1264,6 +1275,7 @@ func NewDefaultOperators() Operators {
 		"recwith":  OperatorInfo{},
 		"defer":    OperatorInfo{},
 		"force":    OperatorInfo{},
+		"return":   OperatorInfo{},
 	}
 }
 
