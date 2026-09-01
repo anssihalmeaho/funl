@@ -147,7 +147,11 @@ func handleSpawnOP(frame *Frame, operands []*Item) (retVal Value) {
 				}
 			}()
 			isFailure = true
-			EvalItem(it, frame)
+			// Create a new frame for the spawned fiber, copying the current frame's context
+			// and init  evalResult to nil to avoid sharing the result with the parent frame.
+			newFrame := *frame
+			newFrame.evalResult = nil
+			EvalItem(it, &newFrame)
 			isFailure = false
 		}(operand)
 	}
