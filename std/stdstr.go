@@ -87,6 +87,11 @@ func initSTDStr(interpreter *funl.Interpreter) (err error) {
 			IsFunction: true,
 		},
 	}
+	item := &funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.StringValue, Data: "'"}}
+	err = topFrame.Syms.Add("quote", item)
+	if err != nil {
+		return
+	}
 	err = setSTDFunctions(topFrame, stdModuleName, stdStrFuncs, interpreter)
 	return
 }
