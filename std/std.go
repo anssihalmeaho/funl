@@ -84,6 +84,7 @@ func InitSTD(interpreter *funl.Interpreter) (err error) {
 		initSTDuuid,
 		initSTDCal,
 		initSTDRand,
+		initSTDYaml,
 	}
 	for _, initf := range inits {
 		err = initf(interpreter)
