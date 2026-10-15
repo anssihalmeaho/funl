@@ -19,8 +19,28 @@ func initSTDYaml(interpreter *funl.Interpreter) (err error) {
 			IsFunction: true,
 		},
 	}
+	item := &funl.Item{Type: funl.ValueItem, Data: funl.Value{Kind: funl.OpaqueValue, Data: &OpaqueYAMLnull{}}}
+	err = topFrame.Syms.Add("null", item)
+	if err != nil {
+		return
+	}
 	err = setSTDFunctions(topFrame, stdModuleName, stdFuncs, interpreter)
 	return
+}
+
+type OpaqueYAMLnull struct{}
+
+func (opa *OpaqueYAMLnull) TypeName() string {
+	return "yaml-null"
+}
+
+func (opa *OpaqueYAMLnull) Str() string {
+	return "yaml-null"
+}
+
+func (opa *OpaqueYAMLnull) Equals(with funl.OpaqueAPI) bool {
+	_, ok := with.(*OpaqueYAMLnull)
+	return ok
 }
 
 // decode(opaque:bytearray) -> list(bool, string, <VALUE>)
@@ -80,7 +100,7 @@ func decodeYAML(name string, frame *funl.Frame, indata []byte) (ok bool, errText
 func traverseYAML(frame *funl.Frame, intf any) funl.Value {
 	val := reflect.ValueOf(intf)
 	if intf == nil {
-		panic(fmt.Errorf("nil value"))
+		return funl.Value{Kind: funl.OpaqueValue, Data: &OpaqueYAMLnull{}}
 	}
 	switch val.Kind() {
 	case reflect.Bool:
